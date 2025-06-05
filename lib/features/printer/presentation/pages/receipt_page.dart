@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
+import 'package:wincare_modules/features/printer/data/models/receipt_model.dart';
 
 import '../../../../core/theme.dart';
 import '../../domain/entities/receipt_entity.dart';
+import '../widgets/custom_divider.dart';
 import '../widgets/printing_progress_dialog.dart';
 
 class ReceiptPage extends StatefulWidget {
@@ -16,6 +21,28 @@ class _ReceiptPageState extends State<ReceiptPage> {
   ReceiptController? controller;
   String? address;
 
+  static const _channel = MethodChannel('com.wincare/printer');
+
+
+  void setupChannelHandler() {
+    _channel.setMethodCallHandler((call) async {
+      print("Received method: ${call.method}");
+      print("Received arguments: ${call.arguments}");
+      if (call.method == 'sendSaleOrderData') {
+        final jsonStr = call.arguments as String;
+        final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+        final saleOrder = ReceiptModel.fromJson(decoded);
+        print("Received order: ${saleOrder.items?.length}");
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setupChannelHandler();
+  }
+
   final receiptData = ReceiptEntity(
     saleDate: '17/01/2025 19:59',
     receiptCode: '6B100617789112648',
@@ -25,21 +52,24 @@ class _ReceiptPageState extends State<ReceiptPage> {
     customerPhone: '0961891427',
     items: [
       ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g 18936221041746 OMACHI Mì DO kấy sườn ngũ quả 80g 18936221041746',
+        name:
+            'OMACHI Mì DO kấy sườn ngũ quả 80g 18936221041746 OMACHI Mì DO kấy sườn ngũ quả 80g 18936221041746',
         price: '202,000',
         qty: '5',
         unit: 'T',
         total: '1,010,000',
       ),
       ItemEntity(
-        name: 'OMACHI Mì DO xốt bò hầm 80g 18936221041753 OMACHI Mì DO xốt bò hầm 80g 18936221041753 OMACHI Mì DO xốt bò hầm 80g 18936221041753',
+        name:
+            'OMACHI Mì DO xốt bò hầm 80g 18936221041753 OMACHI Mì DO xốt bò hầm 80g 18936221041753 OMACHI Mì DO xốt bò hầm 80g 18936221041753',
         price: '202,000',
         qty: '6',
         unit: 'T',
         total: '1,212,000',
       ),
       ItemEntity(
-        name: 'DELIPIE Bánh pie sữa hương vani 216g 18935604744126 DELIPIE Bánh pie sữa hương vani 216g 18935604744126 DELIPIE Bánh pie sữa hương vani 216g 18935604744126',
+        name:
+            'DELIPIE Bánh pie sữa hương vani 216g 18935604744126 DELIPIE Bánh pie sữa hương vani 216g 18935604744126 DELIPIE Bánh pie sữa hương vani 216g 18935604744126',
         price: '277,200',
         qty: '1',
         unit: 'T',
@@ -266,11 +296,11 @@ class _ReceiptPageState extends State<ReceiptPage> {
 
                         /// items
                         buildKeyValueRow('SĐT:', receiptData.customerPhone),
-                        const Divider(),
+                        const CustomDivider(),
                         buildItemHeader(),
                         for (final item in receiptData.items)
                           buildItemRow(item),
-                        const Divider(),
+                        const CustomDivider(),
                         buildTotalRow(
                           'TỔNG TIỀN PHẢI T.TOÁN',
                           receiptData.totalAmount,
@@ -296,7 +326,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                             style: TextStyle(fontSize: ReceiptSize.small),
                           ),
                         ),
-                        const Divider(),
+                        const CustomDivider(),
                         buildKeyValueRow(
                           'ID thẻ khách hàng',
                           receiptData.customerCardId,
@@ -305,7 +335,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           'Điểm tích',
                           receiptData.accumulatedPoints,
                         ),
-                        const Divider(),
+                        const CustomDivider(),
                         buildKeyValueRow(
                           'Hình thức GH',
                           receiptData.deliveryMethod,
@@ -337,7 +367,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Divider(),
+                        const CustomDivider(),
                         const SizedBox(height: 4),
 
                         /// footer
