@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
-import 'package:wincare_modules/features/printer/data/models/receipt_model.dart';
 
 import '../../../../core/theme.dart';
-import '../../domain/entities/receipt_entity.dart';
+import '../../data/models/sale_order_header.dart';
 import '../widgets/custom_divider.dart';
 import '../widgets/printing_progress_dialog.dart';
 
@@ -20,9 +19,9 @@ class ReceiptPage extends StatefulWidget {
 class _ReceiptPageState extends State<ReceiptPage> {
   ReceiptController? controller;
   String? address;
+  late SaleOrderHeader receiptData;
 
   static const _channel = MethodChannel('com.wincare/printer');
-
 
   void setupChannelHandler() {
     _channel.setMethodCallHandler((call) async {
@@ -31,7 +30,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
       if (call.method == 'sendSaleOrderData') {
         final jsonStr = call.arguments as String;
         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-        final saleOrder = ReceiptModel.fromJson(decoded);
+        final saleOrder = SaleOrderHeader.fromJson(decoded);
+        setState(() {
+          receiptData = saleOrder;
+        });
         print("Received order: ${saleOrder.items?.length}");
       }
     });
@@ -42,177 +44,6 @@ class _ReceiptPageState extends State<ReceiptPage> {
     super.initState();
     setupChannelHandler();
   }
-
-  final receiptData = ReceiptEntity(
-    saleDate: '17/01/2025 19:59',
-    receiptCode: '6B100617789112648',
-    counter: 'B10',
-    orderCode: '6B100617789112648',
-    customerName: 'Trần Thị Hợp (Cửa Hàng Tạp Hóa Hợp Thanh)',
-    customerPhone: '0961891427',
-    items: [
-      ItemEntity(
-        name:
-            'OMACHI Mì DO kấy sườn ngũ quả 80g 18936221041746 OMACHI Mì DO kấy sườn ngũ quả 80g 18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name:
-            'OMACHI Mì DO xốt bò hầm 80g 18936221041753 OMACHI Mì DO xốt bò hầm 80g 18936221041753 OMACHI Mì DO xốt bò hầm 80g 18936221041753',
-        price: '202,000',
-        qty: '6',
-        unit: 'T',
-        total: '1,212,000',
-      ),
-      ItemEntity(
-        name:
-            'DELIPIE Bánh pie sữa hương vani 216g 18935604744126 DELIPIE Bánh pie sữa hương vani 216g 18935604744126 DELIPIE Bánh pie sữa hương vani 216g 18935604744126',
-        price: '277,200',
-        qty: '1',
-        unit: 'T',
-        total: '277,200',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO xốt bò hầm 80g\n18936221041753',
-        price: '202,000',
-        qty: '6',
-        unit: 'T',
-        total: '1,212,000',
-      ),
-      ItemEntity(
-        name: 'DELIPIE Bánh pie sữa hương vani 216g\n18935604744126',
-        price: '277,200',
-        qty: '1',
-        unit: 'T',
-        total: '277,200',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO xốt bò hầm 80g\n18936221041753',
-        price: '202,000',
-        qty: '6',
-        unit: 'T',
-        total: '1,212,000',
-      ),
-      ItemEntity(
-        name: 'DELIPIE Bánh pie sữa hương vani 216g\n18935604744126',
-        price: '277,200',
-        qty: '1',
-        unit: 'T',
-        total: '277,200',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO xốt bò hầm 80g\n18936221041753',
-        price: '202,000',
-        qty: '6',
-        unit: 'T',
-        total: '1,212,000',
-      ),
-      ItemEntity(
-        name: 'DELIPIE Bánh pie sữa hương vani 216g\n18935604744126',
-        price: '277,200',
-        qty: '1',
-        unit: 'T',
-        total: '277,200',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO xốt bò hầm 80g\n18936221041753',
-        price: '202,000',
-        qty: '6',
-        unit: 'T',
-        total: '1,212,000',
-      ),
-      ItemEntity(
-        name: 'DELIPIE Bánh pie sữa hương vani 216g\n18935604744126',
-        price: '277,200',
-        qty: '1',
-        unit: 'T',
-        total: '277,200',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO xốt bò hầm 80g\n18936221041753',
-        price: '202,000',
-        qty: '6',
-        unit: 'T',
-        total: '1,212,000',
-      ),
-      ItemEntity(
-        name: 'DELIPIE Bánh pie sữa hương vani 216g\n18935604744126',
-        price: '277,200',
-        qty: '1',
-        unit: 'T',
-        total: '277,200',
-      ),
-      ItemEntity(
-        name: 'OMACHI Mì DO kấy sườn ngũ quả 80g\n18936221041746',
-        price: '202,000',
-        qty: '5',
-        unit: 'T',
-        total: '1,010,000',
-      ),
-    ],
-    totalAmount: '2,499,200',
-    totalProductAmount: '2,499,200',
-    customerPaid: '805,500',
-    voucherAmount: '805,500',
-    refundAmount: '0',
-    customerCardId: 'XXXXXXXXXXXX1427',
-    accumulatedPoints: '0',
-    deliveryMethod: 'Đơn bán hàng Mobile',
-    deliveryTime: '17/01/2025 19:42',
-    deliveryAddress: 'Thôn Hải Mậu, Xã Thọ Hải, Thọ Xuân',
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -288,37 +119,44 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           ),
                         ),
                         SizedBox(height: 12),
-                        buildKeyValueRow('Ngày bán:', receiptData.saleDate),
-                        buildKeyValueRow('HD:', receiptData.receiptCode),
-                        buildKeyValueRow('Quầy:', receiptData.counter),
-                        buildKeyValueRow('Mã GH:', receiptData.orderCode),
-                        buildKeyValueRow('KH:', receiptData.customerName),
+                        buildKeyValueRow('Ngày bán:', ""),
+                        buildKeyValueRow('HD:', ""),
+                        buildKeyValueRow('Quầy:', ""),
+                        buildKeyValueRow('Mã GH:', ""),
+                        buildKeyValueRow('KH:', ""),
 
                         /// items
-                        buildKeyValueRow('SĐT:', receiptData.customerPhone),
+                        buildKeyValueRow('SĐT:', ""),
                         const CustomDivider(),
                         buildItemHeader(),
-                        for (final item in receiptData.items)
+                        if(receiptData.items!= null && receiptData.items!.isEmpty)
+                          const Center(
+                            child: Text(
+                              'Không có mặt hàng nào',
+                              style: TextStyle(fontSize: ReceiptSize.standard),
+                            ),
+                          ),
+                        for (final item in receiptData.items!)
                           buildItemRow(item),
                         const CustomDivider(),
                         buildTotalRow(
                           'TỔNG TIỀN PHẢI T.TOÁN',
-                          receiptData.totalAmount,
+                          "00000",
                           bold: true,
                         ),
                         buildTotalRow(
                           'TỔNG TIỀN SẢN PHẨM',
-                          receiptData.totalProductAmount,
+                          "00000",
                         ),
                         buildTotalRow(
                           'TIỀN KHÁCH TRẢ',
-                          receiptData.customerPaid,
+                          "",
                         ),
                         buildKeyValueRow(
                           '  Tiền Voucher',
-                          receiptData.voucherAmount,
+                          "",
                         ),
-                        buildTotalRow('TIỀN TRẢ LẠI', receiptData.refundAmount),
+                        buildTotalRow('TIỀN TRẢ LẠI', ""),
                         const SizedBox(height: 8),
                         const Center(
                           child: Text(
@@ -329,22 +167,22 @@ class _ReceiptPageState extends State<ReceiptPage> {
                         const CustomDivider(),
                         buildKeyValueRow(
                           'ID thẻ khách hàng',
-                          receiptData.customerCardId,
+                          "",
                         ),
                         buildKeyValueRow(
                           'Điểm tích',
-                          receiptData.accumulatedPoints,
+                          "",
                         ),
                         const CustomDivider(),
                         buildKeyValueRow(
                           'Hình thức GH',
-                          receiptData.deliveryMethod,
+                          "",
                         ),
-                        buildKeyValueRow('KH:', receiptData.customerName),
-                        buildKeyValueRow('Giờ GH:', receiptData.deliveryTime),
+                        buildKeyValueRow('KH:', receiptData.customerName ?? ''),
+                        buildKeyValueRow('Giờ GH:', ""),
                         buildKeyValueRow(
                           'Địa chỉ GH:',
-                          receiptData.deliveryAddress,
+                          receiptData.fullAddress ?? '',
                         ),
                         const SizedBox(height: 12),
                         const Center(
@@ -520,12 +358,15 @@ class _ReceiptPageState extends State<ReceiptPage> {
     ),
   );
 
-  Widget buildItemRow(ItemEntity item) => Padding(
+  Widget buildItemRow(SaleOrderItem item) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 2),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(item.name, style: const TextStyle(fontSize: ReceiptSize.standard)),
+        Text(
+          item.description ?? '',
+          style: const TextStyle(fontSize: ReceiptSize.standard),
+        ),
         Row(
           children: [
             const SizedBox(width: 0),
@@ -533,7 +374,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             Expanded(
               flex: 2,
               child: Text(
-                item.price,
+                item.netPrice != null ? item.netPrice.toString() : '0',
                 textAlign: TextAlign.right,
                 style: const TextStyle(fontSize: ReceiptSize.standard),
               ),
@@ -541,7 +382,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             Expanded(
               flex: 1,
               child: Text(
-                item.qty,
+                item.quantity != null ? item.quantity.toString() : '0',
                 textAlign: TextAlign.right,
                 style: const TextStyle(fontSize: ReceiptSize.standard),
               ),
@@ -549,7 +390,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             Expanded(
               flex: 1,
               child: Text(
-                item.unit,
+                item.unitPrice != null ? item.unitPrice.toString() : 'T',
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: ReceiptSize.standard),
               ),
@@ -557,7 +398,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             Expanded(
               flex: 2,
               child: Text(
-                item.total,
+                item.totalAmount != null ? item.totalAmount.toString() : '0',
                 textAlign: TextAlign.right,
                 style: const TextStyle(fontSize: ReceiptSize.standard),
               ),
