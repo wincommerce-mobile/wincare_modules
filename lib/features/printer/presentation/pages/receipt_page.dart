@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/theme.dart';
 import '../../data/models/sale_order_header.dart';
@@ -38,8 +39,117 @@ class _ReceiptPageState extends State<ReceiptPage> {
         });
       }
     });
-    // final jsonStr =
-    //     """{"BillCode":"6B01smthuyhub635","BillDate":"2025-06-04T00:00:00","CustomerName":"Nguyễn Thị Dịu","CustomerPhone":"031223456","DeliveryDate":"2025-06-07T00:00:00","FullAddress":"123a","IsAllowCancel":false,"IsAllowConfirm":false,"Items":[{"Barcode":"8934680089739","Description":"LU bánh quy bơ pháp 540g","DocumentNo":"635","ItemNo":"10324065","LineNo":"1","MarketPrice":0.0,"NetPrice":810000.0,"Quantity":1.0,"QuantityConfirm":0.0,"TotalAmount":810000.0,"UnitOfMeasure":"T","UnitPrice":810000.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg","VatGroup":0,"VatRate":0},{"Barcode":"8934680114967","Description":"LU bánh quy bơ pháp 540g","DocumentNo":"635","ItemNo":"10324065","LineNo":"2","MarketPrice":0.0,"NetPrice":135000.0,"Quantity":2.0,"QuantityConfirm":0.0,"TotalAmount":270000.0,"UnitOfMeasure":"HOP","UnitPrice":135000.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg","VatGroup":0,"VatRate":0}],"MemberLevel":1,"MemberLevelName":"Hội viên","PosCode":"sm.thuy.hub","PosName":"sm Thuy HUB","SaleType":1,"StatusId":20,"StatusName":"Đã duyệt","StoreId":"6B01","StoreName":"HUB WIN+ THA 66B Phố Thiều","TotalPrice":1080000.0,"UserId":0,"check":false}""";
+    // final jsonStr = """
+    //         {
+    //   "BillCode": "6B01smthuyhub635",
+    //   "BillDate": "2025-06-04T00:00:00",
+    //   "CustomerName": "Nguyễn Thị Dịu",
+    //   "CustomerPhone": "031223456",
+    //   "DeliveryDate": "2025-06-07T00:00:00",
+    //   "FullAddress": "123a",
+    //   "IsAllowCancel": false,
+    //   "IsAllowConfirm": false,
+    //   "Items": [
+    //     {
+    //       "Barcode": "8934680089739",
+    //       "Description": "DYMAMYTE Bánh quy bơ pháp 540g SCL BigBag 120g",
+    //       "DocumentNo": "635",
+    //       "ItemNo": "10324065",
+    //       "LineNo": "1",
+    //       "MarketPrice": 0,
+    //       "NetPrice": 810000,
+    //       "Quantity": 1,
+    //       "QuantityConfirm": 0,
+    //       "TotalAmount": 810000,
+    //       "UnitOfMeasure": "T",
+    //       "UnitPrice": 810000,
+    //       "UrlImage": "https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg",
+    //       "VatGroup": 0,
+    //       "VatRate": 0
+    //     },
+    //     {
+    //       "Barcode": "8934680114967",
+    //       "Description": "DYMAMYTE Bánh quy bơ pháp 540g SCL BigBag 120g",
+    //       "DocumentNo": "635",
+    //       "ItemNo": "10324065",
+    //       "LineNo": "2",
+    //       "MarketPrice": 0,
+    //       "NetPrice": 135000,
+    //       "Quantity": 2,
+    //       "QuantityConfirm": 0,
+    //       "TotalAmount": 270000,
+    //       "UnitOfMeasure": "HOP",
+    //       "UnitPrice": 135000,
+    //       "UrlImage": "https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg",
+    //       "VatGroup": 0,
+    //       "VatRate": 0
+    //     },
+    // {
+    //       "Barcode": "8934680114967",
+    //       "Description": "DYMAMYTE Bánh quy bơ pháp 540g SCL BigBag 120g",
+    //       "DocumentNo": "635",
+    //       "ItemNo": "10324065",
+    //       "LineNo": "2",
+    //       "MarketPrice": 0,
+    //       "NetPrice": 135000,
+    //       "Quantity": 2,
+    //       "QuantityConfirm": 0,
+    //       "TotalAmount": 270000,
+    //       "UnitOfMeasure": "HOP",
+    //       "UnitPrice": 135000,
+    //       "UrlImage": "https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg",
+    //       "VatGroup": 0,
+    //       "VatRate": 0
+    //     },
+    // {
+    //       "Barcode": "8934680114967",
+    //       "Description": "DYMAMYTE Bánh quy bơ pháp 540g SCL BigBag 120g",
+    //       "DocumentNo": "635",
+    //       "ItemNo": "10324065",
+    //       "LineNo": "2",
+    //       "MarketPrice": 0,
+    //       "NetPrice": 135000,
+    //       "Quantity": 2,
+    //       "QuantityConfirm": 0,
+    //       "TotalAmount": 270000,
+    //       "UnitOfMeasure": "HOP",
+    //       "UnitPrice": 135000,
+    //       "UrlImage": "https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg",
+    //       "VatGroup": 0,
+    //       "VatRate": 0
+    //     },
+    // {
+    //       "Barcode": "8934680114967",
+    //       "Description": "LU bánh quy bơ pháp 540g BigBag 120 g",
+    //       "DocumentNo": "635",
+    //       "ItemNo": "10324065",
+    //       "LineNo": "2",
+    //       "MarketPrice": 0,
+    //       "NetPrice": 135000,
+    //       "Quantity": 2000,
+    //       "QuantityConfirm": 0,
+    //       "TotalAmount": 270000,
+    //       "UnitOfMeasure": "HOP",
+    //       "UnitPrice": 135000,
+    //       "UrlImage": "https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg",
+    //       "VatGroup": 0,
+    //       "VatRate": 0
+    //     }
+    //   ],
+    //   "MemberLevel": 1,
+    //   "MemberLevelName": "Hội viên",
+    //   "PosCode": "sm.thuy.hub",
+    //   "PosName": "sm Thuy HUB",
+    //   "SaleType": 1,
+    //   "StatusId": 20,
+    //   "StatusName": "Đã duyệt",
+    //   "StoreId": "6B01",
+    //   "StoreName": "HUB WIN+ THA 66B Phố Thiều",
+    //   "TotalPrice": 1080000,
+    //   "UserId": 0,
+    //   "check": false
+    // }
+    //         """;
     // final Map<String, dynamic> decoded = jsonDecode(jsonStr);
     // final saleOrder = SaleOrderHeader.fromJson(decoded);
     // setState(() {
@@ -55,14 +165,39 @@ class _ReceiptPageState extends State<ReceiptPage> {
   @override
   void initState() {
     super.initState();
-    print("initState");
     setupChannelHandler();
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
-    print("didChangeDependencies");
+    await getMacAddress();
+  }
+
+  Future<void> saveMacAddress(Printer printer) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('device_address', printer.address);
+    await prefs.setString('device_name', printer.name);
+  }
+
+  Future<void> getMacAddress() async {
+    final prefs = await SharedPreferences.getInstance();
+    final address = prefs.getString('device_address');
+    final name = prefs.getString('device_name');
+    if (address != null && name != null) {
+      final connectState = await FlutterBluetoothPrinter.connect(address);
+      if (!connectState) {
+        print("Failed to connect to printer with address: $address");
+        printer = null;
+        return;
+      } else {
+        setState(() {
+          printer = Printer(name: name, address: address);
+        });
+      }
+    } else {
+      print("No printer found in preferences");
+    }
   }
 
   Future<void> _setUpPrinter() async {
@@ -74,6 +209,26 @@ class _ReceiptPageState extends State<ReceiptPage> {
           address: selected.address,
         );
       });
+      saveMacAddress(printer!);
+    }
+  }
+
+  static Future<void> _triggerNativeBack() async {
+    try {
+      await _channel.invokeMethod('onBackPressed');
+    } catch (e) {
+      print('Error calling native back: $e');
+    }
+  }
+
+  num simplifyNumber(double? value) {
+    if (value == null) {
+      return 0;
+    }
+    if (value % 1 == 0) {
+      return value.toInt();
+    } else {
+      return value;
     }
   }
 
@@ -86,7 +241,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-            Navigator.of(context).pop();
+            _triggerNativeBack();
           },
         ),
         title: const Text(
@@ -210,6 +365,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                         ),
                         const CustomDivider(),
                         buildItemHeader(),
+                        const SizedBox(height: 4),
                         if (receiptData.items != null &&
                             receiptData.items!.isEmpty)
                           const Center(
@@ -229,12 +385,18 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           _formatCurrency(receiptData.total()),
                           bold: true,
                         ),
+                        const SizedBox(height: 2),
                         buildTotalRow(
                           'TỔNG TIỀN SẢN PHẨM',
-                          _formatCurrency(receiptData.total()).toString(),
+                          _formatCurrency(
+                            receiptData.totalPrice ?? 0,
+                          ).toString(),
                         ),
+                        const SizedBox(height: 2),
                         buildTotalRow('TIỀN KHÁCH TRẢ', ""),
+                        const SizedBox(height: 2),
                         buildKeyValueRow('  Tiền Voucher', ""),
+                        const SizedBox(height: 2),
                         buildTotalRow('TIỀN TRẢ LẠI', ""),
                         const SizedBox(height: 8),
                         const Center(
@@ -396,7 +558,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
     child: Row(
       children: const [
         Expanded(
-          flex: 4,
+          flex: 3,
           child: Text(
             'Mặt hàng',
             style: TextStyle(
@@ -418,6 +580,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             ),
           ),
         ),
+        SizedBox(width: 4),
         Expanded(
           flex: 1,
           child: Text(
@@ -430,6 +593,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             ),
           ),
         ),
+        SizedBox(width: 4),
         Expanded(
           flex: 1,
           child: Text(
@@ -458,8 +622,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
     ),
   );
 
-  Widget buildItemRow(SaleOrderItem item) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 2),
+  Widget buildItemRow(SaleOrderItem item) => Container(
+    margin: const EdgeInsets.symmetric(vertical: 6),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -467,13 +631,15 @@ class _ReceiptPageState extends State<ReceiptPage> {
           item.description ?? '',
           style: const TextStyle(
             fontFamily: 'Roboto',
+            fontWeight: FontWeight.w500,
             fontSize: ReceiptSize.midLarge,
           ),
         ),
+        const SizedBox(height: 6),
         Row(
           children: [
             const SizedBox(width: 0),
-            Expanded(flex: 4, child: SizedBox()),
+            Expanded(flex: 3, child: SizedBox()),
             Expanded(
               flex: 2,
               child: Text(
@@ -481,21 +647,27 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: ReceiptSize.medium,
+                  fontWeight: FontWeight.w500,
+                  fontSize: ReceiptSize.medium2,
                 ),
               ),
             ),
+            SizedBox(width: 4),
             Expanded(
               flex: 1,
               child: Text(
-                item.quantity != null ? item.quantity.toString() : '0',
+                item.quantity != null
+                    ? simplifyNumber(item.quantity).toString()
+                    : '0',
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: ReceiptSize.medium,
+                  fontWeight: FontWeight.w500,
+                  fontSize: ReceiptSize.medium2,
                 ),
               ),
             ),
+            SizedBox(width: 4),
             Expanded(
               flex: 1,
               child: Text(
@@ -505,7 +677,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: ReceiptSize.medium,
+                  fontWeight: FontWeight.w500,
+                  fontSize: ReceiptSize.medium2,
                 ),
               ),
             ),
@@ -518,7 +691,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: ReceiptSize.medium,
+                  fontSize: ReceiptSize.medium2,
                 ),
               ),
             ),
@@ -538,7 +711,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 label,
                 style: TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: ReceiptSize.standard,
+                  fontSize: ReceiptSize.midLarge,
                   fontWeight: bold ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -547,7 +720,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
               amount,
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: ReceiptSize.standard,
+                fontSize: ReceiptSize.midLarge,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
             ),

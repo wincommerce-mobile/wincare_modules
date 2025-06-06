@@ -6,7 +6,7 @@ class CustomDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 1,
+      height: 1.5,
       color: Colors.black,
       margin: const EdgeInsets.symmetric(vertical: 12),
     );
