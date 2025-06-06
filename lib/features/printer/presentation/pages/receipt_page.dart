@@ -189,6 +189,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
       if (!connectState) {
         print("Failed to connect to printer with address: $address");
         printer = null;
+        prefs.remove("device_address");
+        prefs.remove("device_name");
         return;
       } else {
         setState(() {
@@ -631,7 +633,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
           item.description ?? '',
           style: const TextStyle(
             fontFamily: 'Roboto',
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
             fontSize: ReceiptSize.midLarge,
           ),
         ),
@@ -647,7 +649,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                   fontSize: ReceiptSize.medium2,
                 ),
               ),
@@ -662,7 +664,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                   fontSize: ReceiptSize.medium2,
                 ),
               ),
@@ -677,7 +679,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                   fontSize: ReceiptSize.medium2,
                 ),
               ),
