@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class SaleOrderHeader {
   String? billCode;
   DateTime? billDate;
@@ -45,13 +47,30 @@ class SaleOrderHeader {
     this.check,
   });
 
+  double total() {
+    if (items == null || items!.isEmpty) {
+      return 0.0;
+    }
+    double total = 0.0;
+
+    for (var item in items!) {
+      total += item.totalAmount ?? 0.0;
+    }
+
+    return total;
+  }
+
   factory SaleOrderHeader.fromJson(Map<String, dynamic> json) {
     return SaleOrderHeader(
       billCode: json['BillCode'] as String?,
-      billDate: json['BillDate'] != null ? DateTime.tryParse(json['BillDate']) : null,
+      billDate: json['BillDate'] != null
+          ? DateTime.tryParse(json['BillDate'])
+          : null,
       customerName: json['CustomerName'] as String?,
       customerPhone: json['CustomerPhone'] as String?,
-      deliveryDate: json['DeliveryDate'] != null ? DateTime.tryParse(json['DeliveryDate']) : null,
+      deliveryDate: json['DeliveryDate'] != null
+          ? DateTime.tryParse(json['DeliveryDate'])
+          : null,
       fullAddress: json['FullAddress'] as String?,
       isAllowCancel: json['IsAllowCancel'] as bool?,
       isAllowConfirm: json['IsAllowConfirm'] as bool?,

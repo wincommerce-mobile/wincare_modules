@@ -13,6 +13,7 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_bluetooth_printer: ^2.19.0
   get: ^4.7.2
+  intl:
 
 dev_dependencies:
   flutter_test:
@@ -22,7 +23,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/
+    - assets/images/
+    - assets/fonts/roboto/
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/roboto/Roboto-Regular.ttf
+        - asset: assets/fonts/roboto/Roboto-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/roboto/Roboto-Italic.ttf
+          style: italic
   module:
     androidX: true
     androidPackage: com.wincommerce.wincare.wincare_modules

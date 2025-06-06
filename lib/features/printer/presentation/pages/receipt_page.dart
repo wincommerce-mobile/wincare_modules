@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/theme.dart';
 import '../../data/models/sale_order_header.dart';
@@ -18,32 +19,37 @@ class ReceiptPage extends StatefulWidget {
 
 class _ReceiptPageState extends State<ReceiptPage> {
   ReceiptController? controller;
-  String? address;
+  String? printerAddress;
   late SaleOrderHeader receiptData;
 
   static const _channel = MethodChannel('com.wincare/printer');
 
   void setupChannelHandler() {
-    // _channel.setMethodCallHandler((call) async {
-    //   print("Received method: ${call.method}");
-    //   print("Received arguments: ${call.arguments}");
-    //   if (call.method == 'sendSaleOrderData') {
-    //     final jsonStr = call.arguments as String;
-    //     print("Received saleOrder: $jsonStr");
-    //     final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-    //     final saleOrder = SaleOrderHeader.fromJson(decoded);
-    //     setState(() {
-    //       receiptData = saleOrder;
-    //     });
-    //   }
-    // });
-    final jsonStr =
-        """{"BillCode":"6B01smthuyhub635","BillDate":"2025-06-04T00:00:00","CustomerName":"Nguyễn Thị Dịu","CustomerPhone":"031223456","DeliveryDate":"2025-06-07T00:00:00","FullAddress":"123a","IsAllowCancel":false,"IsAllowConfirm":false,"Items":[{"Barcode":"8934680089739","Description":"LU bánh quy bơ pháp 540g","DocumentNo":"635","ItemNo":"10324065","LineNo":"1","MarketPrice":0.0,"NetPrice":810000.0,"Quantity":1.0,"QuantityConfirm":0.0,"TotalAmount":810000.0,"UnitOfMeasure":"T","UnitPrice":810000.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg","VatGroup":0,"VatRate":0},{"Barcode":"8934680114967","Description":"LU bánh quy bơ pháp 540g","DocumentNo":"635","ItemNo":"10324065","LineNo":"2","MarketPrice":0.0,"NetPrice":135000.0,"Quantity":2.0,"QuantityConfirm":0.0,"TotalAmount":270000.0,"UnitOfMeasure":"HOP","UnitPrice":135000.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg","VatGroup":0,"VatRate":0}],"MemberLevel":1,"MemberLevelName":"Hội viên","PosCode":"sm.thuy.hub","PosName":"sm Thuy HUB","SaleType":1,"StatusId":20,"StatusName":"Đã duyệt","StoreId":"6B01","StoreName":"HUB WIN+ THA 66B Phố Thiều","TotalPrice":1080000.0,"UserId":0,"check":false}""";
-    final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-    final saleOrder = SaleOrderHeader.fromJson(decoded);
-    setState(() {
-      receiptData = saleOrder;
+    _channel.setMethodCallHandler((call) async {
+      print("Received method: ${call.method}");
+      print("Received arguments: ${call.arguments}");
+      if (call.method == 'sendSaleOrderData') {
+        final jsonStr = call.arguments as String;
+        print("Received saleOrder: $jsonStr");
+        final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+        final saleOrder = SaleOrderHeader.fromJson(decoded);
+        setState(() {
+          receiptData = saleOrder;
+        });
+      }
     });
+    // final jsonStr =
+    //     """{"BillCode":"6B01smthuyhub635","BillDate":"2025-06-04T00:00:00","CustomerName":"Nguyễn Thị Dịu","CustomerPhone":"031223456","DeliveryDate":"2025-06-07T00:00:00","FullAddress":"123a","IsAllowCancel":false,"IsAllowConfirm":false,"Items":[{"Barcode":"8934680089739","Description":"LU bánh quy bơ pháp 540g","DocumentNo":"635","ItemNo":"10324065","LineNo":"1","MarketPrice":0.0,"NetPrice":810000.0,"Quantity":1.0,"QuantityConfirm":0.0,"TotalAmount":810000.0,"UnitOfMeasure":"T","UnitPrice":810000.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg","VatGroup":0,"VatRate":0},{"Barcode":"8934680114967","Description":"LU bánh quy bơ pháp 540g","DocumentNo":"635","ItemNo":"10324065","LineNo":"2","MarketPrice":0.0,"NetPrice":135000.0,"Quantity":2.0,"QuantityConfirm":0.0,"TotalAmount":270000.0,"UnitOfMeasure":"HOP","UnitPrice":135000.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/12/24/aae58cb3-6cd0-4cf6-91e8-43f77f1744d5.jpg","VatGroup":0,"VatRate":0}],"MemberLevel":1,"MemberLevelName":"Hội viên","PosCode":"sm.thuy.hub","PosName":"sm Thuy HUB","SaleType":1,"StatusId":20,"StatusName":"Đã duyệt","StoreId":"6B01","StoreName":"HUB WIN+ THA 66B Phố Thiều","TotalPrice":1080000.0,"UserId":0,"check":false}""";
+    // final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+    // final saleOrder = SaleOrderHeader.fromJson(decoded);
+    // setState(() {
+    //   receiptData = saleOrder;
+    // });
+  }
+
+  String _formatCurrency(double amount) {
+    final formatter = NumberFormat("#,###", "vi_VN");
+    return formatter.format(amount);
   }
 
   @override
@@ -73,7 +79,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
         ),
         title: const Text(
           'IN HÓA ĐƠN',
-          style: TextStyle(color: Colors.white, fontSize: 15),
+          style: TextStyle(fontFamily: 'Roboto', color: Colors.white, fontSize: 15),
         ),
         actions: [
           IconButton(
@@ -83,7 +89,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
               );
               if (selected != null) {
                 setState(() {
-                  address = selected.address;
+                  printerAddress = selected.address;
                 });
               }
             },
@@ -97,6 +103,32 @@ class _ReceiptPageState extends State<ReceiptPage> {
           Expanded(
             child: Receipt(
               backgroundColor: Colors.grey.shade200,
+              containerBuilder: (context, child) {
+                return Container(
+                  color: Colors.grey.shade200,
+                  child: ClipRect(
+                    clipBehavior: Clip.hardEdge,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: InteractiveViewer(
+                          boundaryMargin: EdgeInsets.zero,
+                          clipBehavior: Clip.none,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              color: Colors.white,
+                              child: child,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
               builder: (context) {
                 return Align(
                   alignment: Alignment.topCenter,
@@ -112,7 +144,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                             Expanded(
                               flex: 1,
                               child: Image.asset(
-                                'assets/win-logo.png',
+                                'assets/images/win-logo.png',
                                 height: 35,
                               ),
                             ),
@@ -122,6 +154,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                                 'HUB WIN+ THA Phần Thôn, Thọ Xuân Thôn Phần Thôn, Xã Thọ Hải, Huyện Thọ Xuân',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
+                                  fontFamily: 'Roboto',
                                   fontSize: ReceiptSize.standard,
                                 ),
                               ),
@@ -134,12 +167,12 @@ class _ReceiptPageState extends State<ReceiptPage> {
                             children: [
                               Text(
                                 'HÓA ĐƠN IN LẠI',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 12),
                               Text(
                                 '(In lần 1)',
-                                style: TextStyle(fontSize: ReceiptSize.small),
+                                style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
                               ),
                             ],
                           ),
@@ -166,7 +199,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           const Center(
                             child: Text(
                               'Không có mặt hàng nào',
-                              style: TextStyle(fontSize: ReceiptSize.standard),
+                              style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.standard),
                             ),
                           ),
                         for (final item in receiptData.items!)
@@ -174,10 +207,13 @@ class _ReceiptPageState extends State<ReceiptPage> {
                         const CustomDivider(),
                         buildTotalRow(
                           'TỔNG TIỀN PHẢI T.TOÁN',
-                          "00000",
+                          _formatCurrency(receiptData.total()),
                           bold: true,
                         ),
-                        buildTotalRow('TỔNG TIỀN SẢN PHẨM', "00000"),
+                        buildTotalRow(
+                          'TỔNG TIỀN SẢN PHẨM',
+                          _formatCurrency(receiptData.total()).toString(),
+                        ),
                         buildTotalRow('TIỀN KHÁCH TRẢ', ""),
                         buildKeyValueRow('  Tiền Voucher', ""),
                         buildTotalRow('TIỀN TRẢ LẠI', ""),
@@ -185,7 +221,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                         const Center(
                           child: Text(
                             '(Giá đã bao gồm thuế GTGT)',
-                            style: TextStyle(fontSize: ReceiptSize.small),
+                            style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
                           ),
                         ),
                         const CustomDivider(),
@@ -209,6 +245,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                               Text(
                                 'Chỉ xuất hoá đơn trong ngày',
                                 style: TextStyle(
+                                  fontFamily: 'Roboto',
                                   fontSize: ReceiptSize.standard,
                                 ),
                               ),
@@ -216,6 +253,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                               Text(
                                 'Tax invoice will be issued within same day',
                                 style: TextStyle(
+                                  fontFamily: 'Roboto',
                                   fontSize: ReceiptSize.standard,
                                 ),
                               ),
@@ -233,6 +271,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                               Text(
                                 'CẢM ƠN QUÝ KHÁCH VÀ HẸN GẶP LẠI',
                                 style: TextStyle(
+                                  fontFamily: 'Roboto',
                                   fontWeight: FontWeight.bold,
                                   fontSize: ReceiptSize.standard,
                                 ),
@@ -240,7 +279,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                               SizedBox(height: 16),
                               Text(
                                 'Hotline: 02471066856   Website: www.winmart.vn',
-                                style: TextStyle(fontSize: ReceiptSize.small),
+                                style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
                               ),
                             ],
                           ),
@@ -266,11 +305,15 @@ class _ReceiptPageState extends State<ReceiptPage> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
+                        print('Selected address: $printerAddress');
                         final selectedAddress =
-                            address ??
+                            printerAddress ??
                             (await FlutterBluetoothPrinter.selectDevice(
                               context,
                             ))?.address;
+                        setState(() {
+                          printerAddress = selectedAddress;
+                        });
                         if (context.mounted && selectedAddress != null) {
                           PrintingProgressDialog.print(
                             context,
@@ -281,7 +324,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                       },
                       child: const Text(
                         'IN HÓA ĐƠN',
-                        style: TextStyle(color: Colors.black, fontSize: 12),
+                        style: TextStyle(fontFamily: 'Roboto', color: Colors.black, fontSize: 12),
                       ),
                     ),
                   ),
@@ -303,14 +346,14 @@ class _ReceiptPageState extends State<ReceiptPage> {
           flex: 4,
           child: Text(
             key,
-            style: const TextStyle(fontSize: ReceiptSize.standard),
+            style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.standard),
           ),
         ),
         Expanded(
           flex: 6,
           child: Text(
             value,
-            style: const TextStyle(fontSize: ReceiptSize.standard),
+            style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.standard),
           ),
         ),
       ],
@@ -326,6 +369,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
           child: Text(
             'Mặt hàng',
             style: TextStyle(
+              fontFamily: 'Roboto',
               fontWeight: FontWeight.bold,
               fontSize: ReceiptSize.standard,
             ),
@@ -337,6 +381,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             'Đơn giá',
             textAlign: TextAlign.right,
             style: TextStyle(
+              fontFamily: 'Roboto',
               fontWeight: FontWeight.bold,
               fontSize: ReceiptSize.standard,
             ),
@@ -348,6 +393,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             'SL',
             textAlign: TextAlign.right,
             style: TextStyle(
+              fontFamily: 'Roboto',
               fontWeight: FontWeight.bold,
               fontSize: ReceiptSize.standard,
             ),
@@ -359,6 +405,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             'ĐVT',
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'Roboto',
               fontWeight: FontWeight.bold,
               fontSize: ReceiptSize.standard,
             ),
@@ -370,6 +417,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             'T.Tiền',
             textAlign: TextAlign.right,
             style: TextStyle(
+              fontFamily: 'Roboto',
               fontWeight: FontWeight.bold,
               fontSize: ReceiptSize.standard,
             ),
@@ -386,9 +434,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
       children: [
         Text(
           item.description ?? '',
-          style: const TextStyle(fontSize: ReceiptSize.standard),
+          style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.midLarge,),
         ),
-        const SizedBox(height: 2),
         Row(
           children: [
             const SizedBox(width: 0),
@@ -396,9 +443,9 @@ class _ReceiptPageState extends State<ReceiptPage> {
             Expanded(
               flex: 2,
               child: Text(
-                item.netPrice != null ? item.netPrice.toString() : '0',
+                item.netPrice != null ? _formatCurrency(item.netPrice!) : '0',
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: ReceiptSize.medium),
+                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
               ),
             ),
             Expanded(
@@ -406,7 +453,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
               child: Text(
                 item.quantity != null ? item.quantity.toString() : '0',
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: ReceiptSize.medium),
+                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
               ),
             ),
             Expanded(
@@ -416,15 +463,17 @@ class _ReceiptPageState extends State<ReceiptPage> {
                     ? item.unitOfMeasure.toString()
                     : 'T',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: ReceiptSize.medium),
+                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
               ),
             ),
             Expanded(
               flex: 3,
               child: Text(
-                item.totalAmount != null ? item.totalAmount.toString() : '0',
+                item.totalAmount != null
+                    ? _formatCurrency(item.totalAmount!)
+                    : '0',
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: ReceiptSize.medium),
+                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
               ),
             ),
           ],
@@ -442,6 +491,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
               child: Text(
                 label,
                 style: TextStyle(
+                  fontFamily: 'Roboto',
                   fontSize: ReceiptSize.standard,
                   fontWeight: bold ? FontWeight.bold : FontWeight.normal,
                 ),
@@ -450,6 +500,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
             Text(
               amount,
               style: TextStyle(
+                fontFamily: 'Roboto',
                 fontSize: ReceiptSize.standard,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),

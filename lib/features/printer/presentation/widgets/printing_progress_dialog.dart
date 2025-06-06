@@ -57,7 +57,7 @@ class _PrintingProgressDialogState extends State<PrintingProgressDialog> {
           children: [
             const Text(
               'In hoá đơn',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             LinearProgressIndicator(
@@ -74,7 +74,7 @@ class _PrintingProgressDialogState extends State<PrintingProgressDialog> {
                   if (!context.mounted) return;
                   Navigator.pop(context);
                 },
-                child: const Text('Đóng'),
+                child: const Text('Đóng', style: TextStyle(fontFamily: 'Roboto'),),
               ),
             ],
           ],
