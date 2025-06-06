@@ -19,7 +19,7 @@ class ReceiptPage extends StatefulWidget {
 
 class _ReceiptPageState extends State<ReceiptPage> {
   ReceiptController? controller;
-  String? printerAddress;
+  Printer? printer;
   late SaleOrderHeader receiptData;
 
   static const _channel = MethodChannel('com.wincare/printer');
@@ -65,6 +65,18 @@ class _ReceiptPageState extends State<ReceiptPage> {
     print("didChangeDependencies");
   }
 
+  Future<void> _setUpPrinter() async {
+    final selected = await FlutterBluetoothPrinter.selectDevice(context);
+    if (selected != null) {
+      setState(() {
+        printer = Printer(
+          name: selected.name ?? 'Unknown Printer',
+          address: selected.address,
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,21 +91,19 @@ class _ReceiptPageState extends State<ReceiptPage> {
         ),
         title: const Text(
           'IN HÓA ĐƠN',
-          style: TextStyle(fontFamily: 'Roboto', color: Colors.white, fontSize: 15),
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 15,
+          ),
         ),
         actions: [
           IconButton(
             onPressed: () async {
-              final selected = await FlutterBluetoothPrinter.selectDevice(
-                context,
-              );
-              if (selected != null) {
-                setState(() {
-                  printerAddress = selected.address;
-                });
-              }
+              await _setUpPrinter();
             },
-            icon: const Icon(Icons.settings, color: Colors.white),
+            icon: const Icon(Icons.print, color: Colors.white),
           ),
         ],
       ),
@@ -167,12 +177,18 @@ class _ReceiptPageState extends State<ReceiptPage> {
                             children: [
                               Text(
                                 'HÓA ĐƠN IN LẠI',
-                                style: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               SizedBox(height: 12),
                               Text(
                                 '(In lần 1)',
-                                style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: ReceiptSize.medium,
+                                ),
                               ),
                             ],
                           ),
@@ -199,7 +215,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           const Center(
                             child: Text(
                               'Không có mặt hàng nào',
-                              style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.standard),
+                              style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: ReceiptSize.standard,
+                              ),
                             ),
                           ),
                         for (final item in receiptData.items!)
@@ -221,7 +240,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
                         const Center(
                           child: Text(
                             '(Giá đã bao gồm thuế GTGT)',
-                            style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: ReceiptSize.medium,
+                            ),
                           ),
                         ),
                         const CustomDivider(),
@@ -279,7 +301,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
                               SizedBox(height: 16),
                               Text(
                                 'Hotline: 02471066856   Website: www.winmart.vn',
-                                style: TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: ReceiptSize.medium,
+                                ),
                               ),
                             ],
                           ),
@@ -305,26 +330,26 @@ class _ReceiptPageState extends State<ReceiptPage> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        print('Selected address: $printerAddress');
-                        final selectedAddress =
-                            printerAddress ??
-                            (await FlutterBluetoothPrinter.selectDevice(
-                              context,
-                            ))?.address;
-                        setState(() {
-                          printerAddress = selectedAddress;
-                        });
-                        if (context.mounted && selectedAddress != null) {
+                        if (printer == null) {
+                          await _setUpPrinter();
+                        }
+
+                        if (context.mounted && printer != null) {
                           PrintingProgressDialog.print(
                             context,
-                            device: selectedAddress,
+                            device: printer!.address,
                             controller: controller!,
                           );
                         }
                       },
-                      child: const Text(
-                        'IN HÓA ĐƠN',
-                        style: TextStyle(fontFamily: 'Roboto', color: Colors.black, fontSize: 12),
+                      child: Text(
+                        'In (${printer?.name ?? 'Chọn máy in'})',
+                        style: const TextStyle(
+                          fontFamily: 'Roboto',
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -346,14 +371,20 @@ class _ReceiptPageState extends State<ReceiptPage> {
           flex: 4,
           child: Text(
             key,
-            style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.standard),
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: ReceiptSize.standard,
+            ),
           ),
         ),
         Expanded(
           flex: 6,
           child: Text(
             value,
-            style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.standard),
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: ReceiptSize.standard,
+            ),
           ),
         ),
       ],
@@ -434,7 +465,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
       children: [
         Text(
           item.description ?? '',
-          style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.midLarge,),
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: ReceiptSize.midLarge,
+          ),
         ),
         Row(
           children: [
@@ -445,7 +479,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
               child: Text(
                 item.netPrice != null ? _formatCurrency(item.netPrice!) : '0',
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: ReceiptSize.medium,
+                ),
               ),
             ),
             Expanded(
@@ -453,7 +490,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
               child: Text(
                 item.quantity != null ? item.quantity.toString() : '0',
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: ReceiptSize.medium,
+                ),
               ),
             ),
             Expanded(
@@ -463,7 +503,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
                     ? item.unitOfMeasure.toString()
                     : 'T',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: ReceiptSize.medium,
+                ),
               ),
             ),
             Expanded(
@@ -473,7 +516,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
                     ? _formatCurrency(item.totalAmount!)
                     : '0',
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontFamily: 'Roboto', fontSize: ReceiptSize.medium),
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: ReceiptSize.medium,
+                ),
               ),
             ),
           ],
@@ -508,4 +554,11 @@ class _ReceiptPageState extends State<ReceiptPage> {
           ],
         ),
       );
+}
+
+class Printer {
+  String name;
+  String address;
+
+  Printer({required this.name, required this.address});
 }
