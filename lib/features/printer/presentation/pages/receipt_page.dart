@@ -560,7 +560,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
     child: Row(
       children: const [
         Expanded(
-          flex: 3,
+          flex: 4,
           child: Text(
             'Mặt hàng',
             style: TextStyle(
@@ -641,7 +641,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
         Row(
           children: [
             const SizedBox(width: 0),
-            Expanded(flex: 3, child: SizedBox()),
+            Expanded(flex: 4, child: SizedBox()),
             Expanded(
               flex: 2,
               child: Text(
