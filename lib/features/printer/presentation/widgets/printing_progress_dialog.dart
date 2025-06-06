@@ -56,7 +56,7 @@ class _PrintingProgressDialogState extends State<PrintingProgressDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Printing Receipt',
+              'In hoá đơn',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -65,17 +65,16 @@ class _PrintingProgressDialogState extends State<PrintingProgressDialog> {
               backgroundColor: Colors.grey.shade200,
             ),
             const SizedBox(height: 4),
-            Text('Processing: ${((progress ?? 0) * 100).round()}%'),
+            Text('Đang xử lý: ${((progress ?? 0) * 100).round()}%'),
             if (((progress ?? 0) * 100).round() == 100) ...[
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
-                  await FlutterBluetoothPrinter.disconnect(widget.device);
-
+                  //await FlutterBluetoothPrinter.disconnect(widget.device);
                   if (!context.mounted) return;
                   Navigator.pop(context);
                 },
-                child: const Text('Disconnect'),
+                child: const Text('Đóng'),
               ),
             ],
           ],
