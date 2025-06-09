@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart';
+import 'package:get/get.dart';
+
 class PrintingProgressDialog extends StatefulWidget {
   final String device;
   final ReceiptController controller;
@@ -14,10 +16,10 @@ class PrintingProgressDialog extends StatefulWidget {
   State<PrintingProgressDialog> createState() => _PrintingProgressDialogState();
 
   static void print(
-      BuildContext context, {
-        required String device,
-        required ReceiptController controller,
-      }) async {
+    BuildContext context, {
+    required String device,
+    required ReceiptController controller,
+  }) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -42,6 +44,13 @@ class _PrintingProgressDialogState extends State<PrintingProgressDialog> {
           setState(() {
             progress = sent / total;
           });
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) {
+              if (((progress ?? 0) * 100).round() == 100) {
+                Get.back();
+              }
+            }
+          });
         }
       },
     );
@@ -57,7 +66,11 @@ class _PrintingProgressDialogState extends State<PrintingProgressDialog> {
           children: [
             const Text(
               'In hoá đơn',
-              style: TextStyle(fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             LinearProgressIndicator(
@@ -66,17 +79,17 @@ class _PrintingProgressDialogState extends State<PrintingProgressDialog> {
             ),
             const SizedBox(height: 4),
             Text('Đang xử lý: ${((progress ?? 0) * 100).round()}%'),
-            if (((progress ?? 0) * 100).round() == 100) ...[
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  //await FlutterBluetoothPrinter.disconnect(widget.device);
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                },
-                child: const Text('Đóng', style: TextStyle(fontFamily: 'Roboto'),),
-              ),
-            ],
+            // if (((progress ?? 0) * 100).round() == 100) ...[
+            //   const SizedBox(height: 16),
+            //   ElevatedButton(
+            //     onPressed: () async {
+            //       //await FlutterBluetoothPrinter.disconnect(widget.device);
+            //       if (!context.mounted) return;
+            //       Navigator.pop(context);
+            //     },
+            //     child: const Text('Đóng', style: TextStyle(fontFamily: 'Roboto'),),
+            //   ),
+            // ],
           ],
         ),
       ),

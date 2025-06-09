@@ -203,15 +203,19 @@ class _ReceiptPageState extends State<ReceiptPage> {
   }
 
   Future<void> _setUpPrinter() async {
-    final selected = await FlutterBluetoothPrinter.selectDevice(context);
-    if (selected != null) {
-      setState(() {
-        printer = Printer(
-          name: selected.name ?? 'Unknown Printer',
-          address: selected.address,
-        );
-      });
-      saveMacAddress(printer!);
+    try{
+      final selected = await FlutterBluetoothPrinter.selectDevice(context);
+      if (selected != null) {
+        setState(() {
+          printer = Printer(
+            name: selected.name ?? 'Unknown Printer',
+            address: selected.address,
+          );
+        });
+        saveMacAddress(printer!);
+      }
+    }catch(e){
+      print("Error selecting printer: $e");
     }
   }
 
