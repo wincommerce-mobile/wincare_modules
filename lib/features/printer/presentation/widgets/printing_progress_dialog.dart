@@ -22,7 +22,7 @@ class PrintingProgressDialog extends StatefulWidget {
   }) async {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) =>
           PrintingProgressDialog(controller: controller, device: device),
     );
