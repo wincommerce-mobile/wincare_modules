@@ -242,7 +242,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.red,
+        backgroundColor: Color(0xFFC6142C),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -273,10 +273,10 @@ class _ReceiptPageState extends State<ReceiptPage> {
         children: [
           Expanded(
             child: Receipt(
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: Color(0xFFE5E5E5),
               containerBuilder: (context, child) {
                 return Container(
-                  color: Colors.grey.shade200,
+                  color: Color(0xFFE5E5E5),
                   child: ClipRect(
                     clipBehavior: Clip.hardEdge,
                     child: Container(
@@ -497,6 +497,9 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFC6142C),
+                      ),
                       onPressed: () async {
                         if (printer == null) {
                           await _setUpPrinter();
@@ -514,9 +517,9 @@ class _ReceiptPageState extends State<ReceiptPage> {
                         'In (${printer?.name ?? 'Chọn máy in'})',
                         style: const TextStyle(
                           fontFamily: 'Roboto',
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: FontSize.standard,
                         ),
                       ),
                     ),
