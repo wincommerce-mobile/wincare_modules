@@ -12,7 +12,7 @@ For android:
 
 for example:
 
-```flutter build aar --output-dir=/Users/uytb/Downloads/WinCare/app/modules/```
+```flutter build aar --output-dir=/Users/uytb/Documents/projects/WinCare/app/modules/```
 
 ```flutter build aar --output-dir=/Users/uytb/Documents/projects/wincare-libs/android```
 
