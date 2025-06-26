@@ -6,10 +6,11 @@ import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../core/theme.dart';
-import '../../data/models/sale_order_header.dart';
-import '../widgets/custom_divider.dart';
-import '../widgets/printing_progress_dialog.dart';
+import '../../../../../core/theme.dart';
+import '../../../data/models/printer_model.dart';
+import '../../../data/models/sale_order_header.dart';
+import '../../widgets/custom_divider.dart';
+import '../../widgets/printing_progress_dialog.dart';
 
 class ReceiptPage extends StatefulWidget {
   const ReceiptPage({super.key});
@@ -670,11 +671,4 @@ class _ReceiptPageState extends State<ReceiptPage> {
           ],
         ),
       );
-}
-
-class Printer {
-  String name;
-  String address;
-
-  Printer({required this.name, required this.address});
 }

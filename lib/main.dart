@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import 'features/printer/presentation/pages/receipt_page.dart';
+import 'app/app_pages.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MainApp(initialRoute: AppRoutes.selectLabel));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MainApp extends StatefulWidget {
+  const MainApp({super.key, required this.initialRoute});
+
+  /// Init route
+  final String initialRoute;
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MainApp> createState() => _MainAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -29,11 +32,11 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const ReceiptPage(),
+      initialRoute: widget.initialRoute,
+      getPages: AppPages.pages,
     );
   }
 }
-
 
 @pragma('vm:entry-point')
 void printerModule() {

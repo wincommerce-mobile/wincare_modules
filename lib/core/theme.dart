@@ -18,6 +18,14 @@ class ReceiptSize {
   static const double large = 24.0;
 }
 
+class LabelSize {
+  static const double pt6 = 13.6;
+  static const double pt8 = 18.1;
+  static const double pt10 = 22.6;
+  static const double pt12 = 27.2;
+  static const double pt47 = 107;
+}
+
 class AppTheme {
   static final ThemeData dartTheme = ThemeData(
     primaryColor: Colors.white,
