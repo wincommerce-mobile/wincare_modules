@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart' hide ReceiptController, PaperSize;
+import 'package:flutter/services.dart';
+import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart'
+    hide ReceiptController, PaperSize;
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/border_label_widget.dart';
@@ -23,48 +27,101 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
   final GlobalKey _key = GlobalKey();
 
   // Change this for your device
-  final double devicePpi = 460; // iPhone 16 example
+
   ReceiptController? controller;
   Printer? printer;
   LabelType? labelType;
   List<ShelfLabelItem> shelfLabelItems = [];
+  bool _isLoading = true;
+
+  static const _channel = MethodChannel('com.wincare/printer');
+
+  Future<void> setupChannelHandler() async {
+    print("Setting up channel handler");
+    // try {
+    //   _channel.setMethodCallHandler((call) async {
+    //     print("Received arguments: ${call.arguments}");
+    //     if (call.method == 'sendItemData') {
+    //       final jsonStr = call.arguments as String;
+    //       print("Received saleOrder: $jsonStr");
+    //       final List decoded = jsonDecode(jsonStr);
+    //       final List<ShelfLabelItem> items = decoded
+    //           .map((item) => ShelfLabelItem.fromJson(item))
+    //           .toList();
+    //       setState(() {
+    //         shelfLabelItems = items;
+    //         _isLoading = false;
+    //       });
+    //     }
+    //   });
+    // } catch (e) {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    //   print('Error setting up channel handler: $e');
+    // }
+    final jsonStr = """
+          [
+  {
+    "title": "",
+    "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",
+    "originalPrice": 20200,
+    "discountedPrice": 1800,
+    "qrCode": "8935001712435",
+    "unitOfMeasure": "G1",
+    "fromDate": "2025-06-19T00:00:00.000",
+    "toDate": "2025-07-02T00:00:00.000"
+  },
+  {
+    "title": "KHUYEN MAI",
+    "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",
+    "originalPrice": 15900,
+    "discountedPrice": 18000,
+    "qrCode": "8935001712435",
+    "unitOfMeasure": "G1",
+    "fromDate": "2025-06-19T00:00:00.000",
+    "toDate": "2025-07-02T00:00:00.000"
+  },
+  {
+    "title": "KHUYEN MAI",
+    "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",
+    "originalPrice": 15900,
+    "discountedPrice": 18000,
+    "qrCode": "8935001712435",
+    "unitOfMeasure": "G1",
+    "fromDate": "2025-06-19T00:00:00.000",
+    "toDate": "2025-07-02T00:00:00.000"
+  }
+  ]
+            """;
+    try {
+      Future.delayed(const Duration(seconds: 2), () {
+        final List decoded = jsonDecode(jsonStr);
+        final List<ShelfLabelItem> items = decoded
+            .map((item) => ShelfLabelItem.fromJson(item))
+            .toList();
+        print('Decoded items: ${items.length}');
+        setState(() {
+          shelfLabelItems = items;
+          _isLoading = false;
+        });
+      });
+    } catch (e) {
+      print("Error parsing JSON: $e");
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      setupChannelHandler();
       setState(() {
         labelType = Get.arguments as LabelType?;
       });
-      _setupShelfLabelItems();
-      final RenderBox box =
-          _key.currentContext!.findRenderObject() as RenderBox;
-      final size = box.size; // logical pixels
-
-      double widthMm = logicalPixelsToMillimeters(
-        context,
-        size.width,
-        devicePpi,
-      );
-      double heightMm = logicalPixelsToMillimeters(
-        context,
-        size.height,
-        devicePpi,
-      );
-
-      print("Width in mm: $widthMm, Height in mm: $heightMm");
-      //setupChannelHandler();
+      //_setupShelfLabelItems();
     });
-  }
-
-  double logicalPixelsToMillimeters(
-    BuildContext context,
-    double logicalPixels,
-    double ppi,
-  ) {
-    final dpr = MediaQuery.of(context).devicePixelRatio;
-    return (logicalPixels * 25.4) / (ppi * dpr);
   }
 
   @override
@@ -132,34 +189,35 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     toDate: DateTime(2025, 7, 2),
   );
 
-  final items = [
+  /// item with no title (no border item)
+  final itemsNoBorder = [
     ShelfLabelItem(
       name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-      originalPrice: 9000,
+      originalPrice: 20200,
       discountedPrice: 1800,
       qrCode: '8935001712435',
       unitOfMeasure: 'G1',
       fromDate: DateTime(2025, 6, 19),
       toDate: DateTime(2025, 7, 2),
     ),
-    ShelfLabelItem(
-      name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-      originalPrice: 15900,
-      discountedPrice: 18000,
-      qrCode: '8935001712435',
-      unitOfMeasure: 'G1',
-      fromDate: DateTime(2025, 6, 19),
-      toDate: DateTime(2025, 7, 2),
-    ),
-    ShelfLabelItem(
-      name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-      originalPrice: 159000,
-      discountedPrice: 1800,
-      qrCode: '8935001712435',
-      unitOfMeasure: 'G1',
-      fromDate: DateTime(2025, 6, 19),
-      toDate: DateTime(2025, 7, 2),
-    ),
+    // ShelfLabelItem(
+    //   name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
+    //   originalPrice: 15900,
+    //   discountedPrice: 18000,
+    //   qrCode: '8935001712435',
+    //   unitOfMeasure: 'G1',
+    //   fromDate: DateTime(2025, 6, 19),
+    //   toDate: DateTime(2025, 7, 2),
+    // ),
+    // ShelfLabelItem(
+    //   name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
+    //   originalPrice: 159000,
+    //   discountedPrice: 1800,
+    //   qrCode: '8935001712435',
+    //   unitOfMeasure: 'G1',
+    //   fromDate: DateTime(2025, 6, 19),
+    //   toDate: DateTime(2025, 7, 2),
+    // ),
     // ShelfLabelItem(
     //   name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
     //   originalPrice: 1800000,
@@ -169,6 +227,49 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     //   fromDate: DateTime(2025, 6, 19),
     //   toDate: DateTime(2025, 7, 2),
     // ),
+  ];
+
+  final itemsBorder = [
+    ShelfLabelItem(
+      title: "",
+      name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
+      originalPrice: 20200,
+      discountedPrice: 1800,
+      qrCode: '8935001712435',
+      unitOfMeasure: 'G1',
+      fromDate: DateTime(2025, 6, 19),
+      toDate: DateTime(2025, 7, 2),
+    ),
+    ShelfLabelItem(
+      title: "KHUYEN MAI",
+      name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
+      originalPrice: 15900,
+      discountedPrice: 18000,
+      qrCode: '8935001712435',
+      unitOfMeasure: 'G1',
+      fromDate: DateTime(2025, 6, 19),
+      toDate: DateTime(2025, 7, 2),
+    ),
+    ShelfLabelItem(
+      title: "KHUYEN MAI",
+      name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
+      originalPrice: 159000,
+      discountedPrice: 1800,
+      qrCode: '8935001712435',
+      unitOfMeasure: 'G1',
+      fromDate: DateTime(2025, 6, 19),
+      toDate: DateTime(2025, 7, 2),
+    ),
+    ShelfLabelItem(
+      title: "KHUYEN MAI",
+      name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
+      originalPrice: 1800000,
+      discountedPrice: 180000,
+      qrCode: '8935001712435',
+      unitOfMeasure: 'G1',
+      fromDate: DateTime(2025, 6, 19),
+      toDate: DateTime(2025, 7, 2),
+    ),
   ];
 
   @override
@@ -201,94 +302,96 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: CustomReceipt(
-              backgroundColor: Color(0xFFE5E5E5),
-              containerBuilder: (context, child) {
-                return Container(
-                  color: Color(0xFFE5E5E5),
-                  child: ClipRect(
-                    clipBehavior: Clip.hardEdge,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: InteractiveViewer(
-                          boundaryMargin: EdgeInsets.zero,
-                          clipBehavior: Clip.none,
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: CustomReceipt(
+                    backgroundColor: Color(0xFFE5E5E5),
+                    containerBuilder: (context, child) {
+                      return Container(
+                        color: Color(0xFFE5E5E5),
+                        child: ClipRect(
+                          clipBehavior: Clip.hardEdge,
                           child: Container(
-                            //padding: const EdgeInsets.all(6.0),
-                            color: _color(),
-                            child: child,
+                            alignment: Alignment.center,
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: InteractiveViewer(
+                                boundaryMargin: EdgeInsets.zero,
+                                clipBehavior: Clip.none,
+                                child: Container(
+                                  //padding: const EdgeInsets.all(6.0),
+                                  color: _color(),
+                                  child: child,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-              builder: (context) {
-                return Container(
-                  key: _key,
-                  margin: EdgeInsets.only(bottom: 75),
-                  child: Column(
-                    children: shelfLabelItems
-                        .map((item) => _itemByLabelType(item))
-                        .toList(),
-                  ),
-                );
-              },
-              onInitialized: (controller) {
-                controller.paperSize = PaperSize.mm60;
-                setState(() {
-                  this.controller = controller;
-                });
-              },
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFC6142C),
-                      ),
-                      onPressed: () async {
-                        if (printer == null) {
-                          await _setUpPrinter();
-                        }
-
-                        if (context.mounted && printer != null) {
-                          CustomPrintProgressDialog.print(
-                            context,
-                            device: printer!.address,
-                            controller: controller!,
-                          );
-                        }
-                      },
-                      child: Text(
-                        'In (${printer?.name ?? 'Chọn máy in'})',
-                        style: const TextStyle(
-                          fontFamily: 'Roboto',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: FontSize.standard,
+                      );
+                    },
+                    builder: (context) {
+                      return Container(
+                        key: _key,
+                        //margin: EdgeInsets.only(bottom: 50),
+                        child: Column(
+                          children: shelfLabelItems
+                              .map((item) => _itemByLabelType(item))
+                              .toList(),
                         ),
-                      ),
+                      );
+                    },
+                    onInitialized: (controller) {
+                      controller.paperSize = MyPaperSize.mm60;
+                      setState(() {
+                        this.controller = controller;
+                      });
+                    },
+                  ),
+                ),
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFFC6142C),
+                            ),
+                            onPressed: () async {
+                              if (printer == null) {
+                                await _setUpPrinter();
+                              }
+
+                              if (context.mounted && printer != null) {
+                                CustomPrintProgressDialog.print(
+                                  context,
+                                  device: printer!.address,
+                                  controller: controller!,
+                                );
+                              }
+                            },
+                            child: Text(
+                              'In (${printer?.name ?? 'Chọn máy in'})',
+                              style: const TextStyle(
+                                fontFamily: 'Roboto',
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: FontSize.standard,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -332,59 +435,20 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     switch (labelType!.id) {
       /// Border
       case '1':
-        setState(() {
-          shelfLabelItems = [
-            ShelfLabelItem(
-              title: "KHUYEN MAI",
-              name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-              originalPrice: 9000,
-              discountedPrice: 1800,
-              qrCode: '8935001712435',
-              unitOfMeasure: 'G1',
-              fromDate: DateTime(2025, 6, 19),
-              toDate: DateTime(2025, 7, 2),
-            ),
-            ShelfLabelItem(
-              title: "KHUYEN MAI",
-              name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-              originalPrice: 15900,
-              discountedPrice: 18000,
-              qrCode: '8935001712435',
-              unitOfMeasure: 'G1',
-              fromDate: DateTime(2025, 6, 19),
-              toDate: DateTime(2025, 7, 2),
-            ),
-            ShelfLabelItem(
-              title: "KHUYEN MAI",
-              name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-              originalPrice: 159000,
-              discountedPrice: 1800,
-              qrCode: '8935001712435',
-              unitOfMeasure: 'G1',
-              fromDate: DateTime(2025, 6, 19),
-              toDate: DateTime(2025, 7, 2),
-            ),
-            // ShelfLabelItem(
-            //   title: "KHUYEN MAI",
-            //   name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-            //   originalPrice: 1800000,
-            //   discountedPrice: 180000,
-            //   qrCode: '8935001712435',
-            //   unitOfMeasure: 'G1',
-            //   fromDate: DateTime(2025, 6, 19),
-            //   toDate: DateTime(2025, 7, 2),
-            // ),
-          ];
-        });
+        _setItems(itemsBorder);
         break;
       case '2':
-        setState(() {
-          shelfLabelItems = items;
-        });
+        _setItems(itemsNoBorder);
         break;
       default:
-        shelfLabelItems = [];
+        _setItems([]);
         break;
     }
+  }
+
+  void _setItems(List<ShelfLabelItem> items) {
+    setState(() {
+      shelfLabelItems = items;
+    });
   }
 }

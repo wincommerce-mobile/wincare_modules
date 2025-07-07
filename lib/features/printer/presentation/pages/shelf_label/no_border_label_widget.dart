@@ -10,17 +10,6 @@ class NoBorderLabelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.topCenter,
-          child: SizedBox(
-            width: 384,
-            child: LabelWidget(item: item),
-          ),
-        ),
-        Divider(height: 75, color: Colors.grey),
-      ],
-    );
+    return LabelWidget(item: item);
   }
 }

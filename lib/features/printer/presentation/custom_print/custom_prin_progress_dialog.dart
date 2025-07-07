@@ -40,7 +40,7 @@ class _CustomPrintProgressDialogState extends State<CustomPrintProgressDialog> {
     super.initState();
     widget.controller.print(
       address: widget.device,
-      addFeeds: 5,
+      addFeeds: 9,
       keepConnected: true,
       onProgress: (total, sent) {
         if (mounted) {

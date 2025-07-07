@@ -50,4 +50,18 @@ class ShelfLabelItem {
     required this.fromDate,
     required this.toDate,
   });
+
+  /// Create object from JSON
+  factory ShelfLabelItem.fromJson(Map<String, dynamic> json) {
+    return ShelfLabelItem(
+      title: json['title'] ?? '',
+      name: json['name'] ?? '',
+      originalPrice: json['originalPrice'] ?? 0,
+      discountedPrice: json['discountedPrice'] ?? 0,
+      qrCode: json['qrCode'] ?? '',
+      unitOfMeasure: json['unitOfMeasure'] ?? '',
+      fromDate: DateTime.parse(json['fromDate']),
+      toDate: DateTime.parse(json['toDate']),
+    );
+  }
 }

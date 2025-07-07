@@ -6,7 +6,7 @@ import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
 
 typedef ProgressCallback = void Function(int total, int sent);
 
-enum PaperSize {
+enum MyPaperSize {
   // original is 384 => 48 * 8
   mm58(360, 58, 'Roll Paper 58mm'),
   mm60(384, 60.4, 'Roll Paper 60mm'),
@@ -16,17 +16,17 @@ enum PaperSize {
   final double paperWidthMM;
   final String name;
 
-  const PaperSize(this.width, this.paperWidthMM, this.name);
+  const MyPaperSize(this.width, this.paperWidthMM, this.name);
 }
 
 class ReceiptController with ChangeNotifier {
   final ReceiptState _state;
 
-  PaperSize _paperSize = PaperSize.mm60;
+  MyPaperSize _paperSize = MyPaperSize.mm60;
 
-  PaperSize get paperSize => _paperSize;
+  MyPaperSize get paperSize => _paperSize;
 
-  set paperSize(PaperSize size) {
+  set paperSize(MyPaperSize size) {
     _paperSize = size;
     notifyListeners();
   }
@@ -53,7 +53,7 @@ class ReceiptController with ChangeNotifier {
     );
   }
 
-  Future<Uint8List> getImageBytes() {
+  Future<Uint8List> getImageBytesByState() {
     return _state.getImageBytes();
   }
 }
@@ -80,7 +80,7 @@ class CustomReceipt extends StatefulWidget {
 
 class ReceiptState extends State<CustomReceipt> {
   final _localKey = GlobalKey();
-  PaperSize _paperSize = PaperSize.mm60;
+  MyPaperSize _paperSize = MyPaperSize.mm60;
   late ReceiptController controller;
 
   @override
@@ -194,7 +194,7 @@ class ReceiptState extends State<CustomReceipt> {
       // waiting for printer initialized and buffers cleared
       await Future.delayed(const Duration(milliseconds: 400));
 
-      final additional = _paperSize == PaperSize.mm60
+      final additional = _paperSize == MyPaperSize.mm60
           ? <int>[for (int i = 0; i < addFeeds; i++) ...Commands.carriageReturn]
           : <int>[for (int i = 0; i < addFeeds; i++) ...Commands.lineFeed];
 
@@ -260,10 +260,11 @@ class ReceiptState extends State<CustomReceipt> {
         _localKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
 
     final screenWidth = boundary.size.width;
+    debugPrint('screenWidth: ${screenWidth}');
     double quality = _paperSize.width / screenWidth;
 
     final image = await boundary.toImage(pixelRatio: quality);
-
+    debugPrint('Image size: ${image.width}x${image.height}');
     final byteData = await image.toByteData(format: ImageByteFormat.png);
     var bytes = byteData!.buffer.asUint8List();
     return bytes;
