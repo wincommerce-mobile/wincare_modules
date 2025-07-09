@@ -12,9 +12,14 @@ For android:
 
 for example:
 
+build to native repo:
+
 ```flutter build aar --output-dir=/Users/uytb/Documents/projects/WinCare/app/modules/```
 
+build to libs repo:
+
 ```flutter build aar --output-dir=/Users/uytb/Documents/projects/wincare-libs/android```
+
 
 for ios:
 
@@ -24,7 +29,10 @@ for example:
 
 ```flutter build ios-framework --output=/Users/uytb/Documents/projects/test-embed-flutter/Flutter```
 
+build to native repo with only release:
+
 ```flutter build ios-framework --release --no-debug --no-profile --output=/Users/uytb/Documents/projects/test-embed-flutter/Flutter```
 
+build to libs repo with only release:
 
 ```flutter build ios-framework --release --no-debug --no-profile --output=/Users/uytb/Documents/projects/wincare-libs/ios```
