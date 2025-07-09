@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
+import 'package:image/image.dart' as img;
 
 typedef ProgressCallback = void Function(int total, int sent);
 
@@ -43,7 +44,7 @@ class ReceiptController with ChangeNotifier {
     int maxBufferSize = 512,
     int delayTime = 120,
   }) {
-    return _state.print(
+    return _state.printLargeImage(
       address: address,
       onProgress: onProgress,
       addFeeds: addFeeds,
@@ -166,6 +167,71 @@ class ReceiptState extends State<CustomReceipt> {
         ),
       ),
     );
+  }
+
+  Future<bool> printLargeImage({
+    required String address,
+    ProgressCallback? onProgress,
+    int addFeeds = 0,
+    bool keepConnected = false,
+    int maxBufferSize = 512,
+    int delayTime = 120,
+  }) async {
+    final bytes = await getImageBytes();
+    final decodedImage = img.decodeImage(bytes);
+    if (decodedImage == null) throw Exception("Invalid image");
+
+    const int chunkHeight = 300; // safe height for PT-210
+    final generator = Generator();
+    final reset = generator.reset();
+
+    await _initialize(address: address);
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    final additional = _paperSize == MyPaperSize.mm60
+        ? <int>[for (int i = 0; i < addFeeds; i++) ...Commands.carriageReturn]
+        : <int>[for (int i = 0; i < addFeeds; i++) ...Commands.lineFeed];
+
+    // Print each chunk separately
+    for (int y = 0; y < decodedImage.height; y += chunkHeight) {
+      final height = (y + chunkHeight > decodedImage.height)
+          ? decodedImage.height - y
+          : chunkHeight;
+
+      final subImg = img.copyCrop(
+        decodedImage,
+        x: 0,
+        y: y,
+        width: decodedImage.width,
+        height: height,
+      );
+      final subImgBytes = Uint8List.fromList(img.encodePng(subImg));
+
+      final chunk = await generator.encode(
+        bytes: subImgBytes,
+        dotsPerLine: _paperSize.width,
+        useImageRaster: true,
+      );
+
+      final printChunk = Uint8List.fromList([
+        ...chunk,
+        ...reset,
+        ...additional,
+      ]);
+
+      final result = await printBytes(
+        keepConnected: true,
+        address: address,
+        data: printChunk,
+        onProgress: onProgress,
+        maxBufferSize: maxBufferSize,
+        delayTime: delayTime,
+      );
+
+      if (!result) return false; // Fail fast if any chunk fails
+    }
+
+    return true;
   }
 
   Future<bool> print({

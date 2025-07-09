@@ -55,6 +55,7 @@ class LabelWidget extends StatelessWidget {
                                   size: 85,
                                   padding: EdgeInsets.all(2),
                                 ),
+                                const SizedBox(height: 4),
                                 Text(
                                   item.qrCode,
                                   style: TextStyle(

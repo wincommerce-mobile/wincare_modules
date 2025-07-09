@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart'
     hide ReceiptController, PaperSize;
 import 'package:get/get.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/border_label_widget.dart';
 import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/no_border_label_widget.dart';
@@ -34,7 +35,7 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
   List<ShelfLabelItem> shelfLabelItems = [];
   bool _isLoading = true;
 
-  static const _channel = MethodChannel('com.wincare/printer');
+  static const _channel = MethodChannel('com.wincare/item');
 
   Future<void> setupChannelHandler() async {
     print("Setting up channel handler");
@@ -63,7 +64,7 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     final jsonStr = """
           [
   {
-    "title": "",
+    "title": "KHUYEN MAI",
     "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",
     "originalPrice": 20200,
     "discountedPrice": 1800,
@@ -95,7 +96,7 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
   ]
             """;
     try {
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
         final List decoded = jsonDecode(jsonStr);
         final List<ShelfLabelItem> items = decoded
             .map((item) => ShelfLabelItem.fromJson(item))
@@ -114,13 +115,11 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setupChannelHandler();
       setState(() {
         labelType = Get.arguments as LabelType?;
       });
-      //_setupShelfLabelItems();
     });
   }
 

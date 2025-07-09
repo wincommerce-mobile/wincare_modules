@@ -8,6 +8,16 @@ void main() {
   runApp(MainApp(initialRoute: AppRoutes.selectLabel));
 }
 
+@pragma('vm:entry-point')
+void printReceipt() {
+  runApp(MainApp(initialRoute: AppRoutes.receipt));
+}
+
+@pragma('vm:entry-point')
+void printItems() {
+  runApp(MainApp(initialRoute: AppRoutes.selectLabel));
+}
+
 class MainApp extends StatefulWidget {
   const MainApp({super.key, required this.initialRoute});
 
@@ -35,33 +45,5 @@ class _MainAppState extends State<MainApp> {
       initialRoute: widget.initialRoute,
       getPages: AppPages.pages,
     );
-  }
-}
-
-@pragma('vm:entry-point')
-void printerModule() {
-  runApp(PrinterModule());
-}
-
-@pragma('vm:entry-point')
-void scannerModule() {
-  runApp(ScannerModule());
-}
-
-class PrinterModule extends StatelessWidget {
-  const PrinterModule({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class ScannerModule extends StatelessWidget {
-  const ScannerModule({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

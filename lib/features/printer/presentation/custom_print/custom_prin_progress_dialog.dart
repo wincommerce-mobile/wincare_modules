@@ -18,12 +18,12 @@ class CustomPrintProgressDialog extends StatefulWidget {
   @override
   State<CustomPrintProgressDialog> createState() => _CustomPrintProgressDialogState();
 
-  static void print(
+  static Future<void> print(
       BuildContext context, {
         required String device,
         required ReceiptController controller,
       }) async {
-    showDialog(
+    await showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) =>

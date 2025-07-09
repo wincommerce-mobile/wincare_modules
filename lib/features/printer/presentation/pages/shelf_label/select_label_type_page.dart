@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_pages.dart';
 
@@ -12,6 +13,8 @@ class SelectLabelTypePage extends StatefulWidget {
 }
 
 class _SelectLabelTypePageState extends State<SelectLabelTypePage> {
+  static const _channel = MethodChannel('com.wincare/printer');
+
   LabelType? selectedLabelType;
 
   final List<LabelType> labelTypes = [
@@ -33,10 +36,24 @@ class _SelectLabelTypePageState extends State<SelectLabelTypePage> {
     }
   }
 
+  static Future<void> _triggerNativeBack() async {
+    try {
+      await _channel.invokeMethod('onBackPressed');
+    } catch (e) {
+      print('Error calling native back: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () {
+            _triggerNativeBack();
+          },
+        ),
         title: Text(
           'CHỌN LOẠI TEM KỆ',
           style: TextStyle(

@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
-import 'package:wincare_modules/features/printer/presentation/pages/receipt/receipt_page.dart';
-import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/select_label_type_page.dart';
-import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/shelf_label_page.dart';
+
+import '../features/printer/presentation/pages/page.dart';
 
 class AppPages {
   static final pages = [
