@@ -148,7 +148,7 @@ class LabelWidget extends StatelessWidget {
             ),
             Positioned(
               top: 35,
-              right: 10,
+              right: 0,
               child: Text(
                 item.discountedPriceFormatted(),
                 style: TextStyle(

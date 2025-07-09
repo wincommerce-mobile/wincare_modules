@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
@@ -44,6 +45,18 @@ class ReceiptController with ChangeNotifier {
     int maxBufferSize = 512,
     int delayTime = 120,
   }) {
+    if (Platform.isAndroid) {
+      return _state.print(
+        address: address,
+        onProgress: onProgress,
+        addFeeds: addFeeds,
+        keepConnected: keepConnected,
+        maxBufferSize: maxBufferSize,
+        delayTime: delayTime,
+      );
+    }
+
+    /// for iOS, we use a different method to print large images (cut into chunks)
     return _state.printLargeImage(
       address: address,
       onProgress: onProgress,

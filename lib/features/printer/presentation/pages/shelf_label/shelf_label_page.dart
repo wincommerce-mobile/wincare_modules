@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart'
     hide ReceiptController, PaperSize;
 import 'package:get/get.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/border_label_widget.dart';
 import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/no_border_label_widget.dart';
@@ -72,26 +71,6 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     "unitOfMeasure": "G1",
     "fromDate": "2025-06-19T00:00:00.000",
     "toDate": "2025-07-02T00:00:00.000"
-  },
-  {
-    "title": "KHUYEN MAI",
-    "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",
-    "originalPrice": 15900,
-    "discountedPrice": 18000,
-    "qrCode": "8935001712435",
-    "unitOfMeasure": "G1",
-    "fromDate": "2025-06-19T00:00:00.000",
-    "toDate": "2025-07-02T00:00:00.000"
-  },
-  {
-    "title": "KHUYEN MAI",
-    "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",
-    "originalPrice": 15900,
-    "discountedPrice": 18000,
-    "qrCode": "8935001712435",
-    "unitOfMeasure": "G1",
-    "fromDate": "2025-06-19T00:00:00.000",
-    "toDate": "2025-07-02T00:00:00.000"
   }
   ]
             """;
@@ -101,14 +80,14 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
         final List<ShelfLabelItem> items = decoded
             .map((item) => ShelfLabelItem.fromJson(item))
             .toList();
-        print('Decoded items: ${items.length}');
+        debugPrint('Decoded items: ${items.length}');
         setState(() {
           shelfLabelItems = items;
           _isLoading = false;
         });
       });
     } catch (e) {
-      print("Error parsing JSON: $e");
+      debugPrint("Error parsing JSON: $e");
     }
   }
 
