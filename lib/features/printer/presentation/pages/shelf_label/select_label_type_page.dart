@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_pages.dart';
 
+import '../../../../../app/app_constants.dart';
 import '../../../data/models/label_type.dart';
 
 class SelectLabelTypePage extends StatefulWidget {
@@ -13,7 +14,7 @@ class SelectLabelTypePage extends StatefulWidget {
 }
 
 class _SelectLabelTypePageState extends State<SelectLabelTypePage> {
-  static const _channel = MethodChannel('com.wincare/printer');
+  static final _channel = MethodChannel(AppConstants.printerChannel);
 
   LabelType? selectedLabelType;
 
@@ -30,17 +31,39 @@ class _SelectLabelTypePageState extends State<SelectLabelTypePage> {
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setupChannelHandler();
+    });
+  }
+
   void _moveToPrintShelf() {
     if (selectedLabelType != null) {
       Get.toNamed(AppRoutes.label, arguments: selectedLabelType);
     }
   }
 
+  Future<void> setupChannelHandler() async {
+    debugPrint("Setting up channel handler");
+    try {
+      _channel.setMethodCallHandler((call) async {
+        if (call.method == AppConstants.onNativeBackPressed) {
+          debugPrint("Native back pressed");
+          _triggerNativeBack();
+        }
+      });
+    } catch (e) {
+      debugPrint('Error setting up channel handler: $e');
+    }
+  }
+
   static Future<void> _triggerNativeBack() async {
     try {
-      await _channel.invokeMethod('onBackPressed');
+      await _channel.invokeMethod(AppConstants.onBack);
     } catch (e) {
-      print('Error calling native back: $e');
+      debugPrint('Error calling native back: $e');
     }
   }
 

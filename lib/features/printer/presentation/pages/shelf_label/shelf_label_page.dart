@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/border_label_widget.dart';
 import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/no_border_label_widget.dart';
 
+import '../../../../../app/app_constants.dart';
 import '../../../../../core/theme.dart';
 import '../../../data/models/label_type.dart';
 import '../../../data/models/printer_model.dart';
@@ -34,32 +35,36 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
   List<ShelfLabelItem> shelfLabelItems = [];
   bool _isLoading = true;
 
-  static const _channel = MethodChannel('com.wincare/item');
+  static final _channel = MethodChannel(AppConstants.printerChannel);
 
   Future<void> setupChannelHandler() async {
-    print("Setting up channel handler");
-    // try {
-    //   _channel.setMethodCallHandler((call) async {
-    //     print("Received arguments: ${call.arguments}");
-    //     if (call.method == 'sendItemData') {
-    //       final jsonStr = call.arguments as String;
-    //       print("Received saleOrder: $jsonStr");
-    //       final List decoded = jsonDecode(jsonStr);
-    //       final List<ShelfLabelItem> items = decoded
-    //           .map((item) => ShelfLabelItem.fromJson(item))
-    //           .toList();
-    //       setState(() {
-    //         shelfLabelItems = items;
-    //         _isLoading = false;
-    //       });
-    //     }
-    //   });
-    // } catch (e) {
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    //   print('Error setting up channel handler: $e');
-    // }
+    debugPrint("Setting up channel handler");
+    try {
+      _channel.setMethodCallHandler((call) async {
+        if(call.method == AppConstants.onNativeBackPressed) {
+          debugPrint("Native back pressed");
+          Get.back();
+        }
+        debugPrint("Received arguments: ${call.arguments}");
+        // if (call.method == 'sendItemData') {
+        //   final jsonStr = call.arguments as String;
+        //   print("Received saleOrder: $jsonStr");
+        //   final List decoded = jsonDecode(jsonStr);
+        //   final List<ShelfLabelItem> items = decoded
+        //       .map((item) => ShelfLabelItem.fromJson(item))
+        //       .toList();
+        //   setState(() {
+        //     shelfLabelItems = items;
+        //     _isLoading = false;
+        //   });
+        // }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      debugPrint('Error setting up channel handler: $e');
+    }
     final jsonStr = """
           [
   {

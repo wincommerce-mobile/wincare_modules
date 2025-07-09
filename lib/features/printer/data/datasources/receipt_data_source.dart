@@ -2,15 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import '../../../../app/app_constants.dart';
 import '../models/receipt_model.dart';
 
 class ReceiptDataSource {
-  static const _channel = MethodChannel('com.wincare/printer');
+  static final _channel = MethodChannel(AppConstants.printerChannel);
 
   Future<ReceiptModel> fetchReceipts(String receiptCode) async {
     try {
       // final Map<dynamic, dynamic> result = await _channel.invokeMethod(
-      //   'getReceiptData',
+      //   AppConstants.getSaleOrderData,
       //   {
       //     'receiptCode': receiptCode, // Send params
       //   },

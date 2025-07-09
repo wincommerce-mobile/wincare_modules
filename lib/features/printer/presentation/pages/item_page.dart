@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../app/app_constants.dart';
 import '../../../../core/theme.dart';
 import '../../data/models/sale_order_header.dart';
 import '../widgets/printing_progress_dialog.dart';
@@ -25,15 +26,15 @@ class _ItemPageState extends State<ItemPage> {
   SaleOrderHeader? receiptData;
   bool _isLoading = false;
 
-  static const _channel = MethodChannel('com.wincare/printer');
+  static final _channel = MethodChannel(AppConstants.printerChannel);
 
   Future<void> setupChannelHandler() async {
     try {
       _channel.setMethodCallHandler((call) async {
-        print("Received arguments: ${call.arguments}");
-        if (call.method == 'sendSaleOrderData') {
+        debugPrint("Received arguments: ${call.arguments}");
+        if (call.method == AppConstants.getSaleOrderData) {
           final jsonStr = call.arguments as String;
-          print("Received saleOrder: $jsonStr");
+          debugPrint("Received saleOrder: $jsonStr");
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
           final saleOrder = SaleOrderHeader.fromJson(decoded);
           setState(() {
@@ -46,7 +47,7 @@ class _ItemPageState extends State<ItemPage> {
       setState(() {
         _isLoading = false;
       });
-      print('Error setting up channel handler: $e');
+      debugPrint('Error setting up channel handler: $e');
     }
     // final jsonStr = """
     //       {"BillCode":"6B01smthuyhub638","BillDate":"2025-06-11T00:00:00","CustomerName":"Nguyễn Thị Vân","CustomerPhone":"0367662110","DeliveryDate":"2025-06-14T00:00:00","FullAddress":"Phu phố Phúc Lâm, TT Lam Sơn, Thọ Xuân, Thanh Hóa","IsAllowCancel":false,"IsAllowConfirm":false,"Items":[{"Barcode":"8936210890815","Description":"MYSTYLE Kẹo dẻo bóc vỏ vị trcây mix 120G","DocumentNo":"638","ItemNo":"10142530","LineNo":"4","MarketPrice":0.0,"NetPrice":31200.0,"Quantity":1.0,"QuantityConfirm":0.0,"TotalAmount":31200.0,"UnitOfMeasure":"G1","UnitPrice":31200.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/11/12/5372d2b7-686a-46a2-a9bb-dfb60b0a42a8.jpg","VatGroup":0,"VatRate":0},{"Barcode":"8934680025980","Description":"AFC TPBS Bánh lúa mì 172g (T16)","DocumentNo":"638","ItemNo":"10013618","LineNo":"1","MarketPrice":0.0,"NetPrice":25200.0,"Quantity":1.0,"QuantityConfirm":0.0,"TotalAmount":25200.0,"UnitOfMeasure":"HOP","UnitPrice":25200.0,"UrlImage":"https://hcm.fstorage.vn/images/2023/12/10013618-20231213072101.png","VatGroup":0,"VatRate":0},{"Barcode":"2050000915833","Description":"MYSTYLE Kẹo dẻo bóc vỏ vị trcây mix 120G","DocumentNo":"638","ItemNo":"10142530","LineNo":"3","MarketPrice":0.0,"NetPrice":936000.0,"Quantity":1.0,"QuantityConfirm":0.0,"TotalAmount":936000.0,"UnitOfMeasure":"T","UnitPrice":936000.0,"UrlImage":"https://hcm.fstorage.vn/winplus/prod/2024/11/12/5372d2b7-686a-46a2-a9bb-dfb60b0a42a8.jpg","VatGroup":0,"VatRate":0},{"Barcode":"8934680089326","Description":"AFC TPBS Bánh lúa mì 172g (T16)","DocumentNo":"638","ItemNo":"10013618","LineNo":"2","MarketPrice":0.0,"NetPrice":403200.0,"Quantity":1.0,"QuantityConfirm":0.0,"TotalAmount":403200.0,"UnitOfMeasure":"T","UnitPrice":403200.0,"UrlImage":"https://hcm.fstorage.vn/images/2023/12/10013618-20231213072101.png","VatGroup":0,"VatRate":0}],"MemberLevel":1,"MemberLevelName":"Hội viên","PosCode":"sm.thuy.hub","PosName":"sm Thuy HUB","SaleType":1,"StatusId":20,"StatusName":"Đã duyệt","StoreId":"6B01","StoreName":"HUB WIN+ THA 66B Phố Thiều","TotalPrice":1395600.0,"UserId":0,"check":false}
@@ -143,7 +144,7 @@ class _ItemPageState extends State<ItemPage> {
 
   static Future<void> _triggerNativeBack() async {
     try {
-      await _channel.invokeMethod('onBackPressed');
+      await _channel.invokeMethod(AppConstants.onBack);
     } catch (e) {
       print('Error calling native back: $e');
     }

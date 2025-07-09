@@ -6,6 +6,7 @@ import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../../app/app_constants.dart';
 import '../../../../../core/theme.dart';
 import '../../../data/models/printer_model.dart';
 import '../../../data/models/sale_order_header.dart';
@@ -25,13 +26,13 @@ class _ReceiptPageState extends State<ReceiptPage> {
   SaleOrderHeader? receiptData;
   bool _isLoading = true;
 
-  static const _channel = MethodChannel('com.wincare/printer');
+  static final _channel = MethodChannel(AppConstants.printerChannel);
 
   Future<void> setupChannelHandler() async {
     try {
       _channel.setMethodCallHandler((call) async {
         print("Received arguments: ${call.arguments}");
-        if (call.method == 'sendSaleOrderData') {
+        if (call.method == AppConstants.getSaleOrderData) {
           final jsonStr = call.arguments as String;
           print("Received saleOrder: $jsonStr");
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
@@ -140,7 +141,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
 
   static Future<void> _triggerNativeBack() async {
     try {
-      await _channel.invokeMethod('onBackPressed');
+      await _channel.invokeMethod(AppConstants.onBack);
     } catch (e) {
       print('Error calling native back: $e');
     }
