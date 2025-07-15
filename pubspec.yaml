@@ -1,5 +1,6 @@
 name: wincare_modules
 description: "WinCare modules"
+publish_to: none
 version: 1.0.0+1
 
 environment:
@@ -12,11 +13,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   flutter_bluetooth_printer: ^2.19.0
+#  flutter_bluetooth_printer_plugin:
+#    git:
+#      url: https://github.com/uytb-masan/flutter_bluetooth_printer_plugin.git
+#      ref: bugs/android
   get: ^4.7.2
   intl: ^0.18.1
   shared_preferences: ^2.5.3
   qr_flutter: ^4.0.0
   auto_size_text: ^3.0.0
+  mobile_scanner: ^7.0.1
 
 dev_dependencies:
   flutter_test:

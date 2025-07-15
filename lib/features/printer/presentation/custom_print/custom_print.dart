@@ -339,11 +339,9 @@ class ReceiptState extends State<CustomReceipt> {
         _localKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
 
     final screenWidth = boundary.size.width;
-    debugPrint('screenWidth: ${screenWidth}');
     double quality = _paperSize.width / screenWidth;
 
     final image = await boundary.toImage(pixelRatio: quality);
-    debugPrint('Image size: ${image.width}x${image.height}');
     final byteData = await image.toByteData(format: ImageByteFormat.png);
     var bytes = byteData!.buffer.asUint8List();
     return bytes;

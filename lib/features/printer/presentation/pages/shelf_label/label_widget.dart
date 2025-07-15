@@ -21,8 +21,8 @@ class LabelWidget extends StatelessWidget {
               children: [
                 Container(
                   width: 384,
-                  height: 300,
-                  color: Colors.white,
+                  //height: 300,
+                  //color: Colors.red,
                   //padding: EdgeInsets.only(top: 12),
                   //height: 240,
                   child: Column(
@@ -53,6 +53,7 @@ class LabelWidget extends StatelessWidget {
                                 QrImageView(
                                   data: item.qrCode,
                                   size: 85,
+                                  gapless: false,
                                   padding: EdgeInsets.all(2),
                                 ),
                                 const SizedBox(height: 4),
@@ -101,7 +102,7 @@ class LabelWidget extends StatelessWidget {
                                                 ),
                                               ),
                                               Container(
-                                                height: 35,
+                                                height: 55,
                                                 alignment: Alignment.center,
                                                 child: Text(
                                                   item.decimal,
@@ -147,7 +148,7 @@ class LabelWidget extends StatelessWidget {
               ],
             ),
             Positioned(
-              top: 35,
+              top: 42,
               right: 0,
               child: Text(
                 item.discountedPriceFormatted(),

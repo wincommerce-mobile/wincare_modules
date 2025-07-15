@@ -14,7 +14,7 @@ import '../../../../../core/theme.dart';
 import '../../../data/models/label_type.dart';
 import '../../../data/models/printer_model.dart';
 import '../../../data/models/shelf_label_item.dart';
-import '../../custom_print/custom_prin_progress_dialog.dart';
+import '../../custom_print/custom_print_progress_dialog.dart';
 import '../../custom_print/custom_print.dart';
 
 class ShelfLabelPage extends StatefulWidget {
@@ -67,6 +67,16 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     }
     final jsonStr = """
           [
+  {
+    "title": "KHUYEN MAI",
+    "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",
+    "originalPrice": 20200,
+    "discountedPrice": 1800,
+    "qrCode": "8935001712435",
+    "unitOfMeasure": "G1",
+    "fromDate": "2025-06-19T00:00:00.000",
+    "toDate": "2025-07-02T00:00:00.000"
+  },
   {
     "title": "KHUYEN MAI",
     "name": "ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g",

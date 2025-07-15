@@ -20,6 +20,7 @@ class AppText extends StatelessWidget {
       text,
       style: TextStyle(
         fontFamily: 'Roboto',
+        color: Colors.black,
         fontWeight: fontWeight,
         height: height,
         fontSize: fontSize,
