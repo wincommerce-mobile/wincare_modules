@@ -29,13 +29,17 @@ class LabelWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       /// Product name
-                      Text(
-                        item.name,
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.bold,
-                          height: 1.2,
-                          fontSize: LabelSize.pt10,
+                      SizedBox(
+                        width: 384,
+                        height: 56,
+                        child: Text(
+                          item.name,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
+                            fontSize: LabelSize.pt10,
+                          ),
                         ),
                       ),
 
@@ -148,7 +152,7 @@ class LabelWidget extends StatelessWidget {
               ],
             ),
             Positioned(
-              top: 42,
+              top: 48,
               right: 0,
               child: Text(
                 item.discountedPriceFormatted(),

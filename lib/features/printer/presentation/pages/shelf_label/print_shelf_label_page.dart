@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart'
     hide ReceiptController;
 import 'package:get/get.dart';
@@ -7,8 +10,10 @@ import 'package:wincare_modules/app/app_text.dart';
 import 'package:wincare_modules/features/printer/data/models/label_type.dart';
 
 import '../../../../../app/app_colors.dart';
+import '../../../../../app/app_constants.dart';
 import '../../../../../app/app_pages.dart';
 import '../../../data/models/printer_model.dart';
+import '../../../data/models/product_model.dart';
 import '../../../data/models/shelf_label_item.dart';
 import '../../custom_print/custom_print_progress_dialog.dart';
 import '../../custom_print/custom_print.dart';
@@ -26,10 +31,16 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   BluetoothDevice? _selectedDevice;
   ReceiptController? controller;
   late LabelType _labelType;
+  bool _isLoading = true;
+  MProduct? mProduct;
+  static final _channel = MethodChannel(AppConstants.printerChannel);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setupChannelHandler();
+    });
     final arguments = Get.arguments;
     if (arguments != null && arguments is String) {
       debugPrint("barcode: $arguments");
@@ -43,6 +54,87 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
     await getMacAddress();
+  }
+
+  Future<void> setupChannelHandler() async {
+    try {
+      _channel.setMethodCallHandler((call) async {
+        print("Received arguments: ${call.arguments}");
+        if (call.method == AppConstants.getProductData) {
+          final jsonStr = call.arguments as String;
+          print("Received ProductData: $jsonStr");
+          final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+          final product = MProduct.fromJson(decoded);
+          setState(() {
+            mProduct = product;
+            _isLoading = false;
+          });
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('Error setting up channel handler: $e');
+    }
+
+    ///
+//     final jsonStr = """
+//           {
+//   "ProductCode": "PRD001",
+//   "ProductName": "Super Widget",
+//   "ProductBarcode": "1234567890123",
+//   "UnitCode": "PCS",
+//   "UnitName": "Piece",
+//   "Quantity": 10.5,
+//   "QuantityRequire": 12.0,
+//   "SAPLineItem": "1001",
+//   "CarrierCode": "CR001",
+//   "CarrierName": "FastDelivery",
+//   "SalePrice": 100000,
+//   "PromotionPrice": 90000,
+//   "PromotionFrom": "2025-07-01T00:00:00Z",
+//   "PromotionTo": "2025-07-31T23:59:59Z",
+//   "Sloc": "SL01",
+//   "SellPrice": 95000,
+//   "LenBarcode": 13,
+//   "BuyPrice": 80000.0,
+//   "IsAllowDecimal": true,
+//   "VATRate": 10,
+//   "GroupVAT": 1,
+//   "PromotionCode": "PROMO2025",
+//   "IsBlockedEarnPoint": false,
+//   "Mch3": "CAT01",
+//   "Mch3Name": "Electronics",
+//   "IsRequiredReason": false,
+//   "ReasonId": 0,
+//   "ReasonName": "",
+//   "ReasonNote": "",
+//   "RequestCancelIsWarning": false,
+//   "RequestCancelWarningText": "",
+//   "Numerator": 1,
+//   "Denominator": 1,
+//   "SpecPromotionPrice": 88000,
+//   "SpecPromotionFrom": "2025-07-10T00:00:00Z",
+//   "SpecPromotionTo": "2025-07-20T23:59:59Z",
+//   "PLU": "PLU12345",
+//   "_strQty": "10.5",
+//   "CountryOri": "VN",
+//   "CountryOriName": "Vietnam"
+// }
+//             """;
+//     try {
+//       Future.delayed(const Duration(seconds: 5), () {
+//         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+//         final product = MProduct.fromJson(decoded);
+//         setState(() {
+//           mProduct = product;
+//           _isLoading = false;
+//         });
+//       });
+//     } catch (e) {
+//       print("Error parsing JSON: $e");
+//     }
   }
 
   final List<LabelType> _list = [
@@ -167,13 +259,13 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
                 builder: (context) {
                   return _itemByLabelType(
                     ShelfLabelItem(
-                      name: 'ALPENLIEBE Kẹo Mềm H.Dâu 2Chew 73.5g',
-                      originalPrice: 20200,
-                      discountedPrice: 1800,
-                      qrCode: '8935001712435',
-                      unitOfMeasure: 'G1',
-                      fromDate: DateTime(2025, 6, 19),
-                      toDate: DateTime(2025, 7, 2),
+                      name: mProduct?.productName ?? "",
+                      originalPrice: mProduct?.salePrice ?? 0,
+                      discountedPrice: mProduct?.promotionPrice ?? 0,
+                      qrCode: mProduct?.productBarcode ?? "",
+                      unitOfMeasure: mProduct?.unitName ?? "",
+                      fromDate: DateTime.parse(mProduct?.promotionFrom ?? "1970-01-01T00:00:00Z"),
+                      toDate: DateTime.parse(mProduct?.promotionTo ?? "1970-02-01T00:00:00Z"),
                     ),
                   );
                 },
@@ -465,7 +557,8 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
                                 itemCount: devices.length,
                                 itemBuilder: (context, index) {
                                   final device = devices[index];
-                                  final isSelected = device.address == tempSelected?.address;
+                                  final isSelected =
+                                      device.address == tempSelected?.address;
                                   return GestureDetector(
                                     onTap: () {
                                       if (isSelected) {

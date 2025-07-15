@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../../app/app_colors.dart';
+import '../../../../../app/app_constants.dart';
 import '../../../../../app/app_pages.dart';
 
 class ScanShelfLabelPage extends StatefulWidget {
@@ -18,6 +20,7 @@ class ScanShelfLabelPage extends StatefulWidget {
 class _ScanShelfLabelPageState extends State<ScanShelfLabelPage>
     with WidgetsBindingObserver {
   final MobileScannerController controller = MobileScannerController();
+  static final _channel = MethodChannel(AppConstants.printerChannel);
   String? _selectedBarcode;
 
   @override
@@ -54,6 +57,18 @@ class _ScanShelfLabelPageState extends State<ScanShelfLabelPage>
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
     await controller.dispose();
+  }
+
+  Future<String> _requestBarcodeData(String barcode) async {
+    try {
+      final result = await _channel.invokeMethod('getBarcodeData', {
+        'barcode': barcode,
+      });
+      return result;
+    } on PlatformException catch (e) {
+      debugPrint('Error getting barcode data: ${e.message}');
+      throw e;
+    }
   }
 
   @override
@@ -94,7 +109,13 @@ class _ScanShelfLabelPageState extends State<ScanShelfLabelPage>
                       List<String> barcodeList = List<String>.from(
                         jsonDecode(code),
                       );
+
+                      /// 1. After scanning, stop the camera
+                      /// 2. Call method channel to let native call api to get barcode data
+                      /// 3. Listen channel to get barcode data from native and show dialog
                       controller.stop();
+                      final barcodeData = await _requestBarcodeData(code);
+                      debugPrint('Barcode data: $barcodeData');
                       await _showBarCodeDialog(context, barcodeList);
                       controller.start();
                     }
@@ -121,10 +142,12 @@ class _ScanShelfLabelPageState extends State<ScanShelfLabelPage>
                       final manualCode = await _showManualInputDialog(context);
                       if (manualCode != null && manualCode.isNotEmpty) {
                         try {
-                          List<String> barcodeList = List<String>.from(
-                            jsonDecode(manualCode),
-                          );
-                          await _showBarCodeDialog(context, barcodeList);
+                          final barcodeData = await _requestBarcodeData(manualCode);
+                          debugPrint('Barcode data: $barcodeData');
+                          // List<String> barcodeList = List<String>.from(
+                          //   jsonDecode(manualCode),
+                          // );
+                          // await _showBarCodeDialog(context, barcodeList);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Mã không hợp lệ')),
@@ -166,7 +189,10 @@ class _ScanShelfLabelPageState extends State<ScanShelfLabelPage>
           title: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 12,
+                ),
                 child: Row(
                   children: [
                     Visibility(
@@ -195,7 +221,7 @@ class _ScanShelfLabelPageState extends State<ScanShelfLabelPage>
                   ],
                 ),
               ),
-              Divider(thickness: 1, color: AppColors.black,)
+              Divider(thickness: 1, color: AppColors.black),
             ],
           ),
           content: Column(
@@ -215,7 +241,7 @@ class _ScanShelfLabelPageState extends State<ScanShelfLabelPage>
                   fontFamily: 'Roboto',
                   color: Color(0xFFA3A3A3),
                 ),
-              )
+              ),
             ],
           ),
           titlePadding: EdgeInsets.zero,

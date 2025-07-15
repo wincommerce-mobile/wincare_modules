@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'app/app_pages.dart';
 
 void main() {
-  runApp(MainApp(initialRoute: AppRoutes.scanProduct));
+  runApp(MainApp(initialRoute: AppRoutes.printLabel));
 }
 
 @pragma('vm:entry-point')
@@ -15,7 +15,7 @@ void printReceipt() {
 
 @pragma('vm:entry-point')
 void printItems() {
-  runApp(MainApp(initialRoute: AppRoutes.scanProduct));
+  runApp(MainApp(initialRoute: AppRoutes.printLabel));
 }
 
 class MainApp extends StatefulWidget {
