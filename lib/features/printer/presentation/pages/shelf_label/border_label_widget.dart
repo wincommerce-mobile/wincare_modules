@@ -13,7 +13,6 @@ class BorderLabelWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          color: Colors.red,
           padding: EdgeInsets.only(bottom: 8.0, top: 6.0),
           height: 75,
           child: Center(

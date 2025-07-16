@@ -205,6 +205,9 @@ class ReceiptState extends State<CustomReceipt> {
         ? <int>[for (int i = 0; i < addFeeds; i++) ...Commands.carriageReturn]
         : <int>[for (int i = 0; i < addFeeds; i++) ...Commands.lineFeed];
 
+    final spacing = List<int>.filled(3, Commands.lineFeed.first); // 10 lines
+
+
     // Print each chunk separately
     for (int y = 0; y < decodedImage.height; y += chunkHeight) {
       final height = (y + chunkHeight > decodedImage.height)
@@ -230,6 +233,7 @@ class ReceiptState extends State<CustomReceipt> {
         ...chunk,
         ...reset,
         ...additional,
+        ...spacing,
       ]);
 
       final result = await printBytes(

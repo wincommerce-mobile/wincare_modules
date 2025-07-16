@@ -12,12 +12,16 @@ class ShelfLabelItem {
   final String toDate;
 
   String getApplyDate() {
-    if (fromDate.isEmpty || toDate.isEmpty) {
-      final formatted = formatDateDDMMYYYY(DateTime.now());
-      return formatted;
+    if (fromDate.isNotEmpty && toDate.isNotEmpty) {
+      final range = getFormattedDateRange();
+      return "${range['fromDate'] ?? ""} - ${range['toDate'] ?? ""}";
     }
-    final range = getFormattedDateRange();
-    return "${range['fromDate'] ?? ""} - ${range['toDate'] ?? ""}";
+    if (fromDate.isNotEmpty) {
+      return formatDateDDMMYYYY(_parseDate(fromDate));
+    }
+
+    final formatted = formatDateDDMMYYYY(DateTime.now());
+    return formatted;
   }
 
   String formatDateDDMMYYYY(DateTime date) {
@@ -56,30 +60,36 @@ class ShelfLabelItem {
   String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
   DateTime _parseDate(String dateStr) {
-    // Supports "dd/MM/yyyy"
-    final parts = dateStr.split('/');
-    return DateTime(
-      int.parse(parts[2]),
-      int.parse(parts[1]),
-      int.parse(parts[0]),
-    );
+    try {
+      if (dateStr.contains('T')) {
+        // ISO 8601 format like "2025-07-16T14:30:00"
+        return DateTime.parse(dateStr);
+      } else {
+        // Custom format "dd/MM/yyyy"
+        final parts = dateStr.split('/');
+        return DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        );
+      }
+    } catch (_) {
+      return DateTime.now();
+    }
   }
 
   Map<String, String> splitPrice(num value) {
     if (value < 1000) {
       return {
         'major': value % 1 == 0 ? value.toInt().toString() : value.toString(),
-        'decimal': ''
+        'decimal': '',
       };
     }
 
     final major = (value ~/ 1000).toString(); // Integer division
     final decimal = '.${(value % 1000).toInt().toString().padLeft(3, '0')}';
 
-    return {
-      'major': major,
-      'decimal': decimal,
-    };
+    return {'major': major, 'decimal': decimal};
   }
 
   String formatPrice(num value) {
@@ -112,12 +122,16 @@ class ShelfLabelItem {
   }
 
   String get major {
-    final parts = splitPrice(discountedPrice > 0 ? discountedPrice : originalPrice);
+    final parts = splitPrice(
+      discountedPrice > 0 ? discountedPrice : originalPrice,
+    );
     return '${parts['major']}';
   }
 
   String get decimal {
-    final parts = splitPrice(discountedPrice > 0 ? discountedPrice : originalPrice);
+    final parts = splitPrice(
+      discountedPrice > 0 ? discountedPrice : originalPrice,
+    );
     return '${parts['decimal']}đ';
   }
 

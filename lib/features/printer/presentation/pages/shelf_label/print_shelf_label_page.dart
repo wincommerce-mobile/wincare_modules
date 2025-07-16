@@ -59,10 +59,10 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   Future<void> setupChannelHandler() async {
     try {
       _channel.setMethodCallHandler((call) async {
-        print("Received arguments: ${call.arguments}");
+        debugPrint("Received arguments: ${call.arguments}");
         if (call.method == AppConstants.getProductData) {
           final jsonStr = call.arguments as String;
-          print("Received ProductData: $jsonStr");
+          debugPrint("Received ProductData: $jsonStr");
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
           final product = MProduct.fromJson(decoded);
           setState(() {
@@ -85,65 +85,64 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       setState(() {
         _isLoading = false;
       });
-      print('Error setting up channel handler: $e');
+      debugPrint('Error setting up channel handler: $e');
     }
 
-
-//         final jsonStr = """
-//              {
-//   "Quantity" : 0,
-//   "SellPrice" : 4000,
-//   "IsRequiredReason" : false,
-//   "CountryOriName" : "",
-//   "PromotionCode" : "",
-//   "PromotionPrice" : 3000,
-//   "PromotionTo" : "",
-//   "Mch3" : "10401",
-//   "Mch3Name" : "[DO NOT USE]",
-//   "IsAllowDecimal" : false,
-//   "LenBarcode" : 13,
-//   "UnitCode" : "G1",
-//   "Numerator" : 1,
-//   "UnitName" : "G1",
-//   "ReasonId" : 0,
-//   "IsBlockedEarnPoint" : false,
-//   "PromotionFrom" : "",
-//   "ProductName" : "Mì K.Tây Omachi Tôm ch.cay 5sao 30gx78gr",
-//   "QuantityRequire" : 0,
-//   "SalePrice" : 4000,
-//   "RequestCancelWarningText" : "",
-//   "SpecPromotionFrom" : "",
-//   "SpecPromotionTo" : "",
-//   "PLU" : "",
-//   "_strQty" : "0",
-//   "ProductCode" : "000000000010007926",
-//   "ProductBarcode" : "8936017367183",
-//   "BuyPrice" : 4000,
-//   "Denominator" : 1,
-//   "VATRate" : 10,
-//   "RequestCancelIsWarning" : false,
-//   "CountryOri" : "",
-//   "GroupVAT" : 4
-// }
-//                 """;
-//         try {
-//           Future.delayed(const Duration(seconds: 3), () {
-//             final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-//             final product = MProduct.fromJson(decoded);
-//             setState(() {
-//               _product = product;
-//               _isLoading = false;
-//               if (product.isPromotion()) {
-//                 _filteredLabels = _allLabels.where((label) => label.isKM).toList();
-//               } else {
-//                 _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
-//               }
-//               _labelType = _filteredLabels[0];
-//             });
-//           });
-//         } catch (e) {
-//           print("Error parsing JSON: $e");
-//         }
+    //         final jsonStr = """
+    //              {
+    //   "Quantity" : 0,
+    //   "SellPrice" : 4000,
+    //   "IsRequiredReason" : false,
+    //   "CountryOriName" : "",
+    //   "PromotionCode" : "",
+    //   "PromotionPrice" : 1,
+    //   "PromotionTo" : "2025-07-16T14:30:00",
+    //   "PromotionFrom" : "01/01/2025",
+    //   "Mch3" : "10401",
+    //   "Mch3Name" : "[DO NOT USE]",
+    //   "IsAllowDecimal" : false,
+    //   "LenBarcode" : 13,
+    //   "UnitCode" : "G1",
+    //   "Numerator" : 1,
+    //   "UnitName" : "G1",
+    //   "ReasonId" : 0,
+    //   "IsBlockedEarnPoint" : false,
+    //   "ProductName" : "Mì K.Tây Omachi ",
+    //   "QuantityRequire" : 0,
+    //   "SalePrice" : 4000.0,
+    //   "RequestCancelWarningText" : "",
+    //   "SpecPromotionFrom" : "",
+    //   "SpecPromotionTo" : "",
+    //   "PLU" : "",
+    //   "_strQty" : "0",
+    //   "ProductCode" : "000000000010007926",
+    //   "ProductBarcode" : "8936017367183",
+    //   "BuyPrice" : 4000,
+    //   "Denominator" : 1,
+    //   "VATRate" : 10,
+    //   "RequestCancelIsWarning" : false,
+    //   "CountryOri" : "",
+    //   "GroupVAT" : 4
+    // }
+    //                 """;
+    //         try {
+    //           Future.delayed(const Duration(seconds: 3), () {
+    //             final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+    //             final product = MProduct.fromJson(decoded);
+    //             setState(() {
+    //               _product = product;
+    //               _isLoading = false;
+    //               if (product.isPromotion()) {
+    //                 _filteredLabels = _allLabels.where((label) => label.isKM).toList();
+    //               } else {
+    //                 _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
+    //               }
+    //               _labelType = _filteredLabels[0];
+    //             });
+    //           });
+    //         } catch (e) {
+    //           debugPrint("Error parsing JSON: $e");
+    //         }
   }
 
   List<LabelType> _filteredLabels = [];
@@ -219,11 +218,17 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       appBar: AppBar(
         backgroundColor: Color(0xFFC6142C),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () {
-            _triggerNativeBack();
+        leading: InkWell(
+          onTap: () async{
+            await _triggerNativeBack();
           },
+          child: Padding(
+            padding: const EdgeInsets.all(21),
+            child: Image.asset(
+              "assets/images/icon_back.png",
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
         title: const Text(
           'SẢN PHẨM',
@@ -253,36 +258,29 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
         child: Column(
           children: [
             const SizedBox(height: 6),
-            Container(
-              //height: 200,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Color(0xFFC6142C), width: 1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: CustomReceipt(
-                defaultTextStyle: TextStyle(fontFamily: 'Roboto'),
-                containerBuilder: (context, child) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+            CustomReceipt(
+              defaultTextStyle: TextStyle(fontFamily: 'Roboto'),
+              containerBuilder: (context, child) {
+                return ClipRect(
+                  clipBehavior: Clip.hardEdge,
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: InteractiveViewer(
+                      boundaryMargin: EdgeInsets.zero,
+                      clipBehavior: Clip.none,
+                      child: Container(child: child),
                     ),
-                    child: ClipRect(
-                      clipBehavior: Clip.hardEdge,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: InteractiveViewer(
-                          boundaryMargin: EdgeInsets.zero,
-                          clipBehavior: Clip.none,
-                          child: Container(child: child),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                builder: (context) {
-                  return _itemByLabelType(
+                  ),
+                );
+              },
+              builder: (context) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black, width: 1),
+                  ),
+                  padding: EdgeInsets.all(6),
+                  child: _itemByLabelType(
                     ShelfLabelItem(
                       name: _product?.productName ?? "",
                       originalPrice: _product?.sellPrice ?? 0,
@@ -293,15 +291,15 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
                       fromDate: _product?.promotionFrom ?? "",
                       toDate: _product?.promotionTo ?? "",
                     ),
-                  );
-                },
-                onInitialized: (controller) {
-                  controller.paperSize = MyPaperSize.mm60;
-                  setState(() {
-                    this.controller = controller;
-                  });
-                },
-              ),
+                  ),
+                );
+              },
+              onInitialized: (controller) {
+                controller.paperSize = MyPaperSize.mm60;
+                setState(() {
+                  this.controller = controller;
+                });
+              },
             ),
             const SizedBox(height: 24),
             Expanded(

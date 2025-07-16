@@ -40,10 +40,7 @@ class MProduct {
   String? countryOriName;
 
   bool isPromotion() {
-    return (promotionFrom != null &&
-        promotionFrom!.isNotEmpty &&
-        promotionTo != null &&
-        promotionTo!.isNotEmpty);
+    return (promotionPrice != null && promotionPrice! > 0);
   }
 
   MProduct({

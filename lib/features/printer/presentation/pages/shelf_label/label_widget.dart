@@ -29,16 +29,20 @@ class LabelWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       /// Product name
-                      SizedBox(
-                        width: 384,
-                        height: 56,
-                        child: Text(
-                          item.name,
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.bold,
-                            height: 1.2,
-                            fontSize: LabelSize.pt10,
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: 56,
+                        ),
+                        child: SizedBox(
+                          width: 384,
+                          child: Text(
+                            item.name,
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.bold,
+                              height: 1.2,
+                              fontSize: LabelSize.pt10,
+                            ),
                           ),
                         ),
                       ),
