@@ -196,6 +196,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                 Expanded(
                   child: Receipt(
                     backgroundColor: Color(0xFFE5E5E5),
+                    defaultTextStyle: TextStyle(fontFamily: 'Roboto'),
                     containerBuilder: (context, child) {
                       return Container(
                         color: Color(0xFFE5E5E5),

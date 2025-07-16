@@ -89,68 +89,61 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
     }
 
 
-    //     final jsonStr = """
-    //           {
-    //   "ProductCode": "PRD001",
-    //   "ProductName": "Super Widget",
-    //   "ProductBarcode": "1234567890123",
-    //   "UnitCode": "PCS",
-    //   "UnitName": "Piece",
-    //   "Quantity": 10.5,
-    //   "QuantityRequire": 12.0,
-    //   "SAPLineItem": "1001",
-    //   "CarrierCode": "CR001",
-    //   "CarrierName": "FastDelivery",
-    //   "SalePrice": 100000,
-    //   "PromotionPrice": 90000.0,
-    //   "PromotionFrom": "01/01/2025",
-    //   "PromotionTo": "01/01/2025",
-    //   "PromotionCode": "PROMO2025",
-    //   "Sloc": "SL01",
-    //   "SellPrice": 95000,
-    //   "LenBarcode": 13,
-    //   "BuyPrice": 80000.0,
-    //   "IsAllowDecimal": true,
-    //   "VATRate": 10,
-    //   "GroupVAT": 1,
-    //   "IsBlockedEarnPoint": false,
-    //   "Mch3": "CAT01",
-    //   "Mch3Name": "Electronics",
-    //   "IsRequiredReason": false,
-    //   "ReasonId": 0,
-    //   "ReasonName": "",
-    //   "ReasonNote": "",
-    //   "RequestCancelIsWarning": false,
-    //   "RequestCancelWarningText": "",
-    //   "Numerator": 1,
-    //   "Denominator": 1,
-    //   "SpecPromotionPrice": 88000,
-    //   "SpecPromotionFrom": "2025-07-10T00:00:00Z",
-    //   "SpecPromotionTo": "2025-07-20T23:59:59Z",
-    //   "PLU": "PLU12345",
-    //   "_strQty": "10.5",
-    //   "CountryOri": "VN",
-    //   "CountryOriName": "Vietnam"
-    // }
-    //             """;
-    //     try {
-    //       Future.delayed(const Duration(seconds: 3), () {
-    //         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-    //         final product = MProduct.fromJson(decoded);
-    //         setState(() {
-    //           _product = product;
-    //           _isLoading = false;
-    //           if (product.isPromotion()) {
-    //             _filteredLabels = _allLabels.where((label) => label.isKM).toList();
-    //           } else {
-    //             _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
-    //           }
-    //           _labelType = _filteredLabels[0];
-    //         });
-    //       });
-    //     } catch (e) {
-    //       print("Error parsing JSON: $e");
-    //     }
+//         final jsonStr = """
+//              {
+//   "Quantity" : 0,
+//   "SellPrice" : 4000,
+//   "IsRequiredReason" : false,
+//   "CountryOriName" : "",
+//   "PromotionCode" : "",
+//   "PromotionPrice" : 3000,
+//   "PromotionTo" : "",
+//   "Mch3" : "10401",
+//   "Mch3Name" : "[DO NOT USE]",
+//   "IsAllowDecimal" : false,
+//   "LenBarcode" : 13,
+//   "UnitCode" : "G1",
+//   "Numerator" : 1,
+//   "UnitName" : "G1",
+//   "ReasonId" : 0,
+//   "IsBlockedEarnPoint" : false,
+//   "PromotionFrom" : "",
+//   "ProductName" : "Mì K.Tây Omachi Tôm ch.cay 5sao 30gx78gr",
+//   "QuantityRequire" : 0,
+//   "SalePrice" : 4000,
+//   "RequestCancelWarningText" : "",
+//   "SpecPromotionFrom" : "",
+//   "SpecPromotionTo" : "",
+//   "PLU" : "",
+//   "_strQty" : "0",
+//   "ProductCode" : "000000000010007926",
+//   "ProductBarcode" : "8936017367183",
+//   "BuyPrice" : 4000,
+//   "Denominator" : 1,
+//   "VATRate" : 10,
+//   "RequestCancelIsWarning" : false,
+//   "CountryOri" : "",
+//   "GroupVAT" : 4
+// }
+//                 """;
+//         try {
+//           Future.delayed(const Duration(seconds: 3), () {
+//             final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+//             final product = MProduct.fromJson(decoded);
+//             setState(() {
+//               _product = product;
+//               _isLoading = false;
+//               if (product.isPromotion()) {
+//                 _filteredLabels = _allLabels.where((label) => label.isKM).toList();
+//               } else {
+//                 _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
+//               }
+//               _labelType = _filteredLabels[0];
+//             });
+//           });
+//         } catch (e) {
+//           print("Error parsing JSON: $e");
+//         }
   }
 
   List<LabelType> _filteredLabels = [];

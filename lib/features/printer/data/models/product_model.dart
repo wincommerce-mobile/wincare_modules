@@ -9,7 +9,6 @@ class MProduct {
   String? sapLineItem;
   String? carrierCode;
   String? carrierName;
-  num? salePrice;
   num? promotionPrice;
   String? promotionFrom;
   String? promotionTo;
@@ -58,7 +57,6 @@ class MProduct {
     this.sapLineItem,
     this.carrierCode,
     this.carrierName,
-    this.salePrice,
     this.promotionPrice,
     this.promotionFrom,
     this.promotionTo,
@@ -102,7 +100,6 @@ class MProduct {
       sapLineItem: json['SAPLineItem'],
       carrierCode: json['CarrierCode'],
       carrierName: json['CarrierName'],
-      salePrice: json['SalePrice'],
       promotionPrice: json['PromotionPrice'] as num?,
       promotionFrom: json['PromotionFrom'],
       promotionTo: json['PromotionTo'],
@@ -147,7 +144,6 @@ class MProduct {
       'SAPLineItem': sapLineItem,
       'CarrierCode': carrierCode,
       'CarrierName': carrierName,
-      'SalePrice': salePrice,
       'PromotionPrice': promotionPrice,
       'PromotionFrom': promotionFrom,
       'PromotionTo': promotionTo,

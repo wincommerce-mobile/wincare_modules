@@ -66,21 +66,42 @@ class ShelfLabelItem {
   }
 
   Map<String, String> splitPrice(num value) {
-    final major = formatPrice((value ~/ 1000));
-    final remainder = value % 1000;
-    final decimal =
-        '.${remainder.toString().padLeft(3, '0')}'; // Always 3 digits
-    return {'major': major, 'decimal': decimal};
+    if (value < 1000) {
+      return {
+        'major': value % 1 == 0 ? value.toInt().toString() : value.toString(),
+        'decimal': ''
+      };
+    }
+
+    final major = (value ~/ 1000).toString(); // Integer division
+    final decimal = '.${(value % 1000).toInt().toString().padLeft(3, '0')}';
+
+    return {
+      'major': major,
+      'decimal': decimal,
+    };
   }
 
   String formatPrice(num value) {
-    // Keep as-is if less than 1000
-    if (value < 1000) return value.toString();
+    // If value < 1000, return without trailing .0 if it's an int
+    if (value < 1000) {
+      return value % 1 == 0 ? value.toInt().toString() : value.toString();
+    }
 
-    // Format for 1000 or more
-    final major = (value ~/ 1000).toString();
-    final decimal = (value % 1000).toString().padLeft(3, '0');
-    return '$major.$decimal';
+    // Convert to int to ignore decimal part and format with dot as thousands separator
+    final intValue = value.toInt();
+    final str = intValue.toString();
+    final buffer = StringBuffer();
+
+    for (int i = 0; i < str.length; i++) {
+      buffer.write(str[i]);
+      int remaining = str.length - i - 1;
+      if (remaining > 0 && remaining % 3 == 0) {
+        buffer.write('.');
+      }
+    }
+
+    return buffer.toString();
   }
 
   String discountedPriceFormatted() {
