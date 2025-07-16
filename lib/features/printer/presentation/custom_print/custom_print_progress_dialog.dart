@@ -68,7 +68,7 @@ class _CustomPrintProgressDialogState extends State<CustomPrintProgressDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'In hoá đơn',
+              'In tem kệ',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 20,

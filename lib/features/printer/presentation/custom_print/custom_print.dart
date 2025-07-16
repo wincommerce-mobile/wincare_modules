@@ -281,10 +281,12 @@ class ReceiptState extends State<CustomReceipt> {
           ? <int>[for (int i = 0; i < addFeeds; i++) ...Commands.carriageReturn]
           : <int>[for (int i = 0; i < addFeeds; i++) ...Commands.lineFeed];
 
+      final spacing = List<int>.filled(3, Commands.lineFeed.first); // 10 lines
+
       final printResult = await printBytes(
         keepConnected: true,
         address: address,
-        data: Uint8List.fromList([...imageData, ...reset, ...additional]),
+        data: Uint8List.fromList([...imageData, ...reset, ...additional, ...spacing]),
         onProgress: onProgress,
         maxBufferSize: maxBufferSize,
         delayTime: delayTime,
