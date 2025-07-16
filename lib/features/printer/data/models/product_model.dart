@@ -14,7 +14,7 @@ class MProduct {
   String? promotionFrom;
   String? promotionTo;
   String? sloc;
-  double? sellPrice;
+  num? sellPrice;
   double? lenBarcode;
   double? buyPrice;
   bool? isAllowDecimal;
@@ -39,6 +39,13 @@ class MProduct {
   String? strQty;
   String? countryOri;
   String? countryOriName;
+
+  bool isPromotion() {
+    return (promotionFrom != null &&
+        promotionFrom!.isNotEmpty &&
+        promotionTo != null &&
+        promotionTo!.isNotEmpty);
+  }
 
   MProduct({
     this.productCode,
@@ -96,11 +103,11 @@ class MProduct {
       carrierCode: json['CarrierCode'],
       carrierName: json['CarrierName'],
       salePrice: json['SalePrice'],
-      promotionPrice: json['PromotionPrice'],
+      promotionPrice: json['PromotionPrice'] as num?,
       promotionFrom: json['PromotionFrom'],
       promotionTo: json['PromotionTo'],
       sloc: json['Sloc'],
-      sellPrice: (json['SellPrice'] as num?)?.toDouble(),
+      sellPrice: json['SellPrice'] as num?,
       lenBarcode: (json['LenBarcode'] as num?)?.toDouble(),
       buyPrice: (json['BuyPrice'] as num?)?.toDouble(),
       isAllowDecimal: json['IsAllowDecimal'],

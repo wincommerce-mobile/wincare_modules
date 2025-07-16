@@ -32,7 +32,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   ReceiptController? controller;
   late LabelType _labelType;
   bool _isLoading = true;
-  MProduct? mProduct;
+  MProduct? _product;
   static final _channel = MethodChannel(AppConstants.printerChannel);
 
   @override
@@ -46,7 +46,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       debugPrint("barcode: $arguments");
     }
     setState(() {
-      _labelType = _list[0];
+      _labelType = _allLabels[0];
     });
   }
 
@@ -66,8 +66,18 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
           final product = MProduct.fromJson(decoded);
           setState(() {
-            mProduct = product;
+            _product = product;
             _isLoading = false;
+            if (product.isPromotion()) {
+              _filteredLabels = _allLabels
+                  .where((label) => label.isKM)
+                  .toList();
+            } else {
+              _filteredLabels = _allLabels
+                  .where((label) => !label.isKM)
+                  .toList();
+            }
+            _labelType = _filteredLabels[0];
           });
         }
       });
@@ -78,69 +88,82 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       print('Error setting up channel handler: $e');
     }
 
-    ///
-//     final jsonStr = """
-//           {
-//   "ProductCode": "PRD001",
-//   "ProductName": "Super Widget",
-//   "ProductBarcode": "1234567890123",
-//   "UnitCode": "PCS",
-//   "UnitName": "Piece",
-//   "Quantity": 10.5,
-//   "QuantityRequire": 12.0,
-//   "SAPLineItem": "1001",
-//   "CarrierCode": "CR001",
-//   "CarrierName": "FastDelivery",
-//   "SalePrice": 100000,
-//   "PromotionPrice": 90000,
-//   "PromotionFrom": "2025-07-01T00:00:00Z",
-//   "PromotionTo": "2025-07-31T23:59:59Z",
-//   "Sloc": "SL01",
-//   "SellPrice": 95000,
-//   "LenBarcode": 13,
-//   "BuyPrice": 80000.0,
-//   "IsAllowDecimal": true,
-//   "VATRate": 10,
-//   "GroupVAT": 1,
-//   "PromotionCode": "PROMO2025",
-//   "IsBlockedEarnPoint": false,
-//   "Mch3": "CAT01",
-//   "Mch3Name": "Electronics",
-//   "IsRequiredReason": false,
-//   "ReasonId": 0,
-//   "ReasonName": "",
-//   "ReasonNote": "",
-//   "RequestCancelIsWarning": false,
-//   "RequestCancelWarningText": "",
-//   "Numerator": 1,
-//   "Denominator": 1,
-//   "SpecPromotionPrice": 88000,
-//   "SpecPromotionFrom": "2025-07-10T00:00:00Z",
-//   "SpecPromotionTo": "2025-07-20T23:59:59Z",
-//   "PLU": "PLU12345",
-//   "_strQty": "10.5",
-//   "CountryOri": "VN",
-//   "CountryOriName": "Vietnam"
-// }
-//             """;
-//     try {
-//       Future.delayed(const Duration(seconds: 5), () {
-//         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-//         final product = MProduct.fromJson(decoded);
-//         setState(() {
-//           mProduct = product;
-//           _isLoading = false;
-//         });
-//       });
-//     } catch (e) {
-//       print("Error parsing JSON: $e");
-//     }
+
+    //     final jsonStr = """
+    //           {
+    //   "ProductCode": "PRD001",
+    //   "ProductName": "Super Widget",
+    //   "ProductBarcode": "1234567890123",
+    //   "UnitCode": "PCS",
+    //   "UnitName": "Piece",
+    //   "Quantity": 10.5,
+    //   "QuantityRequire": 12.0,
+    //   "SAPLineItem": "1001",
+    //   "CarrierCode": "CR001",
+    //   "CarrierName": "FastDelivery",
+    //   "SalePrice": 100000,
+    //   "PromotionPrice": 90000.0,
+    //   "PromotionFrom": "01/01/2025",
+    //   "PromotionTo": "01/01/2025",
+    //   "PromotionCode": "PROMO2025",
+    //   "Sloc": "SL01",
+    //   "SellPrice": 95000,
+    //   "LenBarcode": 13,
+    //   "BuyPrice": 80000.0,
+    //   "IsAllowDecimal": true,
+    //   "VATRate": 10,
+    //   "GroupVAT": 1,
+    //   "IsBlockedEarnPoint": false,
+    //   "Mch3": "CAT01",
+    //   "Mch3Name": "Electronics",
+    //   "IsRequiredReason": false,
+    //   "ReasonId": 0,
+    //   "ReasonName": "",
+    //   "ReasonNote": "",
+    //   "RequestCancelIsWarning": false,
+    //   "RequestCancelWarningText": "",
+    //   "Numerator": 1,
+    //   "Denominator": 1,
+    //   "SpecPromotionPrice": 88000,
+    //   "SpecPromotionFrom": "2025-07-10T00:00:00Z",
+    //   "SpecPromotionTo": "2025-07-20T23:59:59Z",
+    //   "PLU": "PLU12345",
+    //   "_strQty": "10.5",
+    //   "CountryOri": "VN",
+    //   "CountryOriName": "Vietnam"
+    // }
+    //             """;
+    //     try {
+    //       Future.delayed(const Duration(seconds: 3), () {
+    //         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+    //         final product = MProduct.fromJson(decoded);
+    //         setState(() {
+    //           _product = product;
+    //           _isLoading = false;
+    //           if (product.isPromotion()) {
+    //             _filteredLabels = _allLabels.where((label) => label.isKM).toList();
+    //           } else {
+    //             _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
+    //           }
+    //           _labelType = _filteredLabels[0];
+    //         });
+    //       });
+    //     } catch (e) {
+    //       print("Error parsing JSON: $e");
+    //     }
   }
 
-  final List<LabelType> _list = [
+  List<LabelType> _filteredLabels = [];
+  final List<LabelType> _allLabels = [
     LabelType(id: "0", name: "Tem thường", imagePath: "", checked: true),
     LabelType(id: "1", name: "Tem thường có xuất xứ", imagePath: ""),
-    LabelType(id: "2", name: "Tem khuyến mại", imagePath: "", isKM: true),
+    LabelType(
+      id: "2",
+      name: "Tem khuyến mại",
+      imagePath: "",
+      checked: true,
+      isKM: true,
+    ),
     LabelType(
       id: "3",
       name: "Tem khuyến mại có xuất xứ",
@@ -151,9 +174,9 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
 
   void _toggleLabelType(int index) {
     setState(() {
-      _labelType = _list[index];
-      for (int i = 0; i < _list.length; i++) {
-        _list[i].checked = i == index;
+      _labelType = _filteredLabels[index];
+      for (int i = 0; i < _filteredLabels.length; i++) {
+        _filteredLabels[i].checked = i == index;
       }
     });
   }
@@ -189,6 +212,14 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
     }
   }
 
+  static Future<void> _triggerNativeBack() async {
+    try {
+      await _channel.invokeMethod(AppConstants.onBack);
+    } catch (e) {
+      print('Error calling native back: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,7 +229,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-            Get.offAndToNamed(AppRoutes.scanProduct);
+            _triggerNativeBack();
           },
         ),
         title: const Text(
@@ -207,7 +238,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
             fontFamily: 'Roboto',
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 18,
           ),
         ),
         actions: [
@@ -237,6 +268,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: CustomReceipt(
+                defaultTextStyle: TextStyle(fontFamily: 'Roboto'),
                 containerBuilder: (context, child) {
                   return Container(
                     decoration: BoxDecoration(
@@ -259,13 +291,14 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
                 builder: (context) {
                   return _itemByLabelType(
                     ShelfLabelItem(
-                      name: mProduct?.productName ?? "",
-                      originalPrice: mProduct?.salePrice ?? 0,
-                      discountedPrice: mProduct?.promotionPrice ?? 0,
-                      qrCode: mProduct?.productBarcode ?? "",
-                      unitOfMeasure: mProduct?.unitName ?? "",
-                      fromDate: DateTime.parse(mProduct?.promotionFrom ?? "1970-01-01T00:00:00Z"),
-                      toDate: DateTime.parse(mProduct?.promotionTo ?? "1970-02-01T00:00:00Z"),
+                      name: _product?.productName ?? "",
+                      originalPrice: _product?.sellPrice ?? 0,
+                      discountedPrice: _product?.promotionPrice ?? 0,
+                      qrCode: _product?.productBarcode ?? "",
+                      countryOri: _product?.countryOri,
+                      unitOfMeasure: _product?.unitName ?? "",
+                      fromDate: _product?.promotionFrom ?? "",
+                      toDate: _product?.promotionTo ?? "",
                     ),
                   );
                 },
@@ -280,9 +313,9 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
             const SizedBox(height: 24),
             Expanded(
               child: ListView.builder(
-                itemCount: _list.length,
+                itemCount: _filteredLabels.length,
                 itemBuilder: (context, index) {
-                  final labelType = _list[index];
+                  final labelType = _filteredLabels[index];
                   return InkWell(
                     onTap: () {
                       _toggleLabelType(index);
@@ -340,7 +373,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.offAndToNamed(AppRoutes.scanProduct);
+                    _triggerNativeBack();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF2F6BFF),

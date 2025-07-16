@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:wincare_modules/app/app_extensions.dart';
 
 import '../../../../../core/theme.dart';
 import '../../../data/models/shelf_label_item.dart';
@@ -13,13 +12,14 @@ class LabelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
         Stack(
           children: [
             Column(
               children: [
-                Container(
+                SizedBox(
                   width: 384,
                   //height: 300,
                   //color: Colors.red,
@@ -71,6 +71,7 @@ class LabelWidget extends StatelessWidget {
                                 ),
                               ],
                             ),
+                            const SizedBox(width: 10),
 
                             /// Row spacer
 
@@ -123,6 +124,17 @@ class LabelWidget extends StatelessWidget {
                                       ],
                                     ),
                                   ),
+                                  if (item.countryOri != null && item.countryOri!.isNotEmpty) ...[
+                                    Text(
+                                      'Xuất xứ: ${item.countryOri}',
+                                      style: TextStyle(
+                                        fontSize: LabelSize.pt6,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Roboto',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                  ],
                                   Text(
                                     'ĐVT: ${item.unitOfMeasure}',
                                     style: TextStyle(
@@ -133,7 +145,7 @@ class LabelWidget extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Ngày áp dụng: ${item.fromDate.formatDateNoYear()} - ${item.toDate.formatDate()}',
+                                    'Ngày áp dụng: ${item.getApplyDate()}',
                                     style: TextStyle(
                                       fontSize: LabelSize.pt6,
                                       fontWeight: FontWeight.bold,

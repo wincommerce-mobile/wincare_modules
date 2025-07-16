@@ -15,10 +15,10 @@ class AppPages {
       name: AppRoutes.printLabel,
       page: () => const PrintShelfLabelPage(),
     ),
-    GetPage(
-      name: AppRoutes.scanProduct,
-      page: () => const ScanShelfLabelPage(),
-    ),
+    // GetPage(
+    //   name: AppRoutes.scanProduct,
+    //   page: () => const ScanShelfLabelPage(),
+    // ),
     GetPage(name: AppRoutes.label, page: () => const ShelfLabelPage()),
   ];
 }
