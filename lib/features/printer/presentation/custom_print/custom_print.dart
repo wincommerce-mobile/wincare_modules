@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
+import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 
 typedef ProgressCallback = void Function(int total, int sent);
@@ -198,7 +199,15 @@ class ReceiptState extends State<CustomReceipt> {
     final generator = Generator();
     final reset = generator.reset();
 
-    await _initialize(address: address);
+    final result = await _initialize(address: address);
+    if(!result){
+      /// close dialog
+      Get.back();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Không thể kết nối đến máy in')));
+     return false;
+    }
     await Future.delayed(const Duration(milliseconds: 400));
 
     final additional = _paperSize == MyPaperSize.mm60
@@ -286,7 +295,12 @@ class ReceiptState extends State<CustomReceipt> {
       final printResult = await printBytes(
         keepConnected: true,
         address: address,
-        data: Uint8List.fromList([...imageData, ...reset, ...additional, ...spacing]),
+        data: Uint8List.fromList([
+          ...imageData,
+          ...reset,
+          ...additional,
+          ...spacing,
+        ]),
         onProgress: onProgress,
         maxBufferSize: maxBufferSize,
         delayTime: delayTime,
@@ -302,7 +316,7 @@ class ReceiptState extends State<CustomReceipt> {
     }
   }
 
-  static Future<bool> _initialize({required String address}) async {
+  static Future<bool> _initialize({required String address, BuildContext? cxt}) async {
     final isConnected = await connect(address);
     if (!isConnected) {
       return false;
