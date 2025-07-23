@@ -141,7 +141,7 @@ class ReceiptState extends State<CustomReceipt> {
           style: style.merge(
             widget.defaultTextStyle ??
                 const TextStyle(
-                  fontFamily: 'Receipt',
+                  fontFamily: 'Roboto',
                   package: 'flutter_bluetooth_printer',
                 ),
           ),

@@ -4,9 +4,10 @@ import '../../../data/models/shelf_label_item.dart';
 import 'label_widget.dart';
 
 class BorderLabelWidget extends StatelessWidget {
-  const BorderLabelWidget({super.key, required this.item});
+  const BorderLabelWidget({super.key, required this.item, required this.isTemCoXuatXu});
 
   final ShelfLabelItem item;
+  final bool isTemCoXuatXu;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class BorderLabelWidget extends StatelessWidget {
             ),
           ),
         ),
-        LabelWidget(item: item),
+        LabelWidget(item: item, isTemCoXuatXu: isTemCoXuatXu),
       ],
     );
   }

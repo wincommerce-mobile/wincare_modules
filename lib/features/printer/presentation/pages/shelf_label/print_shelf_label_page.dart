@@ -11,12 +11,12 @@ import 'package:wincare_modules/features/printer/data/models/label_type.dart';
 
 import '../../../../../app/app_colors.dart';
 import '../../../../../app/app_constants.dart';
-import '../../../../../app/app_pages.dart';
+import '../../../../../app/app_enum.dart';
 import '../../../data/models/printer_model.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/models/shelf_label_item.dart';
-import '../../custom_print/custom_print_progress_dialog.dart';
 import '../../custom_print/custom_print.dart';
+import '../../custom_print/custom_print_progress_dialog.dart';
 import 'border_label_widget.dart';
 import 'no_border_label_widget.dart';
 
@@ -57,47 +57,51 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   }
 
   Future<void> setupChannelHandler() async {
-    // try {
-    //   _channel.setMethodCallHandler((call) async {
-    //     debugPrint("Received arguments: ${call.arguments}");
-    //     if (call.method == AppConstants.getProductData) {
-    //       final jsonStr = call.arguments as String;
-    //       debugPrint("Received ProductData: $jsonStr");
-    //       final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-    //       final product = MProduct.fromJson(decoded);
-    //       setState(() {
-    //         _product = product;
-    //         _isLoading = false;
-    //         if (product.isPromotion()) {
-    //           _filteredLabels = _allLabels
-    //               .where((label) => label.isKM)
-    //               .toList();
-    //         } else {
-    //           _filteredLabels = _allLabels
-    //               .where((label) => !label.isKM)
-    //               .toList();
-    //         }
-    //         _labelType = _filteredLabels[0];
-    //       });
-    //     }
-    //   });
-    // } catch (e) {
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    //   debugPrint('Error setting up channel handler: $e');
-    // }
+    try {
+      _channel.setMethodCallHandler((call) async {
+        debugPrint("Received arguments: ${call.arguments}");
+        if (call.method == AppConstants.getProductData) {
+          final jsonStr = call.arguments as String;
+          debugPrint("Received ProductData: $jsonStr");
+          final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+          final product = MProduct.fromJson(decoded);
+          setState(() {
+            _product = product;
+            _isLoading = false;
+            if (product.isPromotion()) {
+              _filteredLabels = _allLabels
+                  .where((label) => label.isKM)
+                  .toList();
+            } else {
+              _filteredLabels = _allLabels
+                  .where((label) => !label.isKM)
+                  .toList();
+            }
+            _labelType = _filteredLabels[0];
+          });
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      debugPrint('Error setting up channel handler: $e');
+    }
 
-            final jsonStr = """
+    //await dummyDataTest();
+  }
+
+  Future<void> dummyDataTest() async {
+    final jsonStr = """
                  {
       "Quantity" : 0,
       "SellPrice" : 4000,
       "IsRequiredReason" : false,
       "CountryOriName" : "",
       "PromotionCode" : "",
-      "PromotionPrice" : 1,
+      "PromotionPrice" : 0,
       "PromotionTo" : "2025-07-16T14:30:00",
-      "PromotionFrom" : "01/01/2025",
+      "PromotionFrom" : "",
       "Mch3" : "10401",
       "Mch3Name" : "[DO NOT USE]",
       "IsAllowDecimal" : false,
@@ -125,40 +129,53 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       "GroupVAT" : 4
     }
                     """;
-            try {
-              Future.delayed(const Duration(seconds: 3), () {
-                final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-                final product = MProduct.fromJson(decoded);
-                setState(() {
-                  _product = product;
-                  _isLoading = false;
-                  if (product.isPromotion()) {
-                    _filteredLabels = _allLabels.where((label) => label.isKM).toList();
-                  } else {
-                    _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
-                  }
-                  _labelType = _filteredLabels[0];
-                });
-              });
-            } catch (e) {
-              debugPrint("Error parsing JSON: $e");
-            }
+    try {
+      Future.delayed(const Duration(seconds: 3), () {
+        final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+        final product = MProduct.fromJson(decoded);
+        setState(() {
+          _product = product;
+          _isLoading = false;
+          if (product.isPromotion()) {
+            _filteredLabels = _allLabels.where((label) => label.isKM).toList();
+          } else {
+            _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
+          }
+          _labelType = _filteredLabels[0];
+        });
+      });
+    } catch (e) {
+      debugPrint("Error parsing JSON: $e");
+    }
   }
 
   List<LabelType> _filteredLabels = [];
   final List<LabelType> _allLabels = [
-    LabelType(id: "0", name: "Tem thường", imagePath: "", checked: true),
-    LabelType(id: "1", name: "Tem thường có xuất xứ", imagePath: ""),
+    LabelType(
+      id: "0",
+      name: "Tem thường",
+      imagePath: "",
+      labelType: LabelTypeEnum.temThuong,
+      checked: true,
+    ),
+    LabelType(
+      id: "1",
+      name: "Tem thường có xuất xứ",
+      imagePath: "",
+      labelType: LabelTypeEnum.temThuongCoXuatXu,
+    ),
     LabelType(
       id: "2",
       name: "Tem khuyến mại",
       imagePath: "",
+      labelType: LabelTypeEnum.temKhuyenMai,
       checked: true,
       isKM: true,
     ),
     LabelType(
       id: "3",
       name: "Tem khuyến mại có xuất xứ",
+      labelType: LabelTypeEnum.temThuongCoXuatXu,
       imagePath: "",
       isKM: true,
     ),
@@ -275,18 +292,18 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
               },
               builder: (context) {
                 return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black, width: 1),
-                  ),
-                  padding: EdgeInsets.all(6),
+                  // decoration: BoxDecoration(
+                  //   color: Colors.white,
+                  //   border: Border.all(color: Colors.black, width: 1),
+                  // ),
+                  // padding: EdgeInsets.all(6),
                   child: _itemByLabelType(
                     ShelfLabelItem(
                       name: _product?.productName ?? "",
                       originalPrice: _product?.sellPrice ?? 0,
                       discountedPrice: _product?.promotionPrice ?? 0,
                       qrCode: _product?.productBarcode ?? "",
-                      countryOri: _product?.countryOri,
+                      countryOri: _product?.countryOri ?? '',
                       unitOfMeasure: _product?.unitName ?? "",
                       fromDate: _product?.promotionFrom ?? "",
                       toDate: _product?.promotionTo ?? "",
@@ -461,10 +478,16 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       /// Border
       case '0':
       case '1':
-        return NoBorderLabelWidget(item: label);
+        return NoBorderLabelWidget(
+          item: label,
+          isTemCoXuatXu: _labelType.id == '1',
+        );
       case '2':
       case '3':
-        return BorderLabelWidget(item: label);
+        return BorderLabelWidget(
+          item: label,
+          isTemCoXuatXu: _labelType.id == '3',
+        );
       default:
         return Text('Unknown label type');
     }

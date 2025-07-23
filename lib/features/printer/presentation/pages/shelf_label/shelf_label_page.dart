@@ -178,6 +178,7 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     discountedPrice: 100,
     qrCode: '8935001712435',
     unitOfMeasure: 'G1',
+    countryOri: "VN",
     fromDate: "2025-06-19T00:00:00.000",
     toDate: "2025-07-02T00:00:00.000",
   );
@@ -190,6 +191,7 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
       discountedPrice: 1800,
       qrCode: '8935001712435',
       unitOfMeasure: 'G1',
+      countryOri: "VN",
       fromDate: "2025-06-19T00:00:00.000",
       toDate: "2025-07-02T00:00:00.000",
     ),
@@ -230,6 +232,7 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
       discountedPrice: 1800,
       qrCode: '8935001712435',
       unitOfMeasure: 'G1',
+      countryOri: "VN",
       fromDate: "2025-06-19T00:00:00.000",
       toDate: "2025-07-02T00:00:00.000",
     ),
@@ -410,9 +413,9 @@ class _ShelfLabelPageState extends State<ShelfLabelPage> {
     switch (labelType!.id) {
       /// Border
       case '1':
-        return BorderLabelWidget(item: label);
+        return BorderLabelWidget(item: label, isTemCoXuatXu: false);
       case '2':
-        return NoBorderLabelWidget(item: label);
+        return NoBorderLabelWidget(item: label, isTemCoXuatXu: false);
       default:
         return Text('Unknown label type');
     }

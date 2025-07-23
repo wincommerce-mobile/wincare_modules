@@ -1,4 +1,4 @@
-import 'package:wincare_modules/app/app_extensions.dart';
+
 
 class ShelfLabelItem {
   final String title;
@@ -6,7 +6,7 @@ class ShelfLabelItem {
   final num originalPrice;
   final num discountedPrice;
   final String qrCode;
-  final String? countryOri;
+  final String countryOri;
   final String unitOfMeasure;
   final String fromDate;
   final String toDate;
@@ -141,7 +141,7 @@ class ShelfLabelItem {
     required this.originalPrice,
     required this.discountedPrice,
     required this.qrCode,
-    this.countryOri,
+    required this.countryOri,
     required this.unitOfMeasure,
     required this.fromDate,
     required this.toDate,

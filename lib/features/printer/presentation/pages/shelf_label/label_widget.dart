@@ -6,13 +6,13 @@ import '../../../../../core/theme.dart';
 import '../../../data/models/shelf_label_item.dart';
 
 class LabelWidget extends StatelessWidget {
-  const LabelWidget({super.key, required this.item});
+  const LabelWidget({super.key, required this.item, required this.isTemCoXuatXu});
 
   final ShelfLabelItem item;
+  final bool isTemCoXuatXu;
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Stack(
@@ -128,7 +128,7 @@ class LabelWidget extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  if (item.countryOri != null && item.countryOri!.isNotEmpty) ...[
+                                  if (isTemCoXuatXu) ...[
                                     Text(
                                       'Xuất xứ: ${item.countryOri}',
                                       style: TextStyle(

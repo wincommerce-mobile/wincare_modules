@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_pages.dart';
 
 import '../../../../../app/app_constants.dart';
+import '../../../../../app/app_enum.dart';
 import '../../../data/models/label_type.dart';
 
 class SelectLabelTypePage extends StatefulWidget {
@@ -23,11 +24,13 @@ class _SelectLabelTypePageState extends State<SelectLabelTypePage> {
       id: '1',
       name: 'Tem kệ có viền',
       imagePath: 'assets/images/label_border.png',
+      labelType: LabelTypeEnum.temThuong,
     ),
     LabelType(
       id: '2',
       name: 'Tem kệ không viền',
       imagePath: 'assets/images/label_no_border.png',
+      labelType: LabelTypeEnum.temKhuyenMai,
     ),
   ];
 
