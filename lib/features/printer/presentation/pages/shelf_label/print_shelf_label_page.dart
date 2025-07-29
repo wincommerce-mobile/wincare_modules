@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wincare_modules/app/app_text.dart';
 import 'package:wincare_modules/features/printer/data/models/label_type.dart';
+import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/shelf_label_item_mapper.dart';
 
 import '../../../../../app/app_colors.dart';
 import '../../../../../app/app_constants.dart';
@@ -61,6 +62,8 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       _channel.setMethodCallHandler((call) async {
         debugPrint("Received arguments: ${call.arguments}");
         if (call.method == AppConstants.getProductData) {
+          /// reset product
+          _product = null;
           final jsonStr = call.arguments as String;
           debugPrint("Received ProductData: $jsonStr");
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
@@ -94,43 +97,45 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   Future<void> dummyDataTest() async {
     final jsonStr = """
                  {
-      "Quantity" : 0,
-      "SellPrice" : 4000,
-      "IsRequiredReason" : false,
-      "CountryOriName" : "",
-      "PromotionCode" : "",
-      "PromotionPrice" : 0,
-      "PromotionTo" : "2025-07-16T14:30:00",
-      "PromotionFrom" : "",
-      "Mch3" : "10401",
-      "Mch3Name" : "[DO NOT USE]",
-      "IsAllowDecimal" : false,
-      "LenBarcode" : 13,
-      "UnitCode" : "G1",
-      "Numerator" : 1,
-      "UnitName" : "G1",
-      "ReasonId" : 0,
-      "IsBlockedEarnPoint" : false,
-      "ProductName" : "Mì K.Tây Omachi ",
-      "QuantityRequire" : 0,
-      "SalePrice" : 4000.0,
-      "RequestCancelWarningText" : "",
-      "SpecPromotionFrom" : "",
-      "SpecPromotionTo" : "",
-      "PLU" : "",
-      "_strQty" : "0",
-      "ProductCode" : "000000000010007926",
-      "ProductBarcode" : "8936017367183",
-      "BuyPrice" : 4000,
-      "Denominator" : 1,
-      "VATRate" : 10,
-      "RequestCancelIsWarning" : false,
-      "CountryOri" : "",
-      "GroupVAT" : 4
-    }
+  "BuyPrice": 42218,
+  "Mch3Name": "Thực phẩm khô",
+  "PromotionFrom": "20250718",
+  "LenBarcode": 13,
+  "PromotionPrice": "40000 đ",
+  "ProductName": "NAM NGƯ Nước Mắm Nhãn Vàng 650ml",
+  "SpecPromotionTo": "",
+  "PLU": "",
+  "SpecPromotionFrom": "",
+  "UnitCode": "CHA",
+  "CountryOriName": "Việt Nam",
+  "Mch3": "10206",
+  "ReasonId": 0,
+  "GroupVAT": 6,
+  "QuantityRequire": 0,
+  "RequestCancelWarningText": "",
+  "Numerator": 1,
+  "PromotionCode": "2300669958",
+  "CountryOri": "VN",
+  "IsBlockedEarnPoint": true,
+  "IsAllowDecimal": false,
+  "IsRequiredReason": false,
+  "_strQty": "0",
+  "SellPrice": 5120000,
+  "ProductCode": "000000000010602829",
+  "Quantity": 0,
+  "UnitName": "CHA",
+  "SalePrice": "512000000 đ",
+  "Denominator": 1,
+  "PromotionTo": "20250730",
+  "VATRate": 8,
+  "RequestCancelIsWarning": false,
+  "ProductBarcode": "8936017369231"
+}
+
                     """;
     try {
       Future.delayed(const Duration(seconds: 3), () {
+        _product = null;
         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
         final product = MProduct.fromJson(decoded);
         setState(() {
@@ -298,16 +303,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
                   // ),
                   // padding: EdgeInsets.all(6),
                   child: _itemByLabelType(
-                    ShelfLabelItem(
-                      name: _product?.productName ?? "",
-                      originalPrice: _product?.sellPrice ?? 0,
-                      discountedPrice: _product?.promotionPrice ?? 0,
-                      qrCode: _product?.productBarcode ?? "",
-                      countryOri: _product?.countryOri ?? '',
-                      unitOfMeasure: _product?.unitName ?? "",
-                      fromDate: _product?.promotionFrom ?? "",
-                      toDate: _product?.promotionTo ?? "",
-                    ),
+                    ShelfLabelItemMapper.toShelfLabelItem(_product)
                   ),
                 );
               },

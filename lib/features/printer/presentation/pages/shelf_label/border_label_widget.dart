@@ -13,21 +13,6 @@ class BorderLabelWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: EdgeInsets.only(bottom: 8.0, top: 6.0),
-          height: 75,
-          child: Center(
-            child: Text(
-              item.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Roboto',
-                fontSize: 42,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        ),
         LabelWidget(item: item, isTemCoXuatXu: isTemCoXuatXu),
       ],
     );

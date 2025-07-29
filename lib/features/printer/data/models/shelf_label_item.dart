@@ -24,7 +24,10 @@ class ShelfLabelItem {
     return formatted;
   }
 
-  String formatDateDDMMYYYY(DateTime date) {
+  String formatDateDDMMYYYY(DateTime? date) {
+    if(date == null) {
+      return '';
+    }
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
@@ -37,9 +40,11 @@ class ShelfLabelItem {
       return {'fromDate': fromDate, 'toDate': toDate};
     }
 
-    final from = _parseDate(fromDate!);
-    final to = _parseDate(toDate!);
-
+    final from = _parseDate(fromDate);
+    final to = _parseDate(toDate);
+    if (from == null || to == null) {
+      return {'fromDate': fromDate, 'toDate': toDate};
+    }
     final sameYear = from.year == to.year;
 
     final formattedFrom = sameYear
@@ -59,24 +64,33 @@ class ShelfLabelItem {
 
   String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
-  DateTime _parseDate(String dateStr) {
+  DateTime? _parseDate(String dateStr) {
     try {
       if (dateStr.contains('T')) {
-        // ISO 8601 format like "2025-07-16T14:30:00"
+        // ISO 8601 format
         return DateTime.parse(dateStr);
-      } else {
-        // Custom format "dd/MM/yyyy"
+      } else if (dateStr.contains('/')) {
+        // Format: dd/MM/yyyy
         final parts = dateStr.split('/');
         return DateTime(
           int.parse(parts[2]),
           int.parse(parts[1]),
           int.parse(parts[0]),
         );
+      } else if (RegExp(r'^\d{8}$').hasMatch(dateStr)) {
+        // Format: yyyymmdd
+        return DateTime(
+          int.parse(dateStr.substring(0, 4)),
+          int.parse(dateStr.substring(4, 6)),
+          int.parse(dateStr.substring(6, 8)),
+        );
       }
     } catch (_) {
-      return DateTime.now();
+      return null;
     }
+    return null;
   }
+
 
   Map<String, String> splitPrice(num value) {
     if (value < 1000) {
@@ -125,7 +139,8 @@ class ShelfLabelItem {
     final parts = splitPrice(
       discountedPrice > 0 ? discountedPrice : originalPrice,
     );
-    return '${parts['major']}';
+    final formattedMajor = formatPrice(num.parse(parts['major']!));
+    return formattedMajor;
   }
 
   String get decimal {

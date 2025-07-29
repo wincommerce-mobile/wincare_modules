@@ -37,6 +37,8 @@ class LabelWidget extends StatelessWidget {
                           width: 384,
                           child: Text(
                             item.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class LabelWidget extends StatelessWidget {
                                 Text(
                                   item.qrCode,
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Roboto',
                                   ),
@@ -99,12 +101,12 @@ class LabelWidget extends StatelessWidget {
                                               Expanded(
                                                 child: AutoSizeText(
                                                   item.major,
-                                                  maxFontSize: 107,
+                                                  maxFontSize: 117,
                                                   minFontSize: 14,
                                                   maxLines: 1,
                                                   textAlign: TextAlign.end,
                                                   style: TextStyle(
-                                                    fontSize: 107,
+                                                    fontSize: 117,
                                                     fontFamily: 'Roboto',
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -116,7 +118,7 @@ class LabelWidget extends StatelessWidget {
                                                 child: Text(
                                                   item.decimal,
                                                   style: TextStyle(
-                                                    fontSize: LabelSize.pt12,
+                                                    fontSize: 28,
                                                     fontFamily: 'Roboto',
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -168,7 +170,7 @@ class LabelWidget extends StatelessWidget {
               ],
             ),
             Positioned(
-              top: 48,
+              top: 46,
               right: 0,
               child: Text(
                 item.discountedPriceFormatted(),
