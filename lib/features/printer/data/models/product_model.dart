@@ -19,6 +19,10 @@ class MProduct {
     return (parsePrice(promotionPrice) > 0);
   }
 
+  bool isSpecPromotionPrice() {
+    return (parsePrice(specPromotionPrice) > 0);
+  }
+
   static num parsePrice(dynamic input) {
     if (input == null) return 0;
 

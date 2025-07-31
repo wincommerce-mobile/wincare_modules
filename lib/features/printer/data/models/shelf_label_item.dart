@@ -1,19 +1,20 @@
-
-
 class ShelfLabelItem {
   final String title;
   final String name;
   final num originalPrice;
   final num discountedPrice;
+  final num specDiscountedPrice;
   final String qrCode;
   final String countryOri;
   final String unitOfMeasure;
   final String fromDate;
   final String toDate;
+  final String specFromDate;
+  final String specToDate;
 
   String getApplyDate() {
     if (fromDate.isNotEmpty && toDate.isNotEmpty) {
-      final range = getFormattedDateRange();
+      final range = getFormattedDateRange(fromDate, toDate);
       return "${range['fromDate'] ?? ""} - ${range['toDate'] ?? ""}";
     }
     if (fromDate.isNotEmpty) {
@@ -24,8 +25,21 @@ class ShelfLabelItem {
     return formatted;
   }
 
+  String getSpecApplyDate() {
+    if (specFromDate.isNotEmpty && specToDate.isNotEmpty) {
+      final range = getFormattedDateRange(specFromDate, specToDate);
+      return "${range['fromDate'] ?? ""} - ${range['toDate'] ?? ""}";
+    }
+    if (specFromDate.isNotEmpty) {
+      return formatDateDDMMYYYY(_parseDate(specFromDate));
+    }
+
+    final formatted = formatDateDDMMYYYY(DateTime.now());
+    return formatted;
+  }
+
   String formatDateDDMMYYYY(DateTime? date) {
-    if(date == null) {
+    if (date == null) {
       return '';
     }
     final day = date.day.toString().padLeft(2, '0');
@@ -35,7 +49,7 @@ class ShelfLabelItem {
   }
 
   /// Returns a formatted fromDate and toDate depending on year comparison
-  Map<String, String?> getFormattedDateRange() {
+  Map<String, String?> getFormattedDateRange(String fromDate, String toDate) {
     if (fromDate.isEmpty || toDate.isEmpty) {
       return {'fromDate': fromDate, 'toDate': toDate};
     }
@@ -91,7 +105,6 @@ class ShelfLabelItem {
     return null;
   }
 
-
   Map<String, String> splitPrice(num value) {
     if (value < 1000) {
       return {
@@ -128,6 +141,13 @@ class ShelfLabelItem {
     return buffer.toString();
   }
 
+  String specDiscountedPriceFormatted() {
+    if (specDiscountedPrice == 0) {
+      return "";
+    }
+    return "${formatPrice(originalPrice)}đ";
+  }
+
   String discountedPriceFormatted() {
     if (discountedPrice == 0) {
       return "";
@@ -150,30 +170,45 @@ class ShelfLabelItem {
     return '${parts['decimal']}đ';
   }
 
+  /// for spec promotion
+  String get specMajor {
+    final parts = splitPrice(
+      specDiscountedPrice > 0 ? specDiscountedPrice : originalPrice,
+    );
+    final formattedMajor = formatPrice(num.parse(parts['major']!));
+    return formattedMajor;
+  }
+
+  String get specDecimal {
+    final parts = splitPrice(
+      specDiscountedPrice > 0 ? specDiscountedPrice : originalPrice,
+    );
+    return '${parts['decimal']}đ';
+  }
+
+  String get originMajor {
+    final parts = splitPrice(originalPrice);
+    final formattedMajor = formatPrice(num.parse(parts['major']!));
+    return formattedMajor;
+  }
+
+  String get originDecimal {
+    final parts = splitPrice(originalPrice);
+    return '${parts['decimal']}đ';
+  }
+
   ShelfLabelItem({
     this.title = '',
     required this.name,
     required this.originalPrice,
     required this.discountedPrice,
+    required this.specDiscountedPrice,
     required this.qrCode,
     required this.countryOri,
     required this.unitOfMeasure,
     required this.fromDate,
     required this.toDate,
+    required this.specFromDate,
+    required this.specToDate,
   });
-
-  /// Create object from JSON
-  factory ShelfLabelItem.fromJson(Map<String, dynamic> json) {
-    return ShelfLabelItem(
-      title: json['title'] ?? '',
-      name: json['name'] ?? '',
-      originalPrice: json['originalPrice'] ?? 0,
-      discountedPrice: json['discountedPrice'] ?? 0,
-      qrCode: json['qrCode'] ?? '',
-      countryOri: json['countryOri'] ?? '',
-      unitOfMeasure: json['unitOfMeasure'] ?? '',
-      fromDate: json['fromDate'],
-      toDate: json['toDate'],
-    );
-  }
 }

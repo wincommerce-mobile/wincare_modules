@@ -107,7 +107,7 @@ packages:
     description:
       path: "packages/flutter_bluetooth_printer"
       ref: main
-      resolved-ref: "44b3d3b130c60fc0f1adcd5d4fae15a0e014930e"
+      resolved-ref: "8bfc6e2bd0d263023cc13c6e4656cf7893ea907b"
       url: "https://github.com/uytb-masan/flutter_bluetooth_printer_plugin.git"
     source: git
     version: "2.19.0"

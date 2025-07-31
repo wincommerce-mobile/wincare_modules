@@ -19,10 +19,15 @@ class ReceiptSize {
 }
 
 class LabelSize {
-  static const double pt6 = 13.6;
-  static const double pt8 = 18.1;
-  static const double pt10 = 22.6;
-  static const double pt12 = 27.2;
+  static const double pt4 = 9;
+  static const double pt5 = 11;
+  static const double pt6 = 14;
+  static const double pt8 = 18;
+  static const double pt10 = 23;
+  static const double pt12 = 27;
+  static const double pt15 = 34;
+  static const double pt17 = 39;
+  static const double pt40 = 91;
   static const double pt47 = 107;
 }
 

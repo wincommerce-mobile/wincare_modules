@@ -2,8 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../../../../core/theme.dart';
-import '../../../data/models/shelf_label_item.dart';
+import '../../../../../../core/theme.dart';
+import '../../../../data/models/shelf_label_item.dart';
 
 class LabelWidget extends StatelessWidget {
   const LabelWidget({super.key, required this.item, required this.isTemCoXuatXu});
@@ -62,7 +62,7 @@ class LabelWidget extends StatelessWidget {
                               children: [
                                 QrImageView(
                                   data: item.qrCode,
-                                  size: 85,
+                                  size: 90,
                                   gapless: false,
                                   padding: EdgeInsets.all(2),
                                 ),

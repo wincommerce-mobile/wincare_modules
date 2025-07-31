@@ -8,18 +8,9 @@ class AppPages {
   static final pages = [
     GetPage(name: AppRoutes.receipt, page: () => const ReceiptPage()),
     GetPage(
-      name: AppRoutes.selectLabel,
-      page: () => const SelectLabelTypePage(),
-    ),
-    GetPage(
       name: AppRoutes.printLabel,
       page: () => const PrintShelfLabelPage(),
     ),
-    // GetPage(
-    //   name: AppRoutes.scanProduct,
-    //   page: () => const ScanShelfLabelPage(),
-    // ),
-    GetPage(name: AppRoutes.label, page: () => const ShelfLabelPage()),
   ];
 }
 

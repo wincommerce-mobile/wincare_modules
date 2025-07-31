@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/models/shelf_label_item.dart';
+import '../../../../data/models/shelf_label_item.dart';
 import 'label_widget.dart';
 
 class BorderLabelWidget extends StatelessWidget {

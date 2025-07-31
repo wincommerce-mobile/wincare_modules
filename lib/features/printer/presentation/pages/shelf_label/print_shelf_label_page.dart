@@ -18,8 +18,9 @@ import '../../../data/models/product_model.dart';
 import '../../../data/models/shelf_label_item.dart';
 import '../../custom_print/custom_print.dart';
 import '../../custom_print/custom_print_progress_dialog.dart';
-import 'border_label_widget.dart';
-import 'no_border_label_widget.dart';
+import 'tem_ke/border_label_widget.dart';
+import 'tem_ke/no_border_label_widget.dart';
+import 'tem_ke/tem_hoi_vien.dart';
 
 class PrintShelfLabelPage extends StatefulWidget {
   const PrintShelfLabelPage({super.key});
@@ -41,6 +42,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setupChannelHandler();
+      //dummyDataTest();
     });
     final arguments = Get.arguments;
     if (arguments != null && arguments is String) {
@@ -64,24 +66,45 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
         if (call.method == AppConstants.getProductData) {
           /// reset product
           _product = null;
+          _filteredLabels = [];
           final jsonStr = call.arguments as String;
           debugPrint("Received ProductData: $jsonStr");
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
           final product = MProduct.fromJson(decoded);
-          setState(() {
-            _product = product;
-            _isLoading = false;
-            if (product.isPromotion()) {
-              _filteredLabels = _allLabels
-                  .where((label) => label.isKM)
-                  .toList();
-            } else {
-              _filteredLabels = _allLabels
-                  .where((label) => !label.isKM)
-                  .toList();
-            }
-            _labelType = _filteredLabels[0];
-          });
+          _product = product;
+          _isLoading = false;
+          if (product.isSpecPromotionPrice()) {
+            final specPromotionLabels = _allLabels
+                .where(
+                  (label) =>
+              (label.labelType == LabelTypeEnum.temHoiVien ||
+                  label.labelType == LabelTypeEnum.temHoiVienCoXuatXu),
+            )
+                .toList();
+            _filteredLabels.addAll(specPromotionLabels);
+          }
+          if (product.isPromotion()) {
+            final promotionLabels = _allLabels
+                .where(
+                  (label) =>
+              (label.labelType == LabelTypeEnum.temKhuyenMai ||
+                  label.labelType == LabelTypeEnum.temKhuyenMaiCoXuatXu),
+            )
+                .toList();
+            _filteredLabels.addAll(promotionLabels);
+          } else {
+            final labels = _allLabels
+                .where(
+                  (label) =>
+              (label.labelType == LabelTypeEnum.temThuong ||
+                  label.labelType == LabelTypeEnum.temThuongCoXuatXu),
+            )
+                .toList();
+            _filteredLabels.addAll(labels);
+          }
+          _labelType = _filteredLabels[0];
+          _labelType.checked = true;
+          setState(() {});
         }
       });
     } catch (e) {
@@ -90,8 +113,6 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       });
       debugPrint('Error setting up channel handler: $e');
     }
-
-    //await dummyDataTest();
   }
 
   Future<void> dummyDataTest() async {
@@ -101,11 +122,12 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   "Mch3Name": "Thực phẩm khô",
   "PromotionFrom": "20250718",
   "LenBarcode": 13,
-  "PromotionPrice": "40000 đ",
+  "PromotionPrice": "800000",
   "ProductName": "NAM NGƯ Nước Mắm Nhãn Vàng 650ml",
+  "SpecPromotionPrice": "900000",
   "SpecPromotionTo": "",
+  "SpecPromotionFrom": "20260718",
   "PLU": "",
-  "SpecPromotionFrom": "",
   "UnitCode": "CHA",
   "CountryOriName": "Việt Nam",
   "Mch3": "10206",
@@ -120,7 +142,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   "IsAllowDecimal": false,
   "IsRequiredReason": false,
   "_strQty": "0",
-  "SellPrice": 5120000,
+  "SellPrice": 1000000,
   "ProductCode": "000000000010602829",
   "Quantity": 0,
   "UnitName": "CHA",
@@ -136,18 +158,44 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
     try {
       Future.delayed(const Duration(seconds: 3), () {
         _product = null;
+        _filteredLabels = [];
         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
         final product = MProduct.fromJson(decoded);
-        setState(() {
-          _product = product;
-          _isLoading = false;
-          if (product.isPromotion()) {
-            _filteredLabels = _allLabels.where((label) => label.isKM).toList();
-          } else {
-            _filteredLabels = _allLabels.where((label) => !label.isKM).toList();
-          }
-          _labelType = _filteredLabels[0];
-        });
+
+        _product = product;
+        _isLoading = false;
+        if (product.isSpecPromotionPrice()) {
+          final specPromotionLabels = _allLabels
+              .where(
+                (label) =>
+                    (label.labelType == LabelTypeEnum.temHoiVien ||
+                    label.labelType == LabelTypeEnum.temHoiVienCoXuatXu),
+              )
+              .toList();
+          _filteredLabels.addAll(specPromotionLabels);
+        }
+        if (product.isPromotion()) {
+          final promotionLabels = _allLabels
+              .where(
+                (label) =>
+                    (label.labelType == LabelTypeEnum.temKhuyenMai ||
+                    label.labelType == LabelTypeEnum.temKhuyenMaiCoXuatXu),
+              )
+              .toList();
+          _filteredLabels.addAll(promotionLabels);
+        } else {
+          final labels = _allLabels
+              .where(
+                (label) =>
+                    (label.labelType == LabelTypeEnum.temThuong ||
+                    label.labelType == LabelTypeEnum.temThuongCoXuatXu),
+              )
+              .toList();
+          _filteredLabels.addAll(labels);
+        }
+        _labelType = _filteredLabels[0];
+        _labelType.checked = true;
+        setState(() {});
       });
     } catch (e) {
       debugPrint("Error parsing JSON: $e");
@@ -161,7 +209,6 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       name: "Tem thường",
       imagePath: "",
       labelType: LabelTypeEnum.temThuong,
-      checked: true,
     ),
     LabelType(
       id: "1",
@@ -174,15 +221,24 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       name: "Tem khuyến mại",
       imagePath: "",
       labelType: LabelTypeEnum.temKhuyenMai,
-      checked: true,
-      isKM: true,
     ),
     LabelType(
       id: "3",
       name: "Tem khuyến mại có xuất xứ",
-      labelType: LabelTypeEnum.temThuongCoXuatXu,
+      labelType: LabelTypeEnum.temKhuyenMaiCoXuatXu,
       imagePath: "",
-      isKM: true,
+    ),
+    LabelType(
+      id: "4",
+      name: "Tem hội viên",
+      labelType: LabelTypeEnum.temHoiVien,
+      imagePath: "",
+    ),
+    LabelType(
+      id: "5",
+      name: "Tem hội viên có xuất xứ",
+      labelType: LabelTypeEnum.temHoiVienCoXuatXu,
+      imagePath: "",
     ),
   ];
 
@@ -303,7 +359,7 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
                   // ),
                   // padding: EdgeInsets.all(6),
                   child: _itemByLabelType(
-                    ShelfLabelItemMapper.toShelfLabelItem(_product)
+                    ShelfLabelItemMapper.toShelfLabelItem(_product),
                   ),
                 );
               },
@@ -470,22 +526,28 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
   }
 
   Widget _itemByLabelType(ShelfLabelItem label) {
-    switch (_labelType.id) {
-      /// Border
-      case '0':
-      case '1':
+    switch (_labelType.labelType) {
+      case LabelTypeEnum.temThuong:
+      case LabelTypeEnum.temThuongCoXuatXu:
         return NoBorderLabelWidget(
           item: label,
-          isTemCoXuatXu: _labelType.id == '1',
+          isTemCoXuatXu:
+              _labelType.labelType == LabelTypeEnum.temThuongCoXuatXu,
         );
-      case '2':
-      case '3':
+      case LabelTypeEnum.temKhuyenMai:
+      case LabelTypeEnum.temKhuyenMaiCoXuatXu:
         return BorderLabelWidget(
           item: label,
-          isTemCoXuatXu: _labelType.id == '3',
+          isTemCoXuatXu:
+              _labelType.labelType == LabelTypeEnum.temKhuyenMaiCoXuatXu,
         );
-      default:
-        return Text('Unknown label type');
+      case LabelTypeEnum.temHoiVien:
+      case LabelTypeEnum.temHoiVienCoXuatXu:
+        return TemHoiVien(
+          item: label,
+          isTemCoXuatXu:
+              _labelType.labelType == LabelTypeEnum.temHoiVienCoXuatXu,
+        );
     }
   }
 

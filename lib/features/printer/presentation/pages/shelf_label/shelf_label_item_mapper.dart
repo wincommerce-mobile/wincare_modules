@@ -7,11 +7,14 @@ class ShelfLabelItemMapper {
       name: product?.productName ?? "",
       originalPrice: parsePrice(product?.sellPrice),
       discountedPrice: parsePrice(product?.promotionPrice),
+      specDiscountedPrice: parsePrice(product?.specPromotionPrice),
       qrCode: product?.productBarcode ?? "",
       countryOri: product?.countryOri ?? '',
       unitOfMeasure: product?.unitName ?? "",
       fromDate: product?.promotionFrom ?? "",
       toDate: product?.promotionTo ?? "",
+      specFromDate: product?.specPromotionFrom ?? "",
+      specToDate: product?.specPromotionTo ?? "",
     );
   }
 

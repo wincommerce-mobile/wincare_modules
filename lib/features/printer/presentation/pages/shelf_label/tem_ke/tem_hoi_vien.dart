@@ -58,10 +58,10 @@ class TemHoiVien extends StatelessWidget {
                               ConstrainedBox(
                                 constraints: BoxConstraints(
                                   minHeight: 100,
-                                  maxWidth: 200,
+                                  maxWidth: 210,
                                 ),
                                 child: AutoSizeText(
-                                  item.major,
+                                  item.specMajor,
                                   maxFontSize: LabelSize.pt47,
                                   minFontSize: 14,
                                   maxLines: 1,
@@ -81,7 +81,7 @@ class TemHoiVien extends StatelessWidget {
                             ],
                           ),
                           Positioned(
-                            top: 2,
+                            top: item.specMajor.length > 4 ? -6 : 0,
                             right: 0,
                             child: Container(
                               alignment: Alignment.topCenter,
@@ -90,7 +90,7 @@ class TemHoiVien extends StatelessWidget {
                                 children: [
                                   const SizedBox(height: 2),
                                   Text(
-                                    item.decimal,
+                                    item.specDecimal,
                                     style: TextStyle(
                                       fontSize: LabelSize.pt15,
                                       fontFamily: 'Roboto',
@@ -99,7 +99,7 @@ class TemHoiVien extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 2),
                                   SizedBox(
-                                    width: 90,
+                                    width: 80,
                                     child: Text(
                                       'ĐVT: ${item.unitOfMeasure}',
                                       overflow: TextOverflow.ellipsis,
@@ -115,7 +115,7 @@ class TemHoiVien extends StatelessWidget {
                                   if (isTemCoXuatXu) ...[
                                     const SizedBox(height: 12),
                                     SizedBox(
-                                      width: 90,
+                                      width: 80,
                                       child: Text(
                                         'Xuất xứ: ${item.countryOri}',
                                         overflow: TextOverflow.ellipsis,
@@ -145,6 +145,7 @@ class TemHoiVien extends StatelessWidget {
                       fontFamily: 'Roboto',
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Column(
                     children: [
                       Row(
@@ -152,7 +153,7 @@ class TemHoiVien extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           AutoSizeText(
-                            item.major,
+                            item.originMajor,
                             maxFontSize: LabelSize.pt17,
                             minFontSize: 14,
                             maxLines: 1,
@@ -163,14 +164,14 @@ class TemHoiVien extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 4),
                           Container(
                             alignment: Alignment.topCenter,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item.decimal,
+                                  item.originDecimal,
                                   style: TextStyle(
                                     fontSize: LabelSize.pt5,
                                     fontFamily: 'Roboto',
@@ -222,7 +223,7 @@ class TemHoiVien extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Ngày áp dụng: ${item.getApplyDate()}',
+                    'Ngày áp dụng: ${item.getSpecApplyDate()}',
                     style: TextStyle(
                       fontSize: LabelSize.pt5,
                       fontWeight: FontWeight.bold,
