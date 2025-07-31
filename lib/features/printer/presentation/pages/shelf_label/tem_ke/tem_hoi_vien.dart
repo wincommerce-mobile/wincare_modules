@@ -55,27 +55,21 @@ class TemHoiVien extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Container(
-                                color: Colors.green,
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: 100,
-                                    maxWidth: 200,
-                                  ),
-                                  child: Container(
-                                    color: Colors.yellow,
-                                    child: AutoSizeText(
-                                      item.major,
-                                      maxFontSize: LabelSize.pt47,
-                                      minFontSize: 14,
-                                      maxLines: 1,
-                                      textAlign: TextAlign.end,
-                                      style: TextStyle(
-                                        fontSize: LabelSize.pt47,
-                                        fontFamily: 'Roboto',
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: 100,
+                                  maxWidth: 200,
+                                ),
+                                child: AutoSizeText(
+                                  item.major,
+                                  maxFontSize: LabelSize.pt47,
+                                  minFontSize: 14,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontSize: LabelSize.pt47,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
