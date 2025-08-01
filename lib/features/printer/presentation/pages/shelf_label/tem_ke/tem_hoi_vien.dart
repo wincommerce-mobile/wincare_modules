@@ -26,22 +26,35 @@ class TemHoiVien extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 60),
-
+                  //SizedBox(height: 60),
+                  Center(
+                    child: Text(
+                      'ĐẶC QUYỀN HỘI VIÊN WIN',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: LabelSize.pt9 ,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
                   /// Product name
                   ConstrainedBox(
                     constraints: BoxConstraints(minHeight: 40),
                     child: SizedBox(
                       width: 384,
-                      child: Text(
+                      child: AutoSizeText(
                         item.name,
-                        maxLines: 2,
+                        maxLines: 3,
+                        maxFontSize: 23,
+                        minFontSize: 14,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.bold,
-                          height: 1.2,
-                          fontSize: LabelSize.pt8,
+                          height: 1,
+                          fontSize: LabelSize.pt10,
                         ),
                       ),
                     ),
@@ -62,12 +75,12 @@ class TemHoiVien extends StatelessWidget {
                                 ),
                                 child: AutoSizeText(
                                   item.specMajor,
-                                  maxFontSize: LabelSize.pt47,
+                                  maxFontSize: 117,
                                   minFontSize: 14,
                                   maxLines: 1,
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
-                                    fontSize: LabelSize.pt47,
+                                    fontSize: 117,
                                     fontFamily: 'Roboto',
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -121,7 +134,7 @@ class TemHoiVien extends StatelessWidget {
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
                                         style: TextStyle(
-                                          fontSize: LabelSize.pt5,
+                                          fontSize: LabelSize.pt6,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Roboto',
                                         ),
@@ -216,7 +229,7 @@ class TemHoiVien extends StatelessWidget {
                   Text(
                     item.qrCode,
                     style: TextStyle(
-                      fontSize: LabelSize.pt6,
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Roboto',
                     ),
@@ -225,7 +238,7 @@ class TemHoiVien extends StatelessWidget {
                   Text(
                     'Ngày áp dụng: ${item.getSpecApplyDate()}',
                     style: TextStyle(
-                      fontSize: LabelSize.pt5,
+                      fontSize: LabelSize.pt6,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Roboto',
                     ),
@@ -235,6 +248,7 @@ class TemHoiVien extends StatelessWidget {
             ),
           ],
         ),
+        SizedBox(height: 15),
         //Divider(height: 70, color: Colors.white, thickness: 0),
       ],
     );

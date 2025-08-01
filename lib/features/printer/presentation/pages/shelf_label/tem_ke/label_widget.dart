@@ -38,11 +38,10 @@ class LabelWidget extends StatelessWidget {
                           child: Text(
                             item.name,
                             maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold,
-                              height: 1.2,
+                              height: 1,
                               fontSize: LabelSize.pt10,
                             ),
                           ),
@@ -164,6 +163,7 @@ class LabelWidget extends StatelessWidget {
                           ],
                         ),
                       ),
+                      SizedBox(height: 40),
                     ],
                   ),
                 ),

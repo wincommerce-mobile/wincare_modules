@@ -23,6 +23,7 @@ class LabelSize {
   static const double pt5 = 11;
   static const double pt6 = 14;
   static const double pt8 = 18;
+  static const double pt9 = 20;
   static const double pt10 = 23;
   static const double pt12 = 27;
   static const double pt15 = 34;
