@@ -67,6 +67,10 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
           /// reset product
           _product = null;
           _filteredLabels = [];
+          _labelType = _allLabels[0];
+          for (var label in _allLabels) {
+            label.checked = false;
+          }
           final jsonStr = call.arguments as String;
           debugPrint("Received ProductData: $jsonStr");
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
@@ -159,6 +163,10 @@ class _PrintShelfLabelPageState extends State<PrintShelfLabelPage> {
       Future.delayed(const Duration(seconds: 3), () {
         _product = null;
         _filteredLabels = [];
+        _labelType = _allLabels[0];
+        for (var label in _allLabels) {
+          label.checked = false;
+        }
         final Map<String, dynamic> decoded = jsonDecode(jsonStr);
         final product = MProduct.fromJson(decoded);
 

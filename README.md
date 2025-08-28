@@ -14,7 +14,7 @@ for example:
 
 build to native repo:
 
-```flutter build aar --output-dir=/Users/uytb/Documents/projects/Wincare-update/app/modules/```
+```flutter build aar --output-dir=/Users/uytb/Documents/projects/Wincare.Android/app/modules```
 
 build to libs repo:
 
