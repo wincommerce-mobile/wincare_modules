@@ -214,7 +214,7 @@ class ReceiptState extends State<CustomReceipt> {
         ? <int>[for (int i = 0; i < addFeeds; i++) ...Commands.carriageReturn]
         : <int>[for (int i = 0; i < addFeeds; i++) ...Commands.lineFeed];
 
-    final spacing = List<int>.filled(1, Commands.lineFeed.first); // 10 lines
+    final spacing = List<int>.filled(2, Commands.lineFeed.first); // 1 lines
 
 
     // Print each chunk separately
@@ -290,7 +290,7 @@ class ReceiptState extends State<CustomReceipt> {
           ? <int>[for (int i = 0; i < addFeeds; i++) ...Commands.carriageReturn]
           : <int>[for (int i = 0; i < addFeeds; i++) ...Commands.lineFeed];
 
-      final spacing = List<int>.filled(1, Commands.lineFeed.first); // 10 lines
+      final spacing = List<int>.filled(2, Commands.lineFeed.first); // 1 lines
 
       final printResult = await printBytes(
         keepConnected: true,

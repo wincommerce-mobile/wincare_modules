@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:wincare_modules/features/printer/presentation/pages/shelf_label/print_shelf_label_page.dart';
+import 'package:wincare_modules/features/capture/presentation/capture_binding.dart';
+import 'package:wincare_modules/features/capture/presentation/history/history_page.dart';
 
 import '../features/printer/presentation/pages/page.dart';
-import '../features/printer/presentation/pages/shelf_label/scan_shelf_label_page.dart';
 
 class AppPages {
   static final pages = [
@@ -11,6 +11,12 @@ class AppPages {
       name: AppRoutes.printLabel,
       page: () => const PrintShelfLabelPage(),
     ),
+    GetPage(
+      name: AppRoutes.capture,
+      page: () => const CapturePage(),
+      binding: CaptureBinding(),
+    ),
+    GetPage(name: AppRoutes.history, page: () => const HistoryPage()),
   ];
 }
 
@@ -20,4 +26,8 @@ class AppRoutes {
   static const printLabel = '/printLabel';
   static const scanProduct = '/scanProduct';
   static const label = '/label';
+
+  /// display-capture
+  static const capture = '/capture';
+  static const history = '/history';
 }

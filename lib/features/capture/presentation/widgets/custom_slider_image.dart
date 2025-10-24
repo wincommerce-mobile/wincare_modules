@@ -1,0 +1,138 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../../../app/app_colors.dart';
+import '../../../../app/app_function.dart';
+import '../../../../app/app_icon.dart';
+import '../../../../app/app_text.dart';
+import 'custom_network_image.dart';
+
+class CustomSliderImage extends StatefulWidget {
+  const CustomSliderImage({
+    super.key,
+    required this.images,
+    required this.width,
+    required this.height,
+    this.showImageAddress = false,
+    this.onImageAction,
+    required this.onViewImage,
+  });
+
+  final List<String> images;
+  final double width;
+  final double height;
+  final bool showImageAddress;
+  final OnImageAction? onImageAction;
+  final OnViewImage onViewImage;
+
+  @override
+  State<CustomSliderImage> createState() => _CustomSliderImageState();
+}
+
+class _CustomSliderImageState extends State<CustomSliderImage> {
+  List<String> get _images => widget.images;
+
+  double get _width => widget.width;
+
+  double get _height => widget.height;
+
+  bool get _showImageAddress => widget.showImageAddress;
+
+  int _currentImage = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CarouselSlider(
+          options: CarouselOptions(
+            height: _height,
+            autoPlay: false,
+            viewportFraction: 1,
+            enlargeCenterPage: true,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _currentImage = index;
+              });
+            },
+          ),
+          items: _images
+              .map(
+                (url) => Stack(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        widget.onViewImage(_images.indexOf(url));
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: CustomNetworkImage(
+                          url: url,
+                          fit: BoxFit.cover,
+                          width: _width,
+                          height: _height,
+                        ),
+                      ),
+                    ),
+                    !_showImageAddress
+                        ? Container()
+                        : Positioned(
+                            left: 8,
+                            bottom: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(
+                                  text: "24/09/2025 16:14:06",
+                                  color: AppColors.white,
+                                  backgroundColor: AppColors.black,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                const SizedBox(height: 2),
+                                AppText(
+                                  text: "17 Lê Duẩn, Quận 1, HCM",
+                                  fontSize: 10,
+                                  backgroundColor: AppColors.black,
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ],
+                            ),
+                          ),
+                    widget.onImageAction == null
+                        ? Container()
+                        : Positioned(
+                            top: 6,
+                            right: 6,
+                            child: InkWell(
+                              onTap: () {
+                                widget.onImageAction!(_images.indexOf(url));
+                              },
+                              child: AppIcon.icMoreAction.widget(),
+                            ),
+                          ),
+                  ],
+                ),
+              )
+              .toList(),
+        ),
+        const SizedBox(height: 6),
+        Center(
+          child: AnimatedSmoothIndicator(
+            count: _images.length,
+            activeIndex: _currentImage,
+            effect: WormEffect(
+              dotHeight: 10,
+              dotWidth: 10,
+              activeDotColor: AppColors.color3A73FF,
+              dotColor: AppColors.colorC0C0C0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

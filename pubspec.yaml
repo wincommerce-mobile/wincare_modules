@@ -18,22 +18,42 @@ dependencies:
       url: https://github.com/uytb-masan/flutter_bluetooth_printer_plugin.git
       path: packages/flutter_bluetooth_printer
       ref: main
-  get: ^4.7.2
   intl: ^0.18.1
   shared_preferences: ^2.5.3
   qr_flutter: ^4.0.0
   auto_size_text: ^3.0.0
-  #mobile_scanner: ^7.0.1
+  dotted_border: ^3.1.0
+
+  image_picker: ^1.2.0
+  flutter_svg: ^2.2.1
+  carousel_slider: ^5.1.1
+  cached_network_image: ^3.4.1
+  smooth_page_indicator: ^1.2.1
+
+  flutter_secure_storage: ^9.2.4
+
+  # state management
+  get: ^4.7.2
+
+  # Networking
+  dio: ^5.8.0+1
+  retrofit: ^4.4.2
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  json_serializable: ^6.11.1
+  retrofit_generator: ^10.0.6
+  build_runner: ^2.10.0
+  analyzer: ^8.1.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/icons/
     - assets/fonts/roboto/
   fonts:
     - family: Roboto

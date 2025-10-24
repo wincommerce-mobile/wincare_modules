@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import 'app/app_config.dart';
 import 'app/app_pages.dart';
+import 'app/environments/environment.dart';
 
 void main() {
-  runApp(MainApp(initialRoute: AppRoutes.printLabel));
+  /// Init config for app based on environment
+  String environment = const String.fromEnvironment(
+    'ENV',
+    defaultValue: Environment.dev,
+  );
+
+  AppConfig(env: Environment.getConfigEnvironment(environment));
+
+  runApp(MainApp(initialRoute: AppRoutes.capture));
 }
 
 @pragma('vm:entry-point')
@@ -16,6 +26,19 @@ void printReceipt() {
 @pragma('vm:entry-point')
 void printItems() {
   runApp(MainApp(initialRoute: AppRoutes.printLabel));
+}
+
+@pragma('vm:entry-point')
+void displayCapture() {
+  /// Init config for app based on environment
+  String environment = const String.fromEnvironment(
+    'ENV',
+    defaultValue: Environment.dev,
+  );
+
+  AppConfig(env: Environment.getConfigEnvironment(environment));
+
+  runApp(MainApp(initialRoute: AppRoutes.capture));
 }
 
 class MainApp extends StatefulWidget {

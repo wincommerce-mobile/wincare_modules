@@ -6,6 +6,10 @@ Wincare modules
 
 Build the project using the following command:
 
+#### For code generator
+```
+flutter packages pub run build_runner build --delete-conflicting-outputs
+
 For android:
 
 ```flutter build aar --output-dir=path_to_build directory```
