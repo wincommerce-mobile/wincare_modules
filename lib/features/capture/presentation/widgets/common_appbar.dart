@@ -8,6 +8,7 @@ import '../../../../app/app_colors.dart';
 PreferredSizeWidget commonAppBar(
   String title, {
   List<Widget>? actions,
+  required VoidCallback onBack,
 }) {
   return AppBar(
     backgroundColor: AppColors.appbar,
@@ -17,10 +18,7 @@ PreferredSizeWidget commonAppBar(
       height: 40,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: InkWell(
-          onTap: () => Get.back(),
-          child: AppIcon.icBack.widget(),
-        ),
+        child: InkWell(onTap: onBack, child: AppIcon.icBack.widget()),
       ),
     ),
     title: Padding(

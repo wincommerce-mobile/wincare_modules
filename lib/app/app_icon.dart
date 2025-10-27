@@ -40,6 +40,9 @@ abstract class AppIcon {
 
   static AppIconBuilder get icBack =>
       AppIconBuilder('${_assetPath}ic_back.svg');
+
+  static AppIconBuilder get icWarning =>
+      AppIconBuilder('${_assetPath}ic_warning.svg');
 }
 
 class AppIconBuilder {

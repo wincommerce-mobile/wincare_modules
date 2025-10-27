@@ -115,13 +115,15 @@ void showWarningDialog({
         backgroundColor: AppColors.white,
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              width: double.infinity,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.warning_amber, color: Colors.red, size: 64),
-                  const SizedBox(height: 16),
+                  AppIcon.icWarning.widget(),
+                  const SizedBox(height: 24),
                   AppText(
                     text: message,
                     fontSize: 16,
@@ -180,12 +182,13 @@ void showInformDialog({
                       ),
                     ),
                     child: AppText(
-                    text: message,
-                    fontSize: 16,
-                    textAlign: TextAlign.start,
-                    color: AppColors.black,
-                    fontWeight: FontWeight.w500,
-                  ),)
+                      text: message,
+                      fontSize: 16,
+                      textAlign: TextAlign.start,
+                      color: AppColors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ],
               ),
             ),

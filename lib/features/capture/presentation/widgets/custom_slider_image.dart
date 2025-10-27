@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:wincare_modules/features/capture/presentation/widgets/image_label.dart';
 
 import '../../../../app/app_colors.dart';
 import '../../../../app/app_function.dart';
@@ -146,6 +147,14 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
                               child: AppIcon.icMoreAction.widget(),
                             ),
                           ),
+                    myImage.isHandled ? Positioned(
+                      top: 12,
+                      right: 0,
+                      child: ImageLabel(
+                        label: 'Hình đã xử lý',
+                        textSize: 12,
+                      ),
+                    ) : SizedBox.shrink(),
                   ],
                 ),
               )

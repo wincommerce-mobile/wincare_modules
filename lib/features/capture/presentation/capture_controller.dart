@@ -8,6 +8,7 @@ import 'package:wincare_modules/app/app_secure_storage.dart';
 
 import '../../../app/app_constants.dart';
 import '../domain/entities/user_entity.dart';
+import 'widgets/common_dialog.dart';
 import 'widgets/loading_indicator.dart';
 
 class CaptureController extends GetxController {
@@ -16,6 +17,8 @@ class CaptureController extends GetxController {
   /// Reason
   var selectedReason = Rxn<String>();
   var reasons = RxList<String>(['Apple', 'Banana', 'Cherry', 'Mango']);
+
+  var isLoading = false.obs;
 
   var banners = RxList<MyImage>([
     MyImage(
@@ -32,7 +35,6 @@ class CaptureController extends GetxController {
 
   var images = RxList<MyImage>([]);
   var currentImage = 0.obs;
-  final ImagePicker _picker = ImagePicker();
 
   void updateCurrentImage(int index) {
     currentImage.value = index;
@@ -52,13 +54,13 @@ class CaptureController extends GetxController {
   }
 
   void onAddNewImage(XFile image) {
-    images.add(MyImage(url: null, path: image));
+    images.add(MyImage(url: null, path: image, isHandled: false));
     images.refresh();
     updateCurrentImage(images.length - 1);
   }
 
   Future<XFile?> replacePicture() async {
-    final XFile? image = await _picker.pickImage(
+    final XFile? image = await ImagePicker().pickImage(
       source: ImageSource.camera,
       preferredCameraDevice: CameraDevice.rear,
     );
@@ -71,10 +73,11 @@ class CaptureController extends GetxController {
   }
 
   Future<void> takePicture() async {
-    final XFile? image = await _picker.pickImage(
+    final XFile? image = await ImagePicker().pickImage(
       source: ImageSource.camera,
       preferredCameraDevice: CameraDevice.rear,
     );
+
 
     if (image != null) {
       /// Send this image to server and get the url back
@@ -92,38 +95,40 @@ class CaptureController extends GetxController {
   ///
 
   Future<void> setupChannelHandler() async {
-    try {
-      showLoadingIndicator();
-      _channel.setMethodCallHandler((call) async {
-        debugPrint("Received arguments: ${call.arguments}");
-        if (call.method == AppConstants.getRequestData) {
+    //try {
+    isLoading.value = true;
+    _channel.setMethodCallHandler((call) async {
+      debugPrint("Received arguments: ${call.arguments}");
+      switch (call.method) {
+        case AppConstants.getRequestData:
           final jsonStr = call.arguments as String;
           debugPrint("Received getRequestData: $jsonStr");
           final Map<String, dynamic> decoded = jsonDecode(jsonStr);
           final userEntity = UserEntity.fromJson(decoded);
           await AppSecureStorage.saveUser(userEntity);
-          hideLoadingIndicator();
-        }
-      });
-    } catch (e) {
-      hideLoadingIndicator();
-
-      debugPrint('Error setting up channel handler: $e');
-    }
-  }
-
-  @override
-  void onInit() async {
-    super.onInit();
-    //await setupChannelHandler();
-
-    ///
+          isLoading.value = false;
+          break;
+        case AppConstants.onNativeBackPressed:
+          if (Get.context != null) {
+            showWarningDialog(
+              context: Get.context!,
+              message: 'Vui lòng xác nhận kết quả',
+            );
+          }
+          break;
+      }
+    });
+    // } catch (e) {
+    //   isLoading.value = false;
+    //   debugPrint('Error setting up channel handler: $e');
+    // }
   }
 }
 
 class MyImage {
   final String? url;
   final XFile? path;
+  final bool isHandled;
 
-  MyImage({required this.url, required this.path});
+  MyImage({required this.url, required this.path, this.isHandled = false});
 }

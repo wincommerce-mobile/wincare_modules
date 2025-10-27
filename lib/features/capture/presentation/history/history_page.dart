@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_colors.dart';
 import 'package:wincare_modules/app/app_text.dart';
 import 'package:wincare_modules/features/capture/presentation/widgets/common_appbar.dart';
@@ -14,16 +15,13 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: commonAppBar('LỊCH SỬ THAY ĐỔI'),
+      appBar: commonAppBar('LỊCH SỬ THAY ĐỔI', onBack: () => Get.back()),
       backgroundColor: AppColors.white,
       body: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         itemCount: 5,
-        separatorBuilder: (context, index){
-          return Divider(
-            height: 24,
-            thickness: .5,
-          );
+        separatorBuilder: (context, index) {
+          return Divider(height: 24, thickness: .5);
         },
         itemBuilder: (context, index) {
           return Column(
@@ -31,11 +29,12 @@ class _HistoryPageState extends State<HistoryPage> {
             children: [
               Row(
                 children: [
+                  AppText(text: 'Ngày 10/10/2022 10:10:63: ', fontSize: 14),
                   AppText(
-                    text: 'Ngày 10/10/2022 10:10:63: ',
+                    text: 'Không đạt',
                     fontSize: 14,
+                    fontWeight: FontWeight.w400,
                   ),
-                  AppText(text: 'Không đạt',fontSize: 14, fontWeight: FontWeight.w400),
                 ],
               ),
               AppText(

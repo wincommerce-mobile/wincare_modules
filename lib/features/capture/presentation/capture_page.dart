@@ -36,7 +36,17 @@ class _CapturePageState extends State<CapturePage> {
 
   int get _currentImage => _controller.currentImage.value;
 
+  bool get _isLoading => _controller.isLoading.value;
+
   String? get _selectedReason => _controller.selectedReason.value;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      await _controller.setupChannelHandler();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +55,12 @@ class _CapturePageState extends State<CapturePage> {
         () => Scaffold(
           appBar: commonAppBar(
             'CHẤM ẢNH CHƯƠNG TRÌNH',
+            onBack: () {
+              showWarningDialog(
+                context: context,
+                message: 'Vui lòng xác nhận kết quả',
+              );
+            },
             actions: [
               InkWell(
                 child: AppIcon.icHistory.widget(),
@@ -55,21 +71,30 @@ class _CapturePageState extends State<CapturePage> {
               SizedBox(width: 12),
             ],
           ),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildSlider(),
-                const SizedBox(height: 24),
-                _buildImages(),
-                const SizedBox(height: 24),
-                _buildCapture(),
-                const SizedBox(height: 24),
-                _buildResult(),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
+          body: !_isLoading
+              ? RefreshIndicator(
+                  onRefresh: () async {},
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        _buildSlider(),
+                        const SizedBox(height: 24),
+                        _buildImages(),
+                        const SizedBox(height: 24),
+                        _buildCapture(),
+                        const SizedBox(height: 24),
+                        _buildResult(),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                )
+              : Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.color3A73FF,
+                  ),
+                ),
           bottomNavigationBar: Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             margin: EdgeInsets.only(bottom: 24),

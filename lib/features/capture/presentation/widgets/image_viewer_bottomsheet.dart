@@ -75,9 +75,9 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                   width: double.infinity,
                   alignment: Alignment.center,
                   child: AppText(
-                    text: widget.title,
+                    text: widget.title.toUpperCase(),
                     color: AppColors.white,
-                    fontSize: 14,
+                    fontSize: 16,
                     textAlign: TextAlign.center,
                   ),
                 ),
