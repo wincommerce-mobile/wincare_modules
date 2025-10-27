@@ -11,7 +11,7 @@ abstract class AppIcon {
       AppIconBuilder('${_assetPath}placeholder.png');
 
   static AppIconBuilder get captureImage =>
-      AppIconBuilder('${_assetPath}capture_image.png');
+      AppIconBuilder('${_assetPath}capture_image.svg');
 
   /// Authentication Icons
   static AppIconBuilder get icSwitchOff =>
@@ -34,6 +34,12 @@ abstract class AppIcon {
 
   static AppIconBuilder get icUpdateImage =>
       AppIconBuilder('${_assetPath}ic_update_image.svg');
+
+  static AppIconBuilder get icImageInfo =>
+      AppIconBuilder('${_assetPath}ic_image_info.svg');
+
+  static AppIconBuilder get icBack =>
+      AppIconBuilder('${_assetPath}ic_back.svg');
 }
 
 class AppIconBuilder {

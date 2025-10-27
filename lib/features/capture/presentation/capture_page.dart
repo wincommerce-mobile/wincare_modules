@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_icon.dart';
@@ -11,8 +12,7 @@ import 'package:wincare_modules/features/capture/presentation/widgets/custom_but
 import 'package:wincare_modules/features/capture/presentation/widgets/custom_slider_image.dart';
 
 import '../../../app/app_colors.dart';
-import 'widgets/custom_network_image.dart';
-import 'widgets/custom_switch.dart';
+import '../../../app/environments/environment_banner.dart';
 import 'widgets/diagonal_stripes_shimmer.dart';
 import 'widgets/image_viewer_bottomsheet.dart';
 
@@ -26,56 +26,55 @@ class CapturePage extends StatefulWidget {
 class _CapturePageState extends State<CapturePage> {
   final _controller = Get.find<CaptureController>();
 
-  bool get _allowMultiImage => _controller.allowMultiImage.value;
+  bool get _showVerifyImageButton => _images.isNotEmpty;
 
-  bool get _showVerifyImageButton =>
-      (_singleImage != null || _images.isNotEmpty);
+  List<MyImage> get _banners => _controller.banners;
 
-  List<String> get _banners => _controller.banners;
-
-  List<String> get _images => _controller.images;
-
-  String? get _singleImage => _controller.singleImage.value;
+  List<MyImage> get _images => _controller.images;
 
   List<String> get _reasons => _controller.reasons;
+
+  int get _currentImage => _controller.currentImage.value;
 
   String? get _selectedReason => _controller.selectedReason.value;
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
-        appBar: commonAppBar(
-          'CHẤM ẢNH CHƯƠNG TRÌNH',
-          actions: [
-            InkWell(
-              child: AppIcon.icHistory.widget(),
-              onTap: () {
-                Get.toNamed(AppRoutes.history);
-              },
-            ),
-            SizedBox(width: 12),
-          ],
-        ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildSlider(),
-              const SizedBox(height: 24),
-              _buildImages(),
-              const SizedBox(height: 24),
-              _buildCapture(),
-              const SizedBox(height: 24),
-              _buildResult(),
-              const SizedBox(height: 24),
+    return EnvironmentBanner(
+      child: Obx(
+        () => Scaffold(
+          appBar: commonAppBar(
+            'CHẤM ẢNH CHƯƠNG TRÌNH',
+            actions: [
+              InkWell(
+                child: AppIcon.icHistory.widget(),
+                onTap: () {
+                  Get.toNamed(AppRoutes.history);
+                },
+              ),
+              SizedBox(width: 12),
             ],
           ),
-        ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          margin: EdgeInsets.only(bottom: 24),
-          child: _buildAction(),
+          body: SingleChildScrollView(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildSlider(),
+                const SizedBox(height: 24),
+                _buildImages(),
+                const SizedBox(height: 24),
+                _buildCapture(),
+                const SizedBox(height: 24),
+                _buildResult(),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            margin: EdgeInsets.only(bottom: 24),
+            child: _buildAction(),
+          ),
         ),
       ),
     );
@@ -105,6 +104,7 @@ class _CapturePageState extends State<CapturePage> {
               title: "Hình ảnh trưng bày",
               photos: _banners,
               initPage: index,
+              isShowDelete: false,
             );
           },
           key: ValueKey('sample'),
@@ -126,16 +126,31 @@ class _CapturePageState extends State<CapturePage> {
               fontWeight: FontWeight.w700,
             ),
             Spacer(),
-            CustomSwitch(
-              value: _allowMultiImage,
-              onChanged: (val) {
-                _controller.toggleSwitch(val);
+            InkWell(
+              onTap: () {
+                showInformDialog(
+                  context: context,
+                  message:
+                      'Chỉ chụp 1 hình trưng bày rõ nét các sản phẩm đặt trên kệ. Nếu kệ quá dài thì chụp từng phần kệ, hệ thống sẽ ghép thành 1 hình sau khi chấm hình',
+                );
               },
+              child: Row(
+                children: [
+                  AppText(
+                    text: 'Ghép nhiều hình',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.color4D4D4D,
+                  ),
+                  const SizedBox(width: 8.0),
+                  AppIcon.icImageInfo.widget(),
+                ],
+              ),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        _imageByType(),
+        _images.isEmpty ? _emptyImage() : _buildMultiImages(),
       ],
     );
   }
@@ -143,51 +158,22 @@ class _CapturePageState extends State<CapturePage> {
   Widget _emptyImage() {
     return InkWell(
       onTap: _controller.takePicture,
-      child: SizedBox(
-        width: Get.width,
-        height: 255,
-        child: AppIcon.captureImage.widget(fit: BoxFit.fill),
+      child: DottedBorder(
+        options: RoundedRectDottedBorderOptions(
+          dashPattern: [6, 5],
+          strokeWidth: 1,
+          radius: Radius.circular(20),
+          color: AppColors.colorC2C2C2,
+        ),
+        child: SizedBox(
+          width: Get.width,
+          height: 225,
+          child: Padding(
+            padding: const EdgeInsets.all(62.5),
+            child: AppIcon.captureImage.widget(),
+          ),
+        ),
       ),
-    );
-  }
-
-  Widget _buildSingleImage() {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(16.0),
-          child: CustomNetworkImage(
-            url: _singleImage ?? '',
-            fit: BoxFit.cover,
-            width: Get.width,
-            height: 255,
-          ),
-        ),
-        Positioned(
-          top: 6,
-          right: 6,
-          child: InkWell(
-            child: AppIcon.icMoreAction.widget(),
-            onTap: () {
-              showCupertinoActionSheet(
-                context: context,
-                onUpdateImage: () {
-                  _controller.takePicture();
-                },
-                onDeleteImage: () {
-                  showConfirmDialog(
-                    context: context,
-                    message: 'Bạn chắc chắn xóa hình?',
-                    onConfirm: () {
-                      _controller.onDeleteSingleImage();
-                    },
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 
@@ -198,6 +184,7 @@ class _CapturePageState extends State<CapturePage> {
       images: _images,
       width: width,
       height: height,
+      initCurrentImage: _currentImage,
       key: ValueKey('multiImages'),
       onViewImage: (index) {
         _openImageViewerBottomSheet(
@@ -205,35 +192,28 @@ class _CapturePageState extends State<CapturePage> {
           title: "Hình ảnh trưng bày",
           photos: _images,
           initPage: index,
+          isShowDelete: true,
         );
       },
-      onImageAction: (index) {
-        showCupertinoActionSheet(
-          context: context,
-          onUpdateImage: () {
-            _controller.onUpdateImageInList(index);
-          },
-          onDeleteImage: () {
-            showConfirmDialog(
-              context: context,
-              message: 'Bạn chắc chắn xóa hình?',
-              onConfirm: () {
-                _controller.onDeleteImageInList(index);
-              },
-            );
-          },
-        );
-      },
+      // onImageAction: (index) {
+      //   showCupertinoActionSheet(
+      //     context: context,
+      //     onUpdateImage: () {
+      //       _controller.onUpdateImageInList(index);
+      //     },
+      //     onDeleteImage: () {
+      //       showConfirmDialog(
+      //         context: context,
+      //         message: 'Bạn chắc chắn xóa hình?',
+      //         onConfirm: () {
+      //           _controller.onDeleteImageInList(index);
+      //         },
+      //       );
+      //     },
+      //   );
+      // },
       showImageAddress: true,
     );
-  }
-
-  Widget _imageByType() {
-    if (_allowMultiImage) {
-      return _images.isEmpty ? _emptyImage() : _buildMultiImages();
-    } else {
-      return _singleImage == null ? _emptyImage() : _buildSingleImage();
-    }
   }
 
   /// Capture / Get point
@@ -243,7 +223,10 @@ class _CapturePageState extends State<CapturePage> {
         Expanded(
           child: CustomBorderButton(
             title: 'Chụp hình mới',
-            onPressed: _controller.takePicture,
+            onPressed: () {
+              _controller.takePicture();
+              setState(() {});
+            },
             icon: AppIcon.icCamera.widget(),
             borderColor: AppColors.color3A73FF,
             textColor: AppColors.color3A73FF,
@@ -280,25 +263,49 @@ class _CapturePageState extends State<CapturePage> {
             children: [
               Row(
                 children: [
-                  AppText(text: 'Kết quả: ', fontSize: 14, fontWeight: FontWeight.w400,),
-                  AppText(text: 'Chờ kết quả chấm', fontSize: 14, color: AppColors.colorE7B400,),
+                  AppText(
+                    text: 'Kết quả: ',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  AppText(
+                    text: 'Chờ kết quả chấm',
+                    fontSize: 14,
+                    color: AppColors.colorE7B400,
+                  ),
                 ],
               ),
               Row(
                 children: [
-                  AppText(text: 'Người: ', fontSize: 14, fontWeight: FontWeight.w400,),
-                  AppText(text: 'Nguyễn Văn A', fontSize: 14, color: AppColors.black,),
+                  AppText(
+                    text: 'Người: ',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  AppText(
+                    text: 'Nguyễn Văn A',
+                    fontSize: 14,
+                    color: AppColors.black,
+                  ),
                 ],
               ),
               Row(
                 children: [
-                  AppText(text: 'Ngày: ', fontSize: 14, fontWeight: FontWeight.w400,),
-                  AppText(text: '15/10/2025 11:30', fontSize: 14, color: AppColors.black,),
+                  AppText(
+                    text: 'Ngày: ',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  AppText(
+                    text: '15/10/2025 11:30',
+                    fontSize: 14,
+                    color: AppColors.black,
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
               DiagonalStripesShimmer(
-                height: 27,
+                height: 14,
                 width: Get.width,
                 stripeWidth: 12,
               ),
@@ -466,21 +473,43 @@ class _CapturePageState extends State<CapturePage> {
   void _openImageViewerBottomSheet({
     required BuildContext context,
     required String title,
-    required List<String> photos,
+    required List<MyImage> photos,
     required int initPage,
+    required bool isShowDelete,
   }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.black12.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
-      builder: (_) => ImageViewerBottomSheet(
-        title: title,
-        photos: photos,
-        initPage: initPage,
-      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateBottom) {
+            return ImageViewerBottomSheet(
+              title: title,
+              photos: photos,
+              initPage: initPage,
+              isShowDelete: isShowDelete,
+              onImageAction: (index) {
+                showConfirmDialog(
+                  context: context,
+                  message: 'Bạn chắc chắn xóa hình?',
+                  onConfirm: () {
+                    _controller.onDeleteImageInList(index);
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      if (_images.isEmpty) Get.back();
+                    });
+                    setState(() {}); // rebuild parent
+                    setStateBottom(() {}); // rebuild bottom sheet
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 

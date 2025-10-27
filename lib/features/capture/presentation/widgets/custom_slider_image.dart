@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -6,6 +8,7 @@ import '../../../../app/app_colors.dart';
 import '../../../../app/app_function.dart';
 import '../../../../app/app_icon.dart';
 import '../../../../app/app_text.dart';
+import '../capture_controller.dart';
 import 'custom_network_image.dart';
 
 class CustomSliderImage extends StatefulWidget {
@@ -16,12 +19,14 @@ class CustomSliderImage extends StatefulWidget {
     required this.height,
     this.showImageAddress = false,
     this.onImageAction,
+    this.initCurrentImage = 0,
     required this.onViewImage,
   });
 
-  final List<String> images;
+  final List<MyImage> images;
   final double width;
   final double height;
+  final int initCurrentImage;
   final bool showImageAddress;
   final OnImageAction? onImageAction;
   final OnViewImage onViewImage;
@@ -31,7 +36,7 @@ class CustomSliderImage extends StatefulWidget {
 }
 
 class _CustomSliderImageState extends State<CustomSliderImage> {
-  List<String> get _images => widget.images;
+  List<MyImage> get _images => widget.images;
 
   double get _width => widget.width;
 
@@ -40,6 +45,24 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
   bool get _showImageAddress => widget.showImageAddress;
 
   int _currentImage = 0;
+  final _carouselController = CarouselSliderController();
+
+  @override
+  void initState() {
+    super.initState();
+    _currentImage = widget.initCurrentImage;
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomSliderImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initCurrentImage != widget.initCurrentImage) {
+      _carouselController.animateToPage(widget.initCurrentImage);
+      setState(() {
+        _currentImage = widget.initCurrentImage;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +70,11 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CarouselSlider(
+          carouselController: _carouselController,
           options: CarouselOptions(
             height: _height,
             autoPlay: false,
+            enableInfiniteScroll: false,
             viewportFraction: 1,
             enlargeCenterPage: true,
             onPageChanged: (index, reason) {
@@ -60,27 +85,34 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
           ),
           items: _images
               .map(
-                (url) => Stack(
+                (myImage) => Stack(
                   children: [
                     InkWell(
                       onTap: () {
-                        widget.onViewImage(_images.indexOf(url));
+                        widget.onViewImage(_images.indexOf(myImage));
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
-                        child: CustomNetworkImage(
-                          url: url,
-                          fit: BoxFit.cover,
-                          width: _width,
-                          height: _height,
-                        ),
+                        child: myImage.url != null
+                            ? CustomNetworkImage(
+                                url: myImage.url ?? '',
+                                fit: BoxFit.cover,
+                                width: _width,
+                                height: _height,
+                              )
+                            : Image.file(
+                                File(myImage.path!.path),
+                                fit: BoxFit.cover,
+                                width: _width,
+                                height: _height,
+                              ),
                       ),
                     ),
                     !_showImageAddress
                         ? Container()
                         : Positioned(
-                            left: 8,
-                            bottom: 2,
+                            left: 14,
+                            bottom: 0,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -109,7 +141,7 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
                             right: 6,
                             child: InkWell(
                               onTap: () {
-                                widget.onImageAction!(_images.indexOf(url));
+                                widget.onImageAction!(_images.indexOf(myImage));
                               },
                               child: AppIcon.icMoreAction.widget(),
                             ),
@@ -120,18 +152,20 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
               .toList(),
         ),
         const SizedBox(height: 6),
-        Center(
-          child: AnimatedSmoothIndicator(
-            count: _images.length,
-            activeIndex: _currentImage,
-            effect: WormEffect(
-              dotHeight: 10,
-              dotWidth: 10,
-              activeDotColor: AppColors.color3A73FF,
-              dotColor: AppColors.colorC0C0C0,
-            ),
-          ),
-        ),
+        _images.length > 1
+            ? Center(
+                child: AnimatedSmoothIndicator(
+                  count: _images.length,
+                  activeIndex: _currentImage,
+                  effect: WormEffect(
+                    dotHeight: 10,
+                    dotWidth: 10,
+                    activeDotColor: AppColors.color3A73FF,
+                    dotColor: AppColors.colorC0C0C0,
+                  ),
+                ),
+              )
+            : Container(),
       ],
     );
   }

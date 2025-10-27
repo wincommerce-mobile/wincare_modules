@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wincare_modules/app/app_secure_storage.dart';
-import 'package:wincare_modules/features/capture/presentation/widgets/common_dialog.dart';
 
 import '../../../app/app_constants.dart';
 import '../domain/entities/user_entity.dart';
@@ -18,62 +17,25 @@ class CaptureController extends GetxController {
   var selectedReason = Rxn<String>();
   var reasons = RxList<String>(['Apple', 'Banana', 'Cherry', 'Mango']);
 
-  var allowMultiImage = false.obs;
-
-  var banners = RxList<String>([
-    'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-    'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
+  var banners = RxList<MyImage>([
+    MyImage(
+      url:
+          'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
+      path: null,
+    ),
+    MyImage(
+      url:
+          'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
+      path: null,
+    ),
   ]);
 
-  var images = RxList<String>([]);
-
-  final sampleImage =
-      'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg';
-
-  var singleImage = Rxn<String>();
-
+  var images = RxList<MyImage>([]);
+  var currentImage = 0.obs;
   final ImagePicker _picker = ImagePicker();
 
-  void toggleSwitch(bool val) {
-    /// current is allow multi
-    if (allowMultiImage.value) {
-      switch (images.length) {
-        case 0:
-
-          /// turn off
-          allowMultiImage.value = val;
-          break;
-        case 1:
-          singleImage.value = images[0];
-          images.clear();
-
-          /// turn off
-          allowMultiImage.value = val;
-          break;
-        default:
-          showWarningDialog(
-            context: Get.context!,
-            message:
-                'Vui lòng chỉ giữ lại 1 hình nếu muốn quay về chấm hình đơn',
-          );
-
-          /// -> show popup
-          break;
-      }
-    } else {
-      /// turn on
-      allowMultiImage.value = val;
-
-      /// Add single image to multi
-      if (singleImage.value != null) {
-        images.add(singleImage.value!);
-        singleImage.value = null;
-      }
-    }
-  }
-
-  void onDeleteSingleImage() {
-    singleImage.value = null;
+  void updateCurrentImage(int index) {
+    currentImage.value = index;
   }
 
   void onDeleteImageInList(int index) {
@@ -82,30 +44,27 @@ class CaptureController extends GetxController {
   }
 
   void onUpdateImageInList(int index) async {
-    final newUrl = await replacePicture();
-    if (newUrl != null) {
-      images[index] = newUrl;
+    final newPath = await replacePicture();
+    if (newPath != null) {
+      images[index] = MyImage(url: null, path: newPath);
       images.refresh();
     }
   }
 
-  void onAddNewImage(String url) {
-    if (allowMultiImage.value) {
-      images.add(url);
-      images.refresh();
-    } else {
-      singleImage.value = url;
-    }
+  void onAddNewImage(XFile image) {
+    images.add(MyImage(url: null, path: image));
+    images.refresh();
+    updateCurrentImage(images.length - 1);
   }
 
-  Future<String?> replacePicture() async {
+  Future<XFile?> replacePicture() async {
     final XFile? image = await _picker.pickImage(
       source: ImageSource.camera,
       preferredCameraDevice: CameraDevice.rear,
     );
     if (image != null) {
       /// Send this image to server and get the url back
-      return sampleImage;
+      return image;
     } else {
       return null;
     }
@@ -119,7 +78,7 @@ class CaptureController extends GetxController {
 
     if (image != null) {
       /// Send this image to server and get the url back
-      onAddNewImage(sampleImage);
+      onAddNewImage(image);
     } else {
       debugPrint('No image captured');
     }
@@ -160,4 +119,11 @@ class CaptureController extends GetxController {
 
     ///
   }
+}
+
+class MyImage {
+  final String? url;
+  final XFile? path;
+
+  MyImage({required this.url, required this.path});
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:wincare_modules/app/app_service.dart';
 
 import 'app/app_config.dart';
 import 'app/app_pages.dart';
@@ -12,7 +13,7 @@ void main() {
     'ENV',
     defaultValue: Environment.dev,
   );
-
+  AppService().environment = environment;
   AppConfig(env: Environment.getConfigEnvironment(environment));
 
   runApp(MainApp(initialRoute: AppRoutes.capture));
@@ -35,7 +36,7 @@ void displayCapture() {
     'ENV',
     defaultValue: Environment.dev,
   );
-
+  AppService().environment = environment;
   AppConfig(env: Environment.getConfigEnvironment(environment));
 
   runApp(MainApp(initialRoute: AppRoutes.capture));

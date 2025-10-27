@@ -149,6 +149,63 @@ void showWarningDialog({
   );
 }
 
+void showInformDialog({
+  required BuildContext context,
+  required String message,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        backgroundColor: AppColors.white,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppIcon.icImageInfo.widget(width: 50, height: 50),
+                  const SizedBox(height: 24),
+                  DottedBorder(
+                    options: RoundedRectDottedBorderOptions(
+                      dashPattern: [6, 5],
+                      strokeWidth: 1,
+                      radius: Radius.circular(4),
+                      color: AppColors.colorC2C2C2,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: AppText(
+                    text: message,
+                    fontSize: 16,
+                    textAlign: TextAlign.start,
+                    color: AppColors.black,
+                    fontWeight: FontWeight.w500,
+                  ),)
+                ],
+              ),
+            ),
+            Positioned(
+              top: -6,
+              right: -6,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(Icons.close),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 void showCupertinoActionSheet({
   required BuildContext context,
   required VoidCallback onUpdateImage,

@@ -4,7 +4,7 @@ extension ProductionEnvironment on Environment {
   static Environment env() {
     return Environment(
       envName: "PRO",
-      baseDomain: "https://api-wincare-report.winmart.vn",
+      baseDomain: "https://api-wincare.winmart.vn",
     );
   }
 }

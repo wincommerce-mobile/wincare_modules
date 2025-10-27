@@ -1,30 +1,59 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wincare_modules/app/app_icon.dart';
 
 import '../../../../app/app_colors.dart';
-import '../../../../app/app_text.dart';
 
 PreferredSizeWidget commonAppBar(
   String title, {
   List<Widget>? actions,
-  bool hideLeading = false,
 }) {
   return AppBar(
     backgroundColor: AppColors.appbar,
     elevation: 0,
-    leading: (hideLeading)
-        ? null
-        : IconButton(
-            icon: const Icon(Icons.arrow_back_outlined, color: AppColors.white),
-            onPressed: () => Get.back(),
-          ),
-    title: AppText(
-      text: title,
-      color: AppColors.white,
-      fontSize: 16,
-      fontWeight: FontWeight.w700,
+    leading: SizedBox(
+      width: 40,
+      height: 40,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: InkWell(
+          onTap: () => Get.back(),
+          child: AppIcon.icBack.widget(),
+        ),
+      ),
+    ),
+    title: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: AutoSizeText(
+        title,
+        maxFontSize: 21,
+        minFontSize: 16,
+        maxLines: 2,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.bold,
+          color: AppColors.white,
+        ),
+      ),
     ),
     centerTitle: true,
     actions: actions,
   );
 }
+
+/*
+AutoSizeText(
+                                                  item.major,
+                                                  maxFontSize: 117,
+                                                  minFontSize: 14,
+                                                  maxLines: 1,
+                                                  textAlign: TextAlign.end,
+                                                  style: TextStyle(
+                                                    fontSize: 117,
+                                                    fontFamily: 'Roboto',
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                )
+*/
