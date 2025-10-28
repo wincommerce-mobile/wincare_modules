@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../features/capture/domain/entities/user_entity.dart';
@@ -17,6 +18,7 @@ class AppSecureStorage {
   static Future<void> saveUser(UserEntity user) async {
     final jsonStr = jsonEncode(user.toJson());
     await _storage.write(key: _keyUser, value: jsonStr);
+    debugPrint("saveUser success: ${user.displayName}");
   }
 
   static Future<UserEntity?> getUser() async {

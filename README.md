@@ -28,6 +28,9 @@ build to libs repo:
 for ios:
 
 ```flutter build ios-framework --output=../MyiOSNativeApp/Flutter/```
+```If add new package, add it to FlutterPluginRegistrant.podspec first```
+```Add and Signed its to Frameworks and Libraries in Xcode```
+```Then run pod install in native ios repo```
 
 for example:
 

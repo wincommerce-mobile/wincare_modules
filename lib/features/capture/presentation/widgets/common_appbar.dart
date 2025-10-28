@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_icon.dart';
 
 import '../../../../app/app_colors.dart';
@@ -13,12 +12,15 @@ PreferredSizeWidget commonAppBar(
   return AppBar(
     backgroundColor: AppColors.appbar,
     elevation: 0,
-    leading: SizedBox(
-      width: 40,
-      height: 40,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: InkWell(onTap: onBack, child: AppIcon.icBack.widget()),
+    leading: InkWell(
+      onTap: onBack,
+      child: SizedBox(
+        width: 40,
+        height: 40,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: AppIcon.icBack.widget(),
+        ),
       ),
     ),
     title: Padding(

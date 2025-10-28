@@ -78,7 +78,6 @@ class CaptureController extends GetxController {
       preferredCameraDevice: CameraDevice.rear,
     );
 
-
     if (image != null) {
       /// Send this image to server and get the url back
       onAddNewImage(image);
@@ -95,33 +94,33 @@ class CaptureController extends GetxController {
   ///
 
   Future<void> setupChannelHandler() async {
-    //try {
-    isLoading.value = true;
-    _channel.setMethodCallHandler((call) async {
-      debugPrint("Received arguments: ${call.arguments}");
-      switch (call.method) {
-        case AppConstants.getRequestData:
-          final jsonStr = call.arguments as String;
-          debugPrint("Received getRequestData: $jsonStr");
-          final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-          final userEntity = UserEntity.fromJson(decoded);
-          await AppSecureStorage.saveUser(userEntity);
-          isLoading.value = false;
-          break;
-        case AppConstants.onNativeBackPressed:
-          if (Get.context != null) {
-            showWarningDialog(
-              context: Get.context!,
-              message: 'Vui lòng xác nhận kết quả',
-            );
-          }
-          break;
-      }
-    });
-    // } catch (e) {
-    //   isLoading.value = false;
-    //   debugPrint('Error setting up channel handler: $e');
-    // }
+    try {
+      isLoading.value = true;
+      _channel.setMethodCallHandler((call) async {
+        debugPrint("Received arguments: ${call.arguments}");
+        switch (call.method) {
+          case AppConstants.getRequestData:
+            final jsonStr = call.arguments as String;
+            debugPrint("Received getRequestData: $jsonStr");
+            final Map<String, dynamic> decoded = jsonDecode(jsonStr);
+            final userEntity = UserEntity.fromJson(decoded);
+            await AppSecureStorage.saveUser(userEntity);
+            isLoading.value = false;
+            break;
+          case AppConstants.onNativeBackPressed:
+            if (Get.context != null) {
+              showWarningDialog(
+                context: Get.context!,
+                message: 'Vui lòng xác nhận kết quả',
+              );
+            }
+            break;
+        }
+      });
+    } catch (e) {
+      isLoading.value = false;
+      debugPrint('Error setting up channel handler: $e');
+    }
   }
 }
 
