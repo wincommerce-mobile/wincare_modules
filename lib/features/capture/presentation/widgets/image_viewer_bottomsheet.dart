@@ -110,17 +110,23 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                         children: [
                           Stack(
                             children: [
-                              _photos[index].url != null
-                                  ? CustomNetworkImage(
-                                      url: _photos[index].url!,
-                                      height: Get.height * .92 - _bottom,
-                                      fit: BoxFit.fill,
-                                    )
-                                  : Image.file(
-                                      File(_photos[index].path!.path),
-                                      height: Get.height * .92 - _bottom,
-                                      fit: BoxFit.fill,
-                                    ),
+                              InteractiveViewer(
+                                panEnabled: true,
+                                minScale: 1,
+                                maxScale: 5,
+                                child: _photos[index].url != null
+                                    ? CustomNetworkImage(
+                                        url: _photos[index].url!,
+                                        height: Get.height * .92 - _bottom,
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Image.file(
+                                        File(_photos[index].path!.path),
+                                        height: Get.height * .92 - _bottom,
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
+
                               widget.isShowDelete
                                   ? Positioned(
                                       left: 4,
@@ -130,7 +136,8 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           AppText(
-                                            text: _photos[index].takenDate ?? '',
+                                            text:
+                                                _photos[index].takenDate ?? '',
                                             color: AppColors.white,
                                             backgroundColor: AppColors.black,
                                             fontSize: 10,

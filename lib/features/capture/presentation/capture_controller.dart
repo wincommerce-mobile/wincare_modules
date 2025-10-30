@@ -203,7 +203,7 @@ class CaptureController extends GetxController {
           ),
         ],
         result: ImageResult(
-          status: MyImageStatus.pending,
+          status: MyImageStatus.processing,
           name: 'AI chấm',
           resultDate: '16/10/2025 11:33',
         ),
@@ -355,7 +355,7 @@ class ImageZone {
 
 enum MyImageStatus {
   created(name: 'Mới tạo', color: AppColors.black4D),
-  pending(name: 'Chờ kết quả chấm', color: Color(0xFFE7B400)),
+  processing(name: 'Chờ kết quả chấm', color: Color(0xFFE7B400)),
   verified(name: 'Đạt', color: Color(0xFF3A73FF)),
   failed(name: 'Rớt', color: AppColors.red);
 

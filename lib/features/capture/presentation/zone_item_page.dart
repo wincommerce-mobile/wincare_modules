@@ -38,13 +38,16 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   ImageResult get _result => widget.imageZone.result;
 
-  bool get _showVerifyImageButton => widget.imageZone.myImages.isNotEmpty;
+  bool get _showVerifyImageButton =>
+      (widget.imageZone.myImages.isNotEmpty &&
+      _result.status != MyImageStatus.verified &&
+      _result.status != MyImageStatus.processing);
 
   double get _bottom => MediaQuery.of(context).padding.bottom;
 
   String? _selectedReason;
 
-  final _reasons = ['Apple', 'Banana', 'Cherry', 'Mango'];
+  final _reasons = ['Chấm sai', 'Chấm sai 1', 'Chấm sai 2', 'Chấm sai 3'];
 
   @override
   bool get wantKeepAlive => true;
@@ -289,7 +292,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                   ),
                 ],
               ),
-              if (_result.status == MyImageStatus.pending) ...[
+              if (_result.status == MyImageStatus.processing) ...[
                 const SizedBox(height: 8),
                 DiagonalStripesShimmer(
                   height: 14,
@@ -306,38 +309,41 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   /// Confirm / Feedback
   Widget _buildAction() {
-    if (_result.status == MyImageStatus.pending ||
+    if (_result.status == MyImageStatus.processing ||
         _result.status == MyImageStatus.created) {
       return Container();
     }
-    return Row(
-      children: [
-        Expanded(
-          child: CustomButton(
-            text: 'Xác nhận',
-            onPressed: () {
-              showConfirmDialog(
-                context: context,
-                message: 'Bạn chắc chắn xác nhận kết quả?',
-                onConfirm: () {},
-              );
-            },
-            height: 48,
-            bgColor: AppColors.color3A73FF,
+    return Container(
+      color: AppColors.white,
+      child: Row(
+        children: [
+          Expanded(
+            child: CustomButton(
+              text: 'Xác nhận',
+              onPressed: () {
+                showConfirmDialog(
+                  context: context,
+                  message: 'Bạn chắc chắn xác nhận kết quả?',
+                  onConfirm: () {},
+                );
+              },
+              height: 48,
+              bgColor: AppColors.color3A73FF,
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: CustomButton(
-            text: 'Khiếu nại',
-            onPressed: () {
-              showDropdownReasonDialog();
-            },
-            height: 48,
-            bgColor: AppColors.red,
+          const SizedBox(width: 16),
+          Expanded(
+            child: CustomButton(
+              text: 'Khiếu nại',
+              onPressed: () {
+                showDropdownReasonDialog();
+              },
+              height: 48,
+              bgColor: AppColors.red,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
