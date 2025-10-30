@@ -130,7 +130,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           AppText(
-                                            text: "24/09/2025 16:14:06",
+                                            text: _photos[index].takenDate ?? '',
                                             color: AppColors.white,
                                             backgroundColor: AppColors.black,
                                             fontSize: 10,
@@ -138,7 +138,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                           ),
                                           const SizedBox(height: 2),
                                           AppText(
-                                            text: "17 Lê Duẩn, Quận 1, HCM",
+                                            text: _photos[index].address ?? '',
                                             fontSize: 10,
                                             backgroundColor: AppColors.black,
                                             color: AppColors.white,

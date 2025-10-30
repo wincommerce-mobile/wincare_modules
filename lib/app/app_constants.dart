@@ -8,5 +8,6 @@ class AppConstants {
   static const String getSaleOrderData = 'getSaleOrderData';
   static const String getProductData = 'getProductData';
   static const String onBack = 'onBack';
+  static const String getAddressFromLocation = 'getAddressFromLocation';
   static const String onNativeBackPressed = 'onNativeBackPressed';
 }

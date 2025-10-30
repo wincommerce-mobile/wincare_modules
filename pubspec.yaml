@@ -32,6 +32,8 @@ dependencies:
 
   flutter_secure_storage: ^9.2.4
 
+  connectivity_plus: ^7.0.0
+
   # state management
   get: ^4.7.2
 
@@ -39,6 +41,10 @@ dependencies:
   dio: ^5.8.0+1
   retrofit: ^4.4.2
   json_annotation: ^4.9.0
+
+  # Location
+  geocoding: ^4.0.0
+  geolocator: ^14.0.2
 
 dev_dependencies:
   flutter_test:

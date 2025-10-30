@@ -118,7 +118,7 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AppText(
-                                  text: "24/09/2025 16:14:06",
+                                  text: myImage.takenDate ?? '',
                                   color: AppColors.white,
                                   backgroundColor: AppColors.black,
                                   fontSize: 10,
@@ -126,7 +126,7 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
                                 ),
                                 const SizedBox(height: 2),
                                 AppText(
-                                  text: "17 Lê Duẩn, Quận 1, HCM",
+                                  text: myImage.address ?? '',
                                   fontSize: 10,
                                   backgroundColor: AppColors.black,
                                   color: AppColors.white,
@@ -147,14 +147,16 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
                               child: AppIcon.icMoreAction.widget(),
                             ),
                           ),
-                    myImage.isHandled ? Positioned(
-                      top: 12,
-                      right: 0,
-                      child: ImageLabel(
-                        label: 'Hình đã xử lý',
-                        textSize: 12,
-                      ),
-                    ) : SizedBox.shrink(),
+                    myImage.isHandled
+                        ? Positioned(
+                            top: 12,
+                            right: 0,
+                            child: ImageLabel(
+                              label: 'Hình đã xử lý',
+                              textSize: 12,
+                            ),
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
               )

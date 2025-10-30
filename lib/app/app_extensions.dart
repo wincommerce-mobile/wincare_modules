@@ -47,6 +47,12 @@ extension DateTimeExtension on DateTime {
   String formatDateNoYear() {
     return DateFormat('dd/MM').format(this);
   }
+
+  String toAppDateTimeFormat() {
+    // 'this' ở đây chính là đối tượng DateTime mà bạn gọi hàm
+    final formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
+    return formatter.format(this);
+  }
 }
 
 extension StringExtension on String {

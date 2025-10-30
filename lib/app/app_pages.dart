@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:wincare_modules/features/capture/presentation/capture_binding.dart';
 import 'package:wincare_modules/features/capture/presentation/history/history_page.dart';
 
+import '../features/capture/presentation/capture_main_page.dart';
 import '../features/printer/presentation/pages/page.dart';
 
 class AppPages {
@@ -13,7 +14,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.capture,
-      page: () => const CapturePage(),
+      page: () => const CaptureMainPage(),
       binding: CaptureBinding(),
     ),
     GetPage(name: AppRoutes.history, page: () => const HistoryPage()),
