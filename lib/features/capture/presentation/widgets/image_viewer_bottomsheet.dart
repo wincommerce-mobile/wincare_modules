@@ -10,6 +10,7 @@ import '../../../../app/app_function.dart';
 import '../../../../app/app_text.dart';
 import 'custom_network_image.dart';
 import 'dismissible_page.dart';
+import 'smart_network_image.dart';
 
 class ImageViewerBottomSheet extends StatefulWidget {
   ImageViewerBottomSheet({
@@ -97,7 +98,6 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                   PageView.builder(
                     controller: widget.pageController,
                     itemCount: _photos.length,
-
                     physics: ClampingScrollPhysics(),
                     onPageChanged: (page) {
                       setState(() {
@@ -105,6 +105,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                       });
                     },
                     itemBuilder: (context, index) {
+                      final photo = _photos[index];
                       return Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -114,14 +115,14 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                 panEnabled: true,
                                 minScale: 1,
                                 maxScale: 5,
-                                child: _photos[index].url != null
+                                child: photo.url != null
                                     ? CustomNetworkImage(
-                                        url: _photos[index].url!,
+                                        url: photo.url!,
                                         height: Get.height * .92 - _bottom,
                                         fit: BoxFit.fill,
                                       )
                                     : Image.file(
-                                        File(_photos[index].path!.path),
+                                        File(photo.path!.path),
                                         height: Get.height * .92 - _bottom,
                                         fit: BoxFit.fill,
                                       ),
@@ -136,8 +137,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           AppText(
-                                            text:
-                                                _photos[index].takenDate ?? '',
+                                            text: photo.takenDate ?? '',
                                             color: AppColors.white,
                                             backgroundColor: AppColors.black,
                                             fontSize: 10,
@@ -145,7 +145,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                           ),
                                           const SizedBox(height: 2),
                                           AppText(
-                                            text: _photos[index].address ?? '',
+                                            text: photo.address ?? '',
                                             fontSize: 10,
                                             backgroundColor: AppColors.black,
                                             color: AppColors.white,
@@ -157,7 +157,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                   : Container(),
                             ],
                           ),
-                          !widget.isShowDelete
+                          !(widget.isShowDelete) || photo.isHandled
                               ? SizedBox.shrink()
                               : InkWell(
                                   onTap: () {

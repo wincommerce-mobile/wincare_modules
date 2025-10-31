@@ -320,6 +320,7 @@ class ImageZone {
   final List<MyImage> sampleImages;
   final List<MyImage> myImages;
   final ImageResult result;
+  final bool finalComplianceStatus;
   bool selected;
 
   ImageZone({
@@ -329,6 +330,7 @@ class ImageZone {
     required this.sampleImages,
     required this.myImages,
     required this.result,
+    this.finalComplianceStatus = false,
     this.selected = false,
   });
 

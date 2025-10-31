@@ -38,10 +38,18 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   ImageResult get _result => widget.imageZone.result;
 
+  bool get _finalComplianceStatus => widget.imageZone.finalComplianceStatus;
+
   bool get _showVerifyImageButton =>
       (widget.imageZone.myImages.isNotEmpty &&
-      _result.status != MyImageStatus.verified &&
-      _result.status != MyImageStatus.processing);
+          _result.status != MyImageStatus.verified &&
+          _result.status != MyImageStatus.processing) ||
+      !_finalComplianceStatus;
+
+  bool get _showTakePickTureButton =>
+      (_result.status != MyImageStatus.verified &&
+          _result.status != MyImageStatus.processing) ||
+      !_finalComplianceStatus;
 
   double get _bottom => MediaQuery.of(context).padding.bottom;
 
@@ -211,21 +219,23 @@ class _ZoneItemPageState extends State<ZoneItemPage>
     return Row(
       children: [
         Expanded(
-          child: CustomBorderButton(
-            title: 'Chụp hình mới',
-            onPressed: () async {
-              widget.onTakePicTure();
-            },
-            icon: AppIcon.icCamera.widget(),
-            borderColor: AppColors.color3A73FF,
-            textColor: AppColors.color3A73FF,
-          ),
+          child: _showTakePickTureButton
+              ? CustomBorderButton(
+                  title: 'Chụp hình mới',
+                  onPressed: () async {
+                    widget.onTakePicTure();
+                  },
+                  icon: AppIcon.icCamera.widget(),
+                  borderColor: AppColors.color3A73FF,
+                  textColor: AppColors.color3A73FF,
+                )
+              : SizedBox.shrink(),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: _showVerifyImageButton
               ? CustomButton(text: 'Chấm hình', onPressed: () {})
-              : Container(),
+              : SizedBox.shrink(),
         ),
       ],
     );
@@ -310,7 +320,8 @@ class _ZoneItemPageState extends State<ZoneItemPage>
   /// Confirm / Feedback
   Widget _buildAction() {
     if (_result.status == MyImageStatus.processing ||
-        _result.status == MyImageStatus.created) {
+        _result.status == MyImageStatus.created ||
+        _finalComplianceStatus) {
       return Container();
     }
     return Container(

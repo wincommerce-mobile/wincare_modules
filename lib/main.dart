@@ -7,12 +7,14 @@ import 'app/app_config.dart';
 import 'app/app_pages.dart';
 import 'app/environments/environment.dart';
 
+/// Environment
+String environment = const String.fromEnvironment(
+  'ENV',
+  defaultValue: Environment.dev,
+);
+
 void main() {
   /// Init config for app based on environment
-  String environment = const String.fromEnvironment(
-    'ENV',
-    defaultValue: Environment.dev,
-  );
   AppService().environment = environment;
   AppConfig(env: Environment.getConfigEnvironment(environment));
 
@@ -21,21 +23,24 @@ void main() {
 
 @pragma('vm:entry-point')
 void printReceipt() {
+  /// Init config for app based on environment
+  AppService().environment = environment;
+  AppConfig(env: Environment.getConfigEnvironment(environment));
   runApp(MainApp(initialRoute: AppRoutes.receipt));
 }
 
 @pragma('vm:entry-point')
 void printItems() {
+  /// Init config for app based on environment
+  AppService().environment = environment;
+  AppConfig(env: Environment.getConfigEnvironment(environment));
+
   runApp(MainApp(initialRoute: AppRoutes.printLabel));
 }
 
 @pragma('vm:entry-point')
 void displayCapture() {
   /// Init config for app based on environment
-  String environment = const String.fromEnvironment(
-    'ENV',
-    defaultValue: Environment.dev,
-  );
   AppService().environment = environment;
   AppConfig(env: Environment.getConfigEnvironment(environment));
 
