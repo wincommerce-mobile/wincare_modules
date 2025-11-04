@@ -2,17 +2,13 @@ import '../../domain/entities/employee/banner_entity.dart';
 import '../../domain/entities/employee/employee_overview_entity.dart';
 import '../response/employee/employee_overview_response.dart';
 
-class EmployeeMapper {
-  static EmployeeOverviewEntity toEmployeeOverviewEntity(
-    EmployeeOverviewResponse response,
-  ) {
+extension EmployeeMapper on EmployeeOverviewResponse {
+  EmployeeOverviewEntity toEntity() {
     return EmployeeOverviewEntity(
-      employeeCode: response.employeeCode ?? '',
-      banners: response.banners == null
+      employeeCode: employeeCode ?? '',
+      banners: banners == null
           ? []
-          : response.banners!
-                .map((e) => BannerEntity(url: e.url ?? ''))
-                .toList(),
+          : banners!.map((e) => BannerEntity(url: e.url ?? '')).toList(),
     );
   }
 }

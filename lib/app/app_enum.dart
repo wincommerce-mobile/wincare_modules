@@ -11,3 +11,35 @@ enum LabelTypeEnum {
   final String description;
   final int type;
 }
+
+enum TemplateType {
+  require(title: 'require'),
+  option(title: 'option');
+
+  const TemplateType({required this.title});
+
+  final String title;
+
+  static TemplateType fromServer(String? type) {
+    switch (type) {
+      case 'require':
+        return TemplateType.require;
+      case 'option':
+        return TemplateType.option;
+      default:
+        return TemplateType.option;
+    }
+  }
+}
+
+/// 1: Hình trưng bày
+/// 2: Hình Outlet
+enum ImageType {
+  sampling(id: 1, title: 'sampling'),
+  outlet(id: 2, title: 'outlet');
+
+  const ImageType({required this.title, required this.id});
+
+  final String title;
+  final int id;
+}

@@ -129,6 +129,10 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                       onDeleteImage: (imageIndex) {
                         _controller.onDeletePicTure(index, imageIndex);
                       },
+                      onGetImagePoint: (result){
+                        _controller.onUpdateResult(index, result);
+                      },
+                      zoneController: _controller.zoneControllers[index],
                     );
                   },
                 ),

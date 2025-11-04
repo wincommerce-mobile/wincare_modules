@@ -1,7 +1,9 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wincare_modules/features/capture/domain/entities/capture/complaint_reason_entity.dart';
 import 'package:wincare_modules/features/capture/presentation/capture_controller.dart';
+import 'package:wincare_modules/features/capture/presentation/zone_controller.dart';
 
 import '../../../app/app_colors.dart';
 import '../../../app/app_function.dart';
@@ -20,11 +22,15 @@ class ZoneItemPage extends StatefulWidget {
     required this.imageZone,
     required this.onTakePicTure,
     required this.onDeleteImage,
+    required this.zoneController,
+    required this.onGetImagePoint,
   });
 
   final ImageZone imageZone;
   final OnTakePicTure onTakePicTure;
   final OnDeleteImage onDeleteImage;
+  final OnGetImagePoint onGetImagePoint;
+  final ZoneController zoneController;
 
   @override
   State<ZoneItemPage> createState() => _ZoneItemPageState();
@@ -53,9 +59,21 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   double get _bottom => MediaQuery.of(context).padding.bottom;
 
-  String? _selectedReason;
+  List<ComplaintReasonEntity> get _reasons => widget.zoneController.reasons;
 
-  final _reasons = ['Chấm sai', 'Chấm sai 1', 'Chấm sai 2', 'Chấm sai 3'];
+  ComplaintReasonEntity? get _selectedReason =>
+      widget.zoneController.selectedReason.value;
+
+  @override
+  void initState() {
+    super.initState();
+    print('zoneController: ${widget.zoneController.zoneId}');
+  }
+
+  Future<void> onGetPoint() async {
+    final result = await widget.zoneController.getResult();
+    widget.onGetImagePoint(result);
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -234,7 +252,12 @@ class _ZoneItemPageState extends State<ZoneItemPage>
         const SizedBox(width: 10),
         Expanded(
           child: _showVerifyImageButton
-              ? CustomButton(text: 'Chấm hình', onPressed: () {})
+              ? CustomButton(
+                  text: 'Chấm hình',
+                  onPressed: () {
+                    onGetPoint();
+                  },
+                )
               : SizedBox.shrink(),
         ),
       ],
@@ -394,7 +417,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                               fontWeight: FontWeight.w500,
                             ),
                             const SizedBox(height: 10),
-                            DropdownButtonFormField<String>(
+                            DropdownButtonFormField<ComplaintReasonEntity>(
                               value: _selectedReason,
                               dropdownColor: AppColors.white,
                               icon: Icon(
@@ -430,10 +453,10 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                               isDense: true,
                               isExpanded: true,
                               items: _reasons.map((item) {
-                                return DropdownMenuItem<String>(
+                                return DropdownMenuItem<ComplaintReasonEntity>(
                                   value: item,
                                   child: AppText(
-                                    text: item,
+                                    text: item.reason ?? '',
                                     color: AppColors.black,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 12,
@@ -441,9 +464,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                                 );
                               }).toList(),
                               onChanged: (value) {
-                                setState(() {
-                                  _selectedReason = value!;
-                                });
+                                widget.zoneController.setSelectReason(value);
                                 setStateBottom(() {});
                               },
                             ),

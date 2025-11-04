@@ -9,18 +9,31 @@ import 'package:image_picker/image_picker.dart';
 import 'package:wincare_modules/app/app_extensions.dart';
 import 'package:wincare_modules/app/app_secure_storage.dart';
 import 'package:wincare_modules/features/capture/data/request/employee_overview_request.dart';
+import 'package:wincare_modules/features/capture/data/request/image_template_request.dart';
+import 'package:wincare_modules/features/capture/domain/entities/capture/complaint_reason_entity.dart';
+import 'package:wincare_modules/features/capture/domain/usecases/get_image_template_use_case.dart';
+import 'package:wincare_modules/features/capture/domain/usecases/get_promotion_aiv_complaint_reason_use_case.dart';
 import 'package:wincare_modules/features/capture/presentation/widgets/loading_indicator.dart';
 
 import '../../../app/app_colors.dart';
 import '../../../app/app_constants.dart';
+import '../data/request/complaint_reason_request.dart';
+import '../domain/entities/base/base_error_entity.dart';
 import '../domain/entities/user_entity.dart';
 import '../domain/usecases/get_employee_overview_use_case.dart';
 import 'widgets/common_dialog.dart';
+import 'zone_controller.dart';
 
 class CaptureController extends GetxController {
   GetEmployeeOverviewUseCase getEmployeeOverviewUseCase;
+  GetImageTemplateUseCase getImageTemplateUseCase;
+  GetPromotionAivComplaintReasonUseCase getPromotionAivComplaintReasonUseCase;
 
-  CaptureController({required this.getEmployeeOverviewUseCase});
+  CaptureController({
+    required this.getEmployeeOverviewUseCase,
+    required this.getImageTemplateUseCase,
+    required this.getPromotionAivComplaintReasonUseCase,
+  });
 
   static final _channel = MethodChannel(AppConstants.captureChannel);
 
@@ -29,6 +42,7 @@ class CaptureController extends GetxController {
   var reasons = RxList<String>(['Apple', 'Banana', 'Cherry', 'Mango']);
 
   final PageController pageController = PageController();
+  final zoneControllers = <ZoneController>[].obs;
 
   void onPageChanged(pageIndex) {
     /// deselect all zones
@@ -65,6 +79,12 @@ class CaptureController extends GetxController {
       imageZones[zoneIndex] = imgZone.copyWith(myImages: imgZone.myImages);
       imageZones.refresh();
     }
+  }
+
+  Future<void> onUpdateResult(int zoneIndex, ImageResult result) async {
+    var imgZone = imageZones[zoneIndex];
+    imageZones[zoneIndex] = imgZone.copyWith(result: result);
+    imageZones.refresh();
   }
 
   Future<XFile?> _takePicture() async {
@@ -173,6 +193,36 @@ class CaptureController extends GetxController {
     } catch (e) {
       debugPrint('Error get address from location: $e');
       return null;
+    }
+  }
+
+  Future<void> _getImageTemplates() async {
+    try {
+      final request = ImageTemplateRequest();
+      final result = await getImageTemplateUseCase.call(request);
+    } on BaseErrorEntity catch (error) {
+      if (error.statusCode == 1002) {
+        /// SignOut
+      }
+    }
+  }
+
+  Future<List<ComplaintReasonEntity>> _getComplaintReason() async {
+    try {
+      final user = await AppSecureStorage.getUser();
+      final request = ComplaintReasonRequest(
+        userId: user?.userId,
+        userName: user?.displayName,
+        employeeCode: user?.employeeCode,
+        siteId: user?.siteId,
+      );
+      final result = await getPromotionAivComplaintReasonUseCase.call(request);
+      return result;
+    } on BaseErrorEntity catch (error) {
+      if (error.statusCode == 1002) {
+        /// SignOut
+      }
+      return [];
     }
   }
 
@@ -291,6 +341,29 @@ class CaptureController extends GetxController {
       ),
     ];
     imageZones.value = zones;
+    final reason = await _getComplaintReason();
+    for (var zone in zones) {
+      final zc = ZoneController(zoneId: zone.zoneId, complaintReasons: reason);
+      // if zone already has a processing state, start polling
+      if (zone.result.status == MyImageStatus.processing) {
+        zc.startPolling();
+      }
+      zoneControllers.add(zc);
+    }
+  }
+
+  Future<ImageResult> _getImageResultFromServer(int zoneIndex) async {
+    // call get result API for the zone
+    // e.g. final res = await getImageResultUseCase.call(GetImageResultRequest(...));
+    // return res;
+    throw UnimplementedError('Implement image result fetch from server');
+  }
+
+  Future<void> _submitImageToServer(int zoneIndex, MyImage image) async {
+    // call upload/process API for the zone/image
+    // e.g. await processImageUseCase.call(ProcessImageRequest(...));
+    // after sending, the backend will report processing state -> ZoneController will poll _fetchZoneResultFromServer
+    throw UnimplementedError('Implement image submit to server');
   }
 
   void getEmployeeOverview() async {

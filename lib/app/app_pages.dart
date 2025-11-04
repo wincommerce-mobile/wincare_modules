@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:wincare_modules/features/capture/presentation/capture_binding.dart';
+import 'package:wincare_modules/features/capture/presentation/history/history_binding.dart';
 import 'package:wincare_modules/features/capture/presentation/history/history_page.dart';
 
 import '../features/capture/presentation/capture_main_page.dart';
@@ -17,7 +18,11 @@ class AppPages {
       page: () => const CaptureMainPage(),
       binding: CaptureBinding(),
     ),
-    GetPage(name: AppRoutes.history, page: () => const HistoryPage()),
+    GetPage(
+      name: AppRoutes.history,
+      page: () => const HistoryPage(),
+      binding: HistoryBinding(),
+    ),
   ];
 }
 

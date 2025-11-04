@@ -23,7 +23,7 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
         if (response == null) {
           throw BaseErrorEntity.noData();
         } else {
-          final data = EmployeeMapper.toEmployeeOverviewEntity(response);
+          final data = response.toEntity();
           return data;
         }
       } on BaseErrorResponse catch (error) {

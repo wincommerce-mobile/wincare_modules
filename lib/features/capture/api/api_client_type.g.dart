@@ -54,7 +54,7 @@ class _APIClientType implements APIClientType {
   }
 
   @override
-  Future<BaseListResponse<CaptureHistoryResponse>> getHistory(
+  Future<BaseListResponse<ImageTemplateResponse>> getImageTemplateGarniture(
     Map<String, dynamic> body,
   ) async {
     final _extra = <String, dynamic>{};
@@ -62,22 +62,299 @@ class _APIClientType implements APIClientType {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body);
-    final _options = _setStreamType<BaseListResponse<CaptureHistoryResponse>>(
+    final _options = _setStreamType<BaseListResponse<ImageTemplateResponse>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/History',
+            '/api/MCHDMS/DMSSamplingOutletScoreImageTemplateGarniture',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseListResponse<CaptureHistoryResponse> _value;
+    late BaseListResponse<ImageTemplateResponse> _value;
     try {
-      _value = BaseListResponse<CaptureHistoryResponse>.fromJson(
+      _value = BaseListResponse<ImageTemplateResponse>.fromJson(
         _result.data!,
-        (json) => CaptureHistoryResponse.fromJson(json as Map<String, dynamic>),
+        (json) => ImageTemplateResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<BaseCreatedResponse>> samplingOutletUploadImage(
+    Map<String, dynamic> body,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<BaseResponse<BaseCreatedResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/MCHDMS/DMSSamplingOutletUploadImage',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<BaseCreatedResponse> _value;
+    try {
+      _value = BaseResponse<BaseCreatedResponse>.fromJson(
+        _result.data!,
+        (json) => BaseCreatedResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<BaseCreatedResponse>> samplingOutletCancelImage(
+    Map<String, dynamic> body,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<BaseResponse<BaseCreatedResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/MCHDMS/DMSSamplingOutletCancelImage',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<BaseCreatedResponse> _value;
+    try {
+      _value = BaseResponse<BaseCreatedResponse>.fromJson(
+        _result.data!,
+        (json) => BaseCreatedResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<BaseCreatedResponse>>
+  samplingOutletSentApprovalImageGarniture(Map<String, dynamic> body) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<BaseResponse<BaseCreatedResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/MCHDMS/DMSSamplingOutletSentApprovalImageGarniture',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<BaseCreatedResponse> _value;
+    try {
+      _value = BaseResponse<BaseCreatedResponse>.fromJson(
+        _result.data!,
+        (json) => BaseCreatedResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<BaseCreatedResponse>> samplingOutletConfirmImageGarniture(
+    Map<String, dynamic> body,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<BaseResponse<BaseCreatedResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/MCHDMS/DMSSamplingOutletConfirmImageGarniture',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<BaseCreatedResponse> _value;
+    try {
+      _value = BaseResponse<BaseCreatedResponse>.fromJson(
+        _result.data!,
+        (json) => BaseCreatedResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseListResponse<ImageGarnitureHistoryResponse>>
+  samplingOutletHistoryImageGarniture(Map<String, dynamic> body) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options =
+        _setStreamType<BaseListResponse<ImageGarnitureHistoryResponse>>(
+          Options(method: 'POST', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                '/api/MCHDMS/DMSSamplingOutletHistoryImageGarniture',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseListResponse<ImageGarnitureHistoryResponse> _value;
+    try {
+      _value = BaseListResponse<ImageGarnitureHistoryResponse>.fromJson(
+        _result.data!,
+        (json) => ImageGarnitureHistoryResponse.fromJson(
+          json as Map<String, dynamic>,
+        ),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<ResultImageGarnitureResponse>>
+  samplingOutletResultImageGarniture(Map<String, dynamic> body) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<BaseResponse<ResultImageGarnitureResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/MCHDMS/DMSSamplingOutletResultImageGarniture',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<ResultImageGarnitureResponse> _value;
+    try {
+      _value = BaseResponse<ResultImageGarnitureResponse>.fromJson(
+        _result.data!,
+        (json) =>
+            ResultImageGarnitureResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseListResponse<ComplaintReasonResponse>>
+  getPromotionAIVComplaintReason(
+    int? userId,
+    String? userName,
+    String? employeeCode,
+    String? siteId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'UserId': userId,
+      r'UserName': userName,
+      r'EmployeeCode': employeeCode,
+      r'SiteId': siteId,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseListResponse<ComplaintReasonResponse>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/MCHDMS/DMSPromotionAIVComplaintReason',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseListResponse<ComplaintReasonResponse> _value;
+    try {
+      _value = BaseListResponse<ComplaintReasonResponse>.fromJson(
+        _result.data!,
+        (json) =>
+            ComplaintReasonResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<BaseCreatedResponse>> promotionAIVComplaint(
+    Map<String, dynamic> body,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<BaseResponse<BaseCreatedResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/MCHDMS/DMSPromotionAIVComplaint',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<BaseCreatedResponse> _value;
+    try {
+      _value = BaseResponse<BaseCreatedResponse>.fromJson(
+        _result.data!,
+        (json) => BaseCreatedResponse.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
