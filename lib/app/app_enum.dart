@@ -43,3 +43,11 @@ enum ImageType {
   final String title;
   final int id;
 }
+
+enum FileExtension {
+  jpeg(type: 'JPEG');
+
+  const FileExtension({required this.type});
+
+  final String type;
+}

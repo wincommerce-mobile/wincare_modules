@@ -7,12 +7,12 @@ class ImageGarnitureHistoryRequest {
   String? imageGarnitureId;
 
   ImageGarnitureHistoryRequest({
-    this.userId,
-    this.userName,
-    this.employeeCode,
-    this.samplingId,
-    this.outletCode,
-    this.imageGarnitureId,
+    required this.userId,
+    required this.userName,
+    required this.employeeCode,
+    required this.samplingId,
+    required this.outletCode,
+    required this.imageGarnitureId,
   });
 
   Map<String, dynamic> toJson() {

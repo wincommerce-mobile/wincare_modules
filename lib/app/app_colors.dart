@@ -19,4 +19,11 @@ class AppColors {
   static const color9D9D9D = Color(0xFF9D9D9D);
   static const colorE7B400 = Color(0xFFE7B400);
   static const colorFF0000 = Color(0xFFFF0000);
+
+  /// Beige
+  static const beigeShade30 = Color.fromRGBO(153, 113, 0, 1);
+  static const beigeTint90 = Color.fromRGBO(252, 245, 223, 1);
+  /// Green
+  static const green0D = Color(0xff0DA40A);
+  static const green00 = Color(0xff00BC3C);
 }

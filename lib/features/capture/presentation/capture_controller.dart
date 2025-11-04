@@ -8,31 +8,65 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wincare_modules/app/app_extensions.dart';
 import 'package:wincare_modules/app/app_secure_storage.dart';
-import 'package:wincare_modules/features/capture/data/request/employee_overview_request.dart';
 import 'package:wincare_modules/features/capture/data/request/image_template_request.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/complaint_reason_entity.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/get_image_template_use_case.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/get_promotion_aiv_complaint_reason_use_case.dart';
+import 'package:wincare_modules/features/capture/domain/usecases/promotion_aiv_complaint_use_case.dart';
+import 'package:wincare_modules/features/capture/domain/usecases/sampling_cancel_image_use_case.dart';
+import 'package:wincare_modules/features/capture/domain/usecases/sampling_confirm_image_use_case.dart';
+import 'package:wincare_modules/features/capture/domain/usecases/sampling_upload_image_use_case.dart';
 import 'package:wincare_modules/features/capture/presentation/widgets/loading_indicator.dart';
+import 'package:wincare_modules/features/capture/presentation/widgets/snack_bar.dart';
 
 import '../../../app/app_colors.dart';
 import '../../../app/app_constants.dart';
+import '../../../app/app_enum.dart';
 import '../data/request/complaint_reason_request.dart';
+import '../data/request/sampling_upload_image_request.dart';
 import '../domain/entities/base/base_error_entity.dart';
 import '../domain/entities/user_entity.dart';
-import '../domain/usecases/get_employee_overview_use_case.dart';
+import '../domain/usecases/sampling_result_image_garniture.dart';
+import '../domain/usecases/sampling_sent_approval_image_use_case.dart';
+import 'common/capture_method_channel.dart';
 import 'widgets/common_dialog.dart';
 import 'zone_controller.dart';
 
 class CaptureController extends GetxController {
-  GetEmployeeOverviewUseCase getEmployeeOverviewUseCase;
-  GetImageTemplateUseCase getImageTemplateUseCase;
-  GetPromotionAivComplaintReasonUseCase getPromotionAivComplaintReasonUseCase;
+  /// Lấy bộ hình mẫu
+  final GetImageTemplateUseCase getImageTemplateUseCase;
+
+  /// Lý do khiếu nại
+  final GetPromotionAivComplaintReasonUseCase
+  getPromotionAivComplaintReasonUseCase;
+
+  /// Chụp & Upload hình lên server
+  final SamplingUploadImageUseCase samplingUploadImageUseCase;
+
+  /// Xoá hình
+  final SamplingCancelImageUseCase samplingCancelImageUseCase;
+
+  /// Xác nhận bộ hình
+  final SamplingConfirmImageUseCase samplingConfirmImageUseCase;
+
+  /// Khiếu nại kết quá
+  final PromotionAivComplaintUseCase promotionAivComplaintUseCase;
+
+  /// Lấy kết quả
+  final SamplingResultImageGarniture samplingResultImageGarniture;
+
+  /// Gửi Chấm hình
+  final SamplingSentApprovalImageUseCase samplingSentApprovalImageUseCase;
 
   CaptureController({
-    required this.getEmployeeOverviewUseCase,
     required this.getImageTemplateUseCase,
     required this.getPromotionAivComplaintReasonUseCase,
+    required this.samplingUploadImageUseCase,
+    required this.samplingCancelImageUseCase,
+    required this.samplingConfirmImageUseCase,
+    required this.promotionAivComplaintUseCase,
+    required this.samplingResultImageGarniture,
+    required this.samplingSentApprovalImageUseCase,
   });
 
   static final _channel = MethodChannel(AppConstants.captureChannel);
@@ -43,6 +77,8 @@ class CaptureController extends GetxController {
 
   final PageController pageController = PageController();
   final zoneControllers = <ZoneController>[].obs;
+
+  final _userEntity = Rxn<UserEntity>();
 
   void onPageChanged(pageIndex) {
     /// deselect all zones
@@ -60,24 +96,37 @@ class CaptureController extends GetxController {
 
   Future<void> onDeletePicTure(int zoneIndex, imageIndex) async {
     var imgZone = imageZones[zoneIndex];
-    imgZone.myImages.removeAt(imageIndex);
-    imageZones[zoneIndex] = imgZone.copyWith(myImages: imgZone.myImages);
-    imageZones.refresh();
+    final result = await _deleteImage(imgZone.myImages[imageIndex].url);
+    if (result) {
+      imgZone.myImages.removeAt(imageIndex);
+      imageZones[zoneIndex] = imgZone.copyWith(myImages: imgZone.myImages);
+      imageZones.refresh();
+    } else {
+      Get.back();
+    }
   }
 
   Future<void> onTakePicTure(int zoneIndex) async {
     final image = await _takePicture();
     if (image != null) {
-      showLoadingIndicator();
-      final address = await _getAddressFromLocation();
-      final takenDate = DateTime.now().toAppDateTimeFormat();
-      hideLoadingIndicator();
-      var imgZone = imageZones[zoneIndex];
-      imgZone.myImages.add(
-        MyImage(url: null, path: image, address: address, takenDate: takenDate),
-      );
-      imageZones[zoneIndex] = imgZone.copyWith(myImages: imgZone.myImages);
-      imageZones.refresh();
+      //showLoadingIndicator();
+      final result = await _uploadImage(await image.readAsBytes());
+      if (result != null && result.isNotEmpty) {
+        final address = await _getAddressFromLocation();
+        final takenDate = DateTime.now().toAppDateTimeFormat();
+        //hideLoadingIndicator();
+        var imgZone = imageZones[zoneIndex];
+        imgZone.myImages.add(
+          MyImage(
+            url: result,
+            path: null,
+            address: address,
+            takenDate: takenDate,
+          ),
+        );
+        imageZones[zoneIndex] = imgZone.copyWith(myImages: imgZone.myImages);
+        imageZones.refresh();
+      }
     }
   }
 
@@ -115,7 +164,7 @@ class CaptureController extends GetxController {
             final Map<String, dynamic> decoded = jsonDecode(jsonStr);
             final userEntity = UserEntity.fromJson(decoded);
             await AppSecureStorage.saveUser(userEntity);
-            getEmployeeOverview();
+            _userEntity.value = await AppSecureStorage.getUser();
             hideLoadingIndicator();
             break;
           case AppConstants.onNativeBackPressed:
@@ -202,13 +251,15 @@ class CaptureController extends GetxController {
       final result = await getImageTemplateUseCase.call(request);
     } on BaseErrorEntity catch (error) {
       if (error.statusCode == 1002) {
-        /// SignOut
+        await CaptureMethodChannel.logOut();
+        return;
       }
     }
   }
 
   Future<List<ComplaintReasonEntity>> _getComplaintReason() async {
     try {
+      showLoadingIndicator();
       final user = await AppSecureStorage.getUser();
       final request = ComplaintReasonRequest(
         userId: user?.userId,
@@ -217,11 +268,14 @@ class CaptureController extends GetxController {
         siteId: user?.siteId,
       );
       final result = await getPromotionAivComplaintReasonUseCase.call(request);
+      hideLoadingIndicator();
       return result;
     } on BaseErrorEntity catch (error) {
+      hideLoadingIndicator();
       if (error.statusCode == 1002) {
-        /// SignOut
+        await CaptureMethodChannel.logOut();
       }
+      showSnackBar(description: error.message ?? '');
       return [];
     }
   }
@@ -341,9 +395,15 @@ class CaptureController extends GetxController {
       ),
     ];
     imageZones.value = zones;
-    final reason = await _getComplaintReason();
+    //final reason = await _getComplaintReason();
     for (var zone in zones) {
-      final zc = ZoneController(zoneId: zone.zoneId, complaintReasons: reason);
+      final zc = ZoneController(
+        zoneId: zone.zoneId,
+        complaintReasons: [],
+        samplingResultImageGarnitureUseCase: samplingResultImageGarniture,
+        samplingSentApprovalImageUseCase: samplingSentApprovalImageUseCase,
+        promotionAivComplaintUseCase: promotionAivComplaintUseCase,
+      );
       // if zone already has a processing state, start polling
       if (zone.result.status == MyImageStatus.processing) {
         zc.startPolling();
@@ -366,21 +426,77 @@ class CaptureController extends GetxController {
     throw UnimplementedError('Implement image submit to server');
   }
 
-  void getEmployeeOverview() async {
-    final user = await AppSecureStorage.getUser();
-    final rq = EmployeeOverviewRequest(
-      userId: user?.userId,
-      userName: user?.displayName,
-      siteId: user?.siteId,
-      employeeCode: user?.employeeCode,
-    );
-    final result = await getEmployeeOverviewUseCase.call(rq);
-    debugPrint('getEmployeeOverview: ${result.employeeCode}');
-    debugPrint('getEmployeeOverview: ${result.banners.length}');
+  /// =========================== API call Zone ===========================//
+  Future<String?> _uploadImage(Uint8List bytes) async {
+    final user = _userEntity.value;
+    try {
+      showLoadingIndicator();
+      final request = SamplingUploadImageRequest(
+        userId: user?.userId,
+        userName: user?.displayName,
+        employeeCode: user?.employeeCode,
+        siteId: user?.siteId,
+        imageGarnitureId: user?.imageGarnitureId,
+        imageType: ImageType.sampling,
+        img: base64Encode(bytes),
+        urlImg: null,
+        fileName: null,
+        fileExtension: FileExtension.jpeg.type,
+      );
+      final result = await samplingUploadImageUseCase.call(request);
+      debugPrint("_uploadImage: ${result.systemMessage}");
+      hideLoadingIndicator();
+
+      /// Image url
+      return result.systemMessage;
+    } on BaseErrorEntity catch (error) {
+      if (error.statusCode == 1002) {
+        hideLoadingIndicator();
+        showSnackBar(description: error.message ?? '');
+        await CaptureMethodChannel.logOut();
+        return null;
+      }
+      hideLoadingIndicator();
+      showSnackBar(description: error.message ?? '');
+      return null;
+    }
+  }
+
+  Future<bool> _deleteImage(String? urlImg) async {
+    final user = _userEntity.value;
+    try {
+      showLoadingIndicator();
+      final request = SamplingUploadImageRequest(
+        userId: user?.userId,
+        userName: user?.displayName,
+        employeeCode: user?.employeeCode,
+        siteId: user?.siteId,
+        imageGarnitureId: user?.imageGarnitureId,
+        imageType: ImageType.sampling,
+        img: null,
+        urlImg: urlImg,
+        fileName: null,
+        fileExtension: FileExtension.jpeg.type,
+      );
+      final result = await samplingCancelImageUseCase.call(request);
+      debugPrint("_deleteImage: ${result.systemMessage}");
+      hideLoadingIndicator();
+      return true;
+    } on BaseErrorEntity catch (error) {
+      if (error.statusCode == 1002) {
+        hideLoadingIndicator();
+        showSnackBar(description: error.message ?? '');
+        await CaptureMethodChannel.logOut();
+        return false;
+      }
+      hideLoadingIndicator();
+      showSnackBar(description: error.message ?? '');
+      return false;
+    }
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     setupPageView();
   }

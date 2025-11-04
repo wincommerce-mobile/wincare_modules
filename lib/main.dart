@@ -6,6 +6,7 @@ import 'package:wincare_modules/app/app_service.dart';
 import 'app/app_config.dart';
 import 'app/app_pages.dart';
 import 'app/environments/environment.dart';
+import 'app/global.dart';
 
 /// Environment
 String environment = const String.fromEnvironment(
@@ -73,6 +74,9 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       initialRoute: widget.initialRoute,
       getPages: AppPages.pages,
+      navigatorObservers: [navigationObserver],
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
+      navigatorKey: navigatorKey,
     );
   }
 }

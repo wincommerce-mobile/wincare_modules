@@ -4,13 +4,15 @@ class SamplingConfirmGarnitureRequest {
   String? userName;
   String? imageGarnitureId;
   String? outletCode;
+  String? planogramCode;
 
   SamplingConfirmGarnitureRequest({
-    this.userId,
-    this.employeeCode,
-    this.userName,
-    this.outletCode,
-    this.imageGarnitureId,
+    required this.userId,
+    required this.employeeCode,
+    required this.userName,
+    required this.outletCode,
+    required this.imageGarnitureId,
+    required this.planogramCode,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class SamplingConfirmGarnitureRequest {
       'EmployeeCode': employeeCode,
       'OutletCode': outletCode,
       'ImageGarnitureId': imageGarnitureId,
+      'PlanogramCode': planogramCode,
     };
   }
 }

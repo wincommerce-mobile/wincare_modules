@@ -1,14 +1,14 @@
 import '../../../../app/app_enum.dart';
 
 class SamplingUploadImageRequest {
-  final int userId;
-  final String userName;
-  final String employeeCode;
-  final String siteId;
+  final int? userId;
+  final String? userName;
+  final String? employeeCode;
+  final String? siteId;
 
   /// Mã bộ hình trong object DMS_SamplingOutletDetailImageGarniture
-  final String id;
-  final ImageType imageType;
+  final String? imageGarnitureId;
+  final ImageType? imageType;
   final String? img;
   final String? urlImg;
   final String? fileName;
@@ -19,12 +19,12 @@ class SamplingUploadImageRequest {
     required this.userName,
     required this.employeeCode,
     required this.siteId,
-    required this.id,
+    required this.imageGarnitureId,
     required this.imageType,
-    this.img,
-    this.urlImg,
-    this.fileName,
-    this.fileExtension,
+    required this.img,
+    required this.urlImg,
+    required this.fileName,
+    required this.fileExtension,
   });
 
   Map<String, dynamic> toJson() {
@@ -33,8 +33,8 @@ class SamplingUploadImageRequest {
       'UserName': userName,
       'EmployeeCode': employeeCode,
       'SiteId': siteId,
-      'ID': id,
-      'ImageTypeId': imageType.id,
+      'ID': imageGarnitureId,
+      'ImageTypeId': imageType?.id,
       'Img': img,
       'UrlImg': urlImg,
       'FileName': fileName,

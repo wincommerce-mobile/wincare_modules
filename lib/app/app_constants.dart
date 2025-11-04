@@ -10,4 +10,6 @@ class AppConstants {
   static const String onBack = 'onBack';
   static const String getAddressFromLocation = 'getAddressFromLocation';
   static const String onNativeBackPressed = 'onNativeBackPressed';
+
+  static const String onSessionExpired = 'onSessionExpired';
 }

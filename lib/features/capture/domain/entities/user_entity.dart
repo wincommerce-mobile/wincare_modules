@@ -1,31 +1,31 @@
 class UserEntity {
   final String displayName;
   final String sessionLogin;
-  final String email;
   final String employeeCode;
   final String siteId;
-  final int userId;
-  final String urlAvatar;
+  final int? userId;
+  final String imageGarnitureId;
+  final String outletCode;
 
   UserEntity({
     required this.displayName,
     required this.sessionLogin,
-    required this.email,
     required this.employeeCode,
     required this.siteId,
     required this.userId,
-    required this.urlAvatar,
+    required this.imageGarnitureId,
+    required this.outletCode,
   });
 
   factory UserEntity.fromJson(Map<String, dynamic> json) {
     return UserEntity(
       displayName: json['displayName'] ?? '',
       sessionLogin: json['sessionLogin'] ?? '',
-      email: json['email'] ?? '',
       employeeCode: json['employeeCode'] ?? '',
       siteId: json['siteId'] ?? '',
       userId: json['userId'] ?? '',
-      urlAvatar: json['urlAvatar'] ?? '',
+      imageGarnitureId: json['imageGarnitureId'] ?? '',
+      outletCode: json['outletCode'] ?? '',
     );
   }
 
@@ -33,11 +33,11 @@ class UserEntity {
     return {
       'displayName': displayName,
       'sessionLogin': sessionLogin,
-      'email': email,
       'userId': userId,
       'employeeCode': employeeCode,
       'siteId': siteId,
-      'urlAvatar': urlAvatar,
+      'imageGarnitureId': imageGarnitureId,
+      'outletCode': outletCode,
     };
   }
 }

@@ -7,12 +7,12 @@ class SamplingSentApprovalGarnitureRequest {
   String? planogramCode;
 
   SamplingSentApprovalGarnitureRequest({
-    this.userId,
-    this.employeeCode,
-    this.userName,
-    this.samplingId,
-    this.outletCode,
-    this.planogramCode,
+    required this.userId,
+    required this.employeeCode,
+    required this.userName,
+    required this.samplingId,
+    required this.outletCode,
+    required this.planogramCode,
   });
 
   Map<String, dynamic> toJson() {
