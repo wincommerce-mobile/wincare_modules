@@ -17,20 +17,16 @@ class HistoryController extends GetxController {
   var imageGarnitureHistories = RxList<ImageGarnitureHistoryEntity>([]);
 
   Future<void> getImageGarnitureHistory() async {
-    final user = await AppSecureStorage.getUser();
-    //TODO - get from native
-    final samplingId = '';
-    final outletCode = '';
-    final imageGarnitureId = '';
+    final requestData = await AppSecureStorage.getRequestData();
     try {
       showLoadingIndicator();
       final request = ImageGarnitureHistoryRequest(
-        userId: user?.userId,
-        userName: user?.displayName,
-        employeeCode: user?.employeeCode,
-        samplingId: samplingId,
-        outletCode: outletCode,
-        imageGarnitureId: imageGarnitureId,
+        userId: requestData?.userId,
+        userName: requestData?.displayName,
+        employeeCode: requestData?.employeeCode,
+        samplingId: requestData?.samplingId,
+        outletCode: requestData?.outletCode,
+        imageGarnitureId: requestData?.imageGarnitureId,
       );
       final result = await historyImageGarnitureUseCase.call(request);
       imageGarnitureHistories.value = result;

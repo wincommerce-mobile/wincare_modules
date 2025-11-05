@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class CurlLogInterceptor extends CurlLoggerDioInterceptor {
   CurlLogInterceptor()
@@ -37,9 +39,14 @@ class CurlLoggerDioInterceptor extends Interceptor {
   void _renderCurlRepresentation(RequestOptions requestOptions) {
     // add a breakpoint here so all errors can break
     try {
-      log(_cURLRepresentation(requestOptions));
+      if(kDebugMode){
+        log(_cURLRepresentation(requestOptions));
+      }else{
+        debugPrint(_cURLRepresentation(requestOptions));
+      }
+
     } catch (err) {
-      log('unable to create a CURL representation of the requestOptions');
+      debugPrint('unable to create a CURL representation of the requestOptions');
     }
   }
 

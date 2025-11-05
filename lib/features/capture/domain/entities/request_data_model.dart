@@ -1,29 +1,32 @@
-class UserEntity {
+class RequestDataModel {
   final String displayName;
   final String sessionLogin;
   final String employeeCode;
   final String siteId;
   final int? userId;
-  final String imageGarnitureId;
-  final String outletCode;
+  final String? samplingId;
+  final String? imageGarnitureId;
+  final String? outletCode;
 
-  UserEntity({
+  RequestDataModel({
     required this.displayName,
     required this.sessionLogin,
     required this.employeeCode,
     required this.siteId,
     required this.userId,
+    required this.samplingId,
     required this.imageGarnitureId,
     required this.outletCode,
   });
 
-  factory UserEntity.fromJson(Map<String, dynamic> json) {
-    return UserEntity(
+  factory RequestDataModel.fromJson(Map<String, dynamic> json) {
+    return RequestDataModel(
       displayName: json['displayName'] ?? '',
       sessionLogin: json['sessionLogin'] ?? '',
       employeeCode: json['employeeCode'] ?? '',
       siteId: json['siteId'] ?? '',
       userId: json['userId'] ?? '',
+      samplingId: json['samplingId'] ?? '',
       imageGarnitureId: json['imageGarnitureId'] ?? '',
       outletCode: json['outletCode'] ?? '',
     );
@@ -36,6 +39,7 @@ class UserEntity {
       'userId': userId,
       'employeeCode': employeeCode,
       'siteId': siteId,
+      'samplingId': samplingId,
       'imageGarnitureId': imageGarnitureId,
       'outletCode': outletCode,
     };

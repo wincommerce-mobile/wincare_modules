@@ -21,11 +21,17 @@ class CaptureDataSourceImpl implements CaptureDataSource {
   final APIClientType apiClient;
 
   @override
-  Future<ResultImageGarnitureResponse?> samplingOutletResultImageGarniture(ResultImageGarnitureRequest request) async {
-    final req = await GlobalRequestBuilder.build<ResultImageGarnitureRequest>(request);
+  Future<ResultImageGarnitureResponse?> samplingOutletResultImageGarniture(
+    ResultImageGarnitureRequest request,
+  ) async {
+    final req = await GlobalRequestBuilder.build<ResultImageGarnitureRequest>(
+      request,
+    );
     final jsonBody = req.toJson((p) => p?.toJson() ?? {});
     try {
-      final response = await apiClient.samplingOutletResultImageGarniture(jsonBody);
+      final response = await apiClient.samplingOutletResultImageGarniture(
+        jsonBody,
+      );
       if (response.data != null) {
         return response.data;
       }
@@ -85,9 +91,6 @@ class CaptureDataSourceImpl implements CaptureDataSource {
   Future<List<ComplaintReasonResponse>?> getPromotionAIVComplaintReason(
     ComplaintReasonRequest request,
   ) async {
-    final req = await GlobalRequestBuilder.build<ComplaintReasonRequest>(
-      request,
-    );
     try {
       final response = await apiClient.getPromotionAIVComplaintReason(
         request.userId,

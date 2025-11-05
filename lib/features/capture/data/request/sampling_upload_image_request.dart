@@ -8,6 +8,8 @@ class SamplingUploadImageRequest {
 
   /// Mã bộ hình trong object DMS_SamplingOutletDetailImageGarniture
   final String? imageGarnitureId;
+  /// Zone ID
+  final String? planogramCode;
   final ImageType? imageType;
   final String? img;
   final String? urlImg;
@@ -20,6 +22,7 @@ class SamplingUploadImageRequest {
     required this.employeeCode,
     required this.siteId,
     required this.imageGarnitureId,
+    required this.planogramCode,
     required this.imageType,
     required this.img,
     required this.urlImg,
@@ -34,6 +37,7 @@ class SamplingUploadImageRequest {
       'EmployeeCode': employeeCode,
       'SiteId': siteId,
       'ID': imageGarnitureId,
+      'PlanogramCode': planogramCode,
       'ImageTypeId': imageType?.id,
       'Img': img,
       'UrlImg': urlImg,

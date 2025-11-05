@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../features/capture/domain/entities/user_entity.dart';
+import '../features/capture/domain/entities/request_data_model.dart';
 
 class AppSecureStorage {
-  static const _keyUser = 'user';
+  static const _keyRequestData = 'request_data';
 
   static AndroidOptions _getAndroidOptions() =>
       const AndroidOptions(encryptedSharedPreferences: true);
@@ -15,19 +15,19 @@ class AppSecureStorage {
     aOptions: _getAndroidOptions(),
   );
 
-  static Future<void> saveUser(UserEntity user) async {
-    final jsonStr = jsonEncode(user.toJson());
-    await _storage.write(key: _keyUser, value: jsonStr);
-    debugPrint("saveUser success: ${user.displayName}");
+  static Future<void> saveRequestData(RequestDataModel request) async {
+    final jsonStr = jsonEncode(request.toJson());
+    await _storage.write(key: _keyRequestData, value: jsonStr);
+    debugPrint("saveRequest success: ${request.displayName}");
   }
 
-  static Future<UserEntity?> getUser() async {
-    final jsonStr = await _storage.read(key: _keyUser);
+  static Future<RequestDataModel?> getRequestData() async {
+    final jsonStr = await _storage.read(key: _keyRequestData);
     if (jsonStr == null) return null;
-    return UserEntity.fromJson(jsonDecode(jsonStr));
+    return RequestDataModel.fromJson(jsonDecode(jsonStr));
   }
 
-  static Future<void> clearUser() async {
-    await _storage.delete(key: _keyUser);
+  static Future<void> clearRequest() async {
+    await _storage.delete(key: _keyRequestData);
   }
 }

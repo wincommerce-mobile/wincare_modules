@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_secure_storage.dart';
-import 'package:wincare_modules/features/capture/domain/entities/user_entity.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_result_image_garniture.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_sent_approval_image_use_case.dart';
 
@@ -10,6 +9,7 @@ import '../data/request/result_image_garniture_request.dart';
 import '../data/request/sampling_sent_approval_garniture_request.dart';
 import '../domain/entities/base/base_error_entity.dart';
 import '../domain/entities/capture/complaint_reason_entity.dart';
+import '../domain/entities/request_data_model.dart';
 import '../domain/usecases/promotion_aiv_complaint_use_case.dart';
 import 'capture_controller.dart';
 import 'common/capture_method_channel.dart';
@@ -41,12 +41,12 @@ class ZoneController extends GetxController {
   bool _isPolling = false;
   var reasons = RxList<ComplaintReasonEntity>([]);
   var selectedReason = Rxn<ComplaintReasonEntity>();
-  final _userEntity = Rxn<UserEntity>();
+  final _requestData = Rxn<RequestDataModel>();
 
   @override
   void onInit() async {
     super.onInit();
-    _userEntity.value = await AppSecureStorage.getUser();
+    _requestData.value = await AppSecureStorage.getRequestData();
     reasons.value = complaintReasons;
   }
 
@@ -91,17 +91,18 @@ class ZoneController extends GetxController {
 
   /// =================== API call Area ==================
   Future<void> samplingResultImageGarniture() async {
-    final user = _userEntity.value;
-    final outletCode = '';
-    final imageGarnitureId = '';
+    final requestData = _requestData.value;
+    final planogramCode = '';
     try {
       showLoadingIndicator();
       final request = ResultImageGarnitureRequest(
-        userId: user?.userId,
-        userName: user?.displayName,
-        employeeCode: user?.employeeCode,
-        outletCode: outletCode,
-        imageGarnitureId: imageGarnitureId,
+        userId: requestData?.userId,
+        userName: requestData?.displayName,
+        employeeCode: requestData?.employeeCode,
+        outletCode: requestData?.outletCode,
+        imageGarnitureId: requestData?.imageGarnitureId,
+        planogramCode: planogramCode,
+        samplingId: requestData?.samplingId,
       );
       final result = await samplingResultImageGarnitureUseCase.call(request);
 
@@ -117,18 +118,16 @@ class ZoneController extends GetxController {
   }
 
   Future<void> samplingSentApprovalImageUse() async {
-    final user = _userEntity.value;
-    final outletCode = '';
-    final samplingId = '';
+    final requestData = _requestData.value;
     final planogramCode = '';
     try {
       showLoadingIndicator();
       final request = SamplingSentApprovalGarnitureRequest(
-        userId: user?.userId,
-        employeeCode: user?.employeeCode,
-        userName: user?.displayName,
-        samplingId: samplingId,
-        outletCode: outletCode,
+        userId: requestData?.userId,
+        employeeCode: requestData?.employeeCode,
+        userName: requestData?.displayName,
+        samplingId: requestData?.samplingId,
+        outletCode: requestData?.samplingId,
         planogramCode: planogramCode,
       );
       final result = await samplingSentApprovalImageUseCase.call(request);

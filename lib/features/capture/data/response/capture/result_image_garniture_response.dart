@@ -4,8 +4,11 @@ part 'result_image_garniture_response.g.dart';
 
 @JsonSerializable()
 class ResultImageGarnitureResponse {
+  @JsonKey(name: 'ComplianceStatusId')
+  final int? complianceStatusId;
+
   @JsonKey(name: 'ComplianceStatus')
-  final int? complianceStatus;
+  final String? complianceStatus;
 
   @JsonKey(name: 'ComplianceSummary')
   final String? complianceSummary;
@@ -17,6 +20,7 @@ class ResultImageGarnitureResponse {
   final String? createdDate;
 
   ResultImageGarnitureResponse({
+    this.complianceStatusId,
     this.complianceStatus,
     this.complianceSummary,
     this.createdByName,

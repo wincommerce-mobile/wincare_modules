@@ -9,7 +9,8 @@ part of 'result_image_garniture_response.dart';
 ResultImageGarnitureResponse _$ResultImageGarnitureResponseFromJson(
   Map<String, dynamic> json,
 ) => ResultImageGarnitureResponse(
-  complianceStatus: (json['ComplianceStatus'] as num?)?.toInt(),
+  complianceStatusId: (json['ComplianceStatusId'] as num?)?.toInt(),
+  complianceStatus: json['ComplianceStatus'] as String?,
   complianceSummary: json['ComplianceSummary'] as String?,
   createdByName: json['CreatedByName'] as String?,
   createdDate: json['CreatedDate'] as String?,
@@ -18,6 +19,7 @@ ResultImageGarnitureResponse _$ResultImageGarnitureResponseFromJson(
 Map<String, dynamic> _$ResultImageGarnitureResponseToJson(
   ResultImageGarnitureResponse instance,
 ) => <String, dynamic>{
+  'ComplianceStatusId': instance.complianceStatusId,
   'ComplianceStatus': instance.complianceStatus,
   'ComplianceSummary': instance.complianceSummary,
   'CreatedByName': instance.createdByName,

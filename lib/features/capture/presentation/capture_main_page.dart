@@ -58,7 +58,7 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
             children: [
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(top: 12, left: 16, right: 16),
+                padding: EdgeInsets.only(top: 12, left: 16, right: 16, bottom: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(_zones.length, (index) {
@@ -144,3 +144,11 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
     );
   }
 }
+/*
+TODO list
+1. Detect to handle back button
+2. Api load hình mẫu theo zone
+3. Api load hình trưng bày theo zone
+4. Api upload image (cần biết nó thuộc zone nào)
+5. Api load hình trưng bày theo zone
+*/

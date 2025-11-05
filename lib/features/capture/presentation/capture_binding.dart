@@ -4,7 +4,6 @@ import 'package:wincare_modules/features/capture/domain/usecases/get_promotion_a
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_result_image_garniture.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_sent_approval_image_use_case.dart';
 import '../di/modules.dart';
-import '../domain/usecases/get_employee_overview_use_case.dart';
 import '../domain/usecases/promotion_aiv_complaint_use_case.dart';
 import '../domain/usecases/sampling_cancel_image_use_case.dart';
 import '../domain/usecases/sampling_confirm_image_use_case.dart';

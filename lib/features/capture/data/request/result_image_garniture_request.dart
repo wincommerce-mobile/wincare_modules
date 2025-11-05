@@ -4,6 +4,8 @@ class ResultImageGarnitureRequest {
   String? employeeCode;
   String? outletCode;
   String? imageGarnitureId;
+  String? planogramCode;
+  String? samplingId;
 
   ResultImageGarnitureRequest({
     required this.userId,
@@ -11,6 +13,8 @@ class ResultImageGarnitureRequest {
     required this.employeeCode,
     required this.outletCode,
     required this.imageGarnitureId,
+    required this.planogramCode,
+    required this.samplingId,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +24,8 @@ class ResultImageGarnitureRequest {
       'EmployeeCode': employeeCode,
       'OutletCode': outletCode,
       'ImageGarnitureId': imageGarnitureId,
+      'PlanogramCode': planogramCode,
+      'SamplingId': samplingId,
     };
   }
 }

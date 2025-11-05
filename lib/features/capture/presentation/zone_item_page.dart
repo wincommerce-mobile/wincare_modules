@@ -64,12 +64,6 @@ class _ZoneItemPageState extends State<ZoneItemPage>
   ComplaintReasonEntity? get _selectedReason =>
       widget.zoneController.selectedReason.value;
 
-  @override
-  void initState() {
-    super.initState();
-    print('zoneController: ${widget.zoneController.zoneId}');
-  }
-
   Future<void> onGetPoint() async {
     final result = await widget.zoneController.getResult();
     widget.onGetImagePoint(result);
@@ -279,8 +273,16 @@ class _ZoneItemPageState extends State<ZoneItemPage>
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                offset: const Offset(0, 2),
+                blurRadius: 4,
+                spreadRadius: 0,
+              ),
+            ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           child: Column(
             children: [
               Row(

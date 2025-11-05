@@ -44,6 +44,31 @@ enum ImageType {
   final int id;
 }
 
+enum ComplianceStatusEnum {
+  created(id: -1, title: 'Mới tạo'),
+  waitingResult(id: 1, title: 'Chờ kết quá chấm'),
+  passed(id: 2, title: 'Đạt'),
+  notPassed(id: 3, title: 'Không đạt');
+
+  const ComplianceStatusEnum({required this.id, required this.title});
+
+  final int id;
+  final String title;
+
+  static ComplianceStatusEnum fromServer(int? id) {
+    switch (id) {
+      case 1:
+        return ComplianceStatusEnum.waitingResult;
+      case 2:
+        return ComplianceStatusEnum.passed;
+      case 3:
+        return ComplianceStatusEnum.notPassed;
+      default:
+        return ComplianceStatusEnum.created;
+    }
+  }
+}
+
 enum FileExtension {
   jpeg(type: 'JPEG');
 

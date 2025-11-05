@@ -10,7 +10,9 @@ import '../response/capture/result_image_garniture_response.dart';
 extension ResultImageGarnitureMapper on ResultImageGarnitureResponse {
   ResultImageGarnitureEntity toEntity() {
     return ResultImageGarnitureEntity(
+      complianceStatusId: complianceStatusId,
       complianceStatus: complianceStatus,
+      complianceStatusEnum: ComplianceStatusEnum.fromServer(complianceStatusId),
       complianceSummary: complianceSummary,
       createdByName: createdByName,
       createdDate: createdDate,

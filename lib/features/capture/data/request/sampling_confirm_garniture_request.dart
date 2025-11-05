@@ -1,28 +1,35 @@
 class SamplingConfirmGarnitureRequest {
   int? userId;
-  String? employeeCode;
   String? userName;
-  String? imageGarnitureId;
-  String? outletCode;
+  String? employeeCode;
+  String? siteId;
   String? planogramCode;
-
-  SamplingConfirmGarnitureRequest({
-    required this.userId,
-    required this.employeeCode,
-    required this.userName,
-    required this.outletCode,
-    required this.imageGarnitureId,
-    required this.planogramCode,
-  });
+  int? level;
+  String? promotionCode;
+  int? rowNumber;
+  String? outletCode;
+  String? outletName;
+  String? zoneName;
+  bool? isComplaint;
+  String? reasonComplaint;
+  String? imageGarnitureId;
 
   Map<String, dynamic> toJson() {
     return {
       'UserId': userId,
       'UserName': userName,
       'EmployeeCode': employeeCode,
-      'OutletCode': outletCode,
-      'ImageGarnitureId': imageGarnitureId,
+      'SiteId': siteId,
       'PlanogramCode': planogramCode,
+      'Level': level,
+      'PromotionCode': promotionCode,
+      'RowNumber': rowNumber,
+      'OutletCode': outletCode,
+      'OutletName': outletName,
+      'ZoneName': zoneName,
+      'IsComplaint': isComplaint,
+      'ReasonComplaint': reasonComplaint,
+      'ImageGarnitureId': imageGarnitureId,
     };
   }
 }

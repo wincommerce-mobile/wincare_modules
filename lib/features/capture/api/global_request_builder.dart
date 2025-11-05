@@ -7,7 +7,7 @@ class GlobalRequestBuilder {
     double? lat,
     double? lng,
   }) async {
-    final user = await AppSecureStorage.getUser();
+    final user = await AppSecureStorage.getRequestData();
 
     final lat = 0.0;
     final lng = 0.0;

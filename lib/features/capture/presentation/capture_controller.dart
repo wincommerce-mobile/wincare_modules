@@ -10,6 +10,7 @@ import 'package:wincare_modules/app/app_extensions.dart';
 import 'package:wincare_modules/app/app_secure_storage.dart';
 import 'package:wincare_modules/features/capture/data/request/image_template_request.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/complaint_reason_entity.dart';
+import 'package:wincare_modules/features/capture/domain/entities/request_data_model.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/get_image_template_use_case.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/get_promotion_aiv_complaint_reason_use_case.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/promotion_aiv_complaint_use_case.dart';
@@ -25,7 +26,6 @@ import '../../../app/app_enum.dart';
 import '../data/request/complaint_reason_request.dart';
 import '../data/request/sampling_upload_image_request.dart';
 import '../domain/entities/base/base_error_entity.dart';
-import '../domain/entities/user_entity.dart';
 import '../domain/usecases/sampling_result_image_garniture.dart';
 import '../domain/usecases/sampling_sent_approval_image_use_case.dart';
 import 'common/capture_method_channel.dart';
@@ -78,7 +78,7 @@ class CaptureController extends GetxController {
   final PageController pageController = PageController();
   final zoneControllers = <ZoneController>[].obs;
 
-  final _userEntity = Rxn<UserEntity>();
+  final _requestData = Rxn<RequestDataModel>();
 
   void onPageChanged(pageIndex) {
     /// deselect all zones
@@ -162,9 +162,9 @@ class CaptureController extends GetxController {
             final jsonStr = call.arguments as String;
             debugPrint("Received getRequestData: $jsonStr");
             final Map<String, dynamic> decoded = jsonDecode(jsonStr);
-            final userEntity = UserEntity.fromJson(decoded);
-            await AppSecureStorage.saveUser(userEntity);
-            _userEntity.value = await AppSecureStorage.getUser();
+            final requestData = RequestDataModel.fromJson(decoded);
+            await AppSecureStorage.saveRequestData(requestData);
+            _requestData.value = await AppSecureStorage.getRequestData();
             hideLoadingIndicator();
             break;
           case AppConstants.onNativeBackPressed:
@@ -260,12 +260,12 @@ class CaptureController extends GetxController {
   Future<List<ComplaintReasonEntity>> _getComplaintReason() async {
     try {
       showLoadingIndicator();
-      final user = await AppSecureStorage.getUser();
+      final requestData = _requestData.value;
       final request = ComplaintReasonRequest(
-        userId: user?.userId,
-        userName: user?.displayName,
-        employeeCode: user?.employeeCode,
-        siteId: user?.siteId,
+        userId: requestData?.userId,
+        userName: requestData?.displayName,
+        employeeCode: requestData?.employeeCode,
+        siteId: requestData?.siteId,
       );
       final result = await getPromotionAivComplaintReasonUseCase.call(request);
       hideLoadingIndicator();
@@ -428,15 +428,18 @@ class CaptureController extends GetxController {
 
   /// =========================== API call Zone ===========================//
   Future<String?> _uploadImage(Uint8List bytes) async {
-    final user = _userEntity.value;
+    final requestData = _requestData.value;
+    //TODO -temp
+    final planogramCode = '';
     try {
       showLoadingIndicator();
       final request = SamplingUploadImageRequest(
-        userId: user?.userId,
-        userName: user?.displayName,
-        employeeCode: user?.employeeCode,
-        siteId: user?.siteId,
-        imageGarnitureId: user?.imageGarnitureId,
+        userId: requestData?.userId,
+        userName: requestData?.displayName,
+        employeeCode: requestData?.employeeCode,
+        siteId: requestData?.siteId,
+        imageGarnitureId: requestData?.imageGarnitureId,
+        planogramCode: planogramCode,
         imageType: ImageType.sampling,
         img: base64Encode(bytes),
         urlImg: null,
@@ -463,15 +466,18 @@ class CaptureController extends GetxController {
   }
 
   Future<bool> _deleteImage(String? urlImg) async {
-    final user = _userEntity.value;
+    final requestData = _requestData.value;
+    //TODO - temp
+    final planogramCode = '';
     try {
       showLoadingIndicator();
       final request = SamplingUploadImageRequest(
-        userId: user?.userId,
-        userName: user?.displayName,
-        employeeCode: user?.employeeCode,
-        siteId: user?.siteId,
-        imageGarnitureId: user?.imageGarnitureId,
+        userId: requestData?.userId,
+        userName: requestData?.displayName,
+        employeeCode: requestData?.employeeCode,
+        siteId: requestData?.siteId,
+        imageGarnitureId: requestData?.imageGarnitureId,
+        planogramCode: planogramCode,
         imageType: ImageType.sampling,
         img: null,
         urlImg: urlImg,
