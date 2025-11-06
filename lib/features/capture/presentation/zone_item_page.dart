@@ -2,13 +2,13 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/complaint_reason_entity.dart';
-import 'package:wincare_modules/features/capture/presentation/capture_controller.dart';
 import 'package:wincare_modules/features/capture/presentation/zone_controller.dart';
 
 import '../../../app/app_colors.dart';
 import '../../../app/app_function.dart';
 import '../../../app/app_icon.dart';
 import '../../../app/app_text.dart';
+import '../domain/entities/capture/image_template_entity.dart';
 import 'widgets/common_dialog.dart';
 import 'widgets/custom_border_button.dart';
 import 'widgets/custom_button.dart';
@@ -26,7 +26,7 @@ class ZoneItemPage extends StatefulWidget {
     required this.onGetImagePoint,
   });
 
-  final ImageZone imageZone;
+  final ImageTemplateEntity imageZone;
   final OnTakePicTure onTakePicTure;
   final OnDeleteImage onDeleteImage;
   final OnGetImagePoint onGetImagePoint;
@@ -38,35 +38,46 @@ class ZoneItemPage extends StatefulWidget {
 
 class _ZoneItemPageState extends State<ZoneItemPage>
     with AutomaticKeepAliveClientMixin {
-  List<MyImage> get _banners => widget.imageZone.sampleImages;
+  ZoneController get _zoneController => widget.zoneController;
 
-  List<MyImage> get _images => widget.imageZone.myImages;
+  List<SampleImageEntity> get _templateImages =>
+      widget.imageZone.templateImage != null
+      ? [widget.imageZone.templateImage!]
+      : [];
 
-  ImageResult get _result => widget.imageZone.result;
+  List<SampleImageEntity> get _images => widget.imageZone.sampleImages;
+
+  ImageResult? get _result => widget.imageZone.result;
 
   bool get _finalComplianceStatus => widget.imageZone.finalComplianceStatus;
 
   bool get _showVerifyImageButton =>
-      (widget.imageZone.myImages.isNotEmpty &&
-          _result.status != MyImageStatus.verified &&
-          _result.status != MyImageStatus.processing) ||
-      !_finalComplianceStatus;
+      widget.imageZone.sampleImages.isNotEmpty &&(
+          (_result?.status != MyImageStatus.verified &&
+              _result?.status != MyImageStatus.processing) ||
+      !_finalComplianceStatus);
 
   bool get _showTakePickTureButton =>
-      (_result.status != MyImageStatus.verified &&
-          _result.status != MyImageStatus.processing) ||
+      (_result?.status != MyImageStatus.verified &&
+          _result?.status != MyImageStatus.processing) ||
       !_finalComplianceStatus;
 
   double get _bottom => MediaQuery.of(context).padding.bottom;
 
-  List<ComplaintReasonEntity> get _reasons => widget.zoneController.reasons;
+  List<ComplaintReasonEntity> get _reasons => _zoneController.reasons;
 
   ComplaintReasonEntity? get _selectedReason =>
-      widget.zoneController.selectedReason.value;
+      _zoneController.selectedReason.value;
 
   Future<void> onGetPoint() async {
-    final result = await widget.zoneController.getResult();
+    final result = await _zoneController.getResult();
     widget.onGetImagePoint(result);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _zoneController.getComplaintReason();
   }
 
   @override
@@ -122,14 +133,14 @@ class _ZoneItemPageState extends State<ZoneItemPage>
         ),
         const SizedBox(height: 8),
         CustomSliderImage(
-          images: _banners,
+          images: _templateImages,
           width: width,
           height: height,
           onViewImage: (index) {
             _openImageViewerBottomSheet(
               context: context,
               title: "Hình ảnh trưng bày",
-              photos: _banners,
+              photos: _templateImages,
               initPage: index,
               isShowDelete: false,
             );
@@ -293,9 +304,9 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                     fontWeight: FontWeight.w400,
                   ),
                   AppText(
-                    text: _result.status.name,
+                    text: _result?.status.name ?? '',
                     fontSize: 14,
-                    color: _result.status.color,
+                    color: _result?.status.color,
                   ),
                 ],
               ),
@@ -307,7 +318,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                     fontWeight: FontWeight.w400,
                   ),
                   AppText(
-                    text: _result.name,
+                    text: _result?.name ?? '',
                     fontSize: 14,
                     color: AppColors.black,
                   ),
@@ -321,13 +332,13 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                     fontWeight: FontWeight.w400,
                   ),
                   AppText(
-                    text: _result.resultDate,
+                    text: _result?.resultDate ?? '',
                     fontSize: 14,
                     color: AppColors.black,
                   ),
                 ],
               ),
-              if (_result.status == MyImageStatus.processing) ...[
+              if (_result?.status == MyImageStatus.processing) ...[
                 const SizedBox(height: 8),
                 DiagonalStripesShimmer(
                   height: 14,
@@ -344,8 +355,9 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   /// Confirm / Feedback
   Widget _buildAction() {
-    if (_result.status == MyImageStatus.processing ||
-        _result.status == MyImageStatus.created ||
+    if (_result?.status == null ||
+        _result?.status == MyImageStatus.processing ||
+        _result?.status == MyImageStatus.created ||
         _finalComplianceStatus) {
       return Container();
     }
@@ -466,7 +478,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                                 );
                               }).toList(),
                               onChanged: (value) {
-                                widget.zoneController.setSelectReason(value);
+                                _zoneController.setSelectReason(value);
                                 setStateBottom(() {});
                               },
                             ),
@@ -510,7 +522,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
   void _openImageViewerBottomSheet({
     required BuildContext context,
     required String title,
-    required List<MyImage> photos,
+    required List<SampleImageEntity> photos,
     required int initPage,
     required bool isShowDelete,
   }) {

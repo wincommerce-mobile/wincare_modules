@@ -26,6 +26,7 @@ import '../../../app/app_enum.dart';
 import '../data/request/complaint_reason_request.dart';
 import '../data/request/sampling_upload_image_request.dart';
 import '../domain/entities/base/base_error_entity.dart';
+import '../domain/entities/capture/image_template_entity.dart';
 import '../domain/usecases/sampling_result_image_garniture.dart';
 import '../domain/usecases/sampling_sent_approval_image_use_case.dart';
 import 'common/capture_method_channel.dart';
@@ -72,8 +73,8 @@ class CaptureController extends GetxController {
   static final _channel = MethodChannel(AppConstants.captureChannel);
 
   /// Reason
-  var selectedReason = Rxn<String>();
-  var reasons = RxList<String>(['Apple', 'Banana', 'Cherry', 'Mango']);
+  var selectedReason = Rxn<ComplaintReasonEntity>();
+  var reasons = RxList<ComplaintReasonEntity>([]);
 
   final PageController pageController = PageController();
   final zoneControllers = <ZoneController>[].obs;
@@ -92,14 +93,19 @@ class CaptureController extends GetxController {
     pageController.jumpToPage(pageIndex);
   }
 
-  var imageZones = RxList<ImageZone>([]);
+  var imageZones = RxList<ImageTemplateEntity>([]);
 
   Future<void> onDeletePicTure(int zoneIndex, imageIndex) async {
     var imgZone = imageZones[zoneIndex];
-    final result = await _deleteImage(imgZone.myImages[imageIndex].url);
+    final result = await _deleteImage(
+      imgZone.sampleImages[imageIndex].url,
+      imgZone.planogramCode,
+    );
     if (result) {
-      imgZone.myImages.removeAt(imageIndex);
-      imageZones[zoneIndex] = imgZone.copyWith(myImages: imgZone.myImages);
+      imgZone.sampleImages.removeAt(imageIndex);
+      imageZones[zoneIndex] = imgZone.copyWith(
+        sampleImages: imgZone.sampleImages,
+      );
       imageZones.refresh();
     } else {
       Get.back();
@@ -109,22 +115,28 @@ class CaptureController extends GetxController {
   Future<void> onTakePicTure(int zoneIndex) async {
     final image = await _takePicture();
     if (image != null) {
+      var imgZone = imageZones[zoneIndex];
       //showLoadingIndicator();
-      final result = await _uploadImage(await image.readAsBytes());
+      final result = await _uploadImage(
+        await image.readAsBytes(),
+        imgZone.planogramCode,
+      );
       if (result != null && result.isNotEmpty) {
         final address = await _getAddressFromLocation();
         final takenDate = DateTime.now().toAppDateTimeFormat();
         //hideLoadingIndicator();
-        var imgZone = imageZones[zoneIndex];
-        imgZone.myImages.add(
-          MyImage(
+
+        imgZone.sampleImages.add(
+          SampleImageEntity(
             url: result,
             path: null,
             address: address,
             takenDate: takenDate,
           ),
         );
-        imageZones[zoneIndex] = imgZone.copyWith(myImages: imgZone.myImages);
+        imageZones[zoneIndex] = imgZone.copyWith(
+          sampleImages: imgZone.sampleImages,
+        );
         imageZones.refresh();
       }
     }
@@ -146,7 +158,7 @@ class CaptureController extends GetxController {
   }
 
   /// Reason
-  void setSelectedReason(String? reason) {
+  void setSelectedReason(ComplaintReasonEntity? reason) {
     selectedReason.value = reason;
   }
 
@@ -245,173 +257,6 @@ class CaptureController extends GetxController {
     }
   }
 
-  Future<void> _getImageTemplates() async {
-    try {
-      final request = ImageTemplateRequest();
-      final result = await getImageTemplateUseCase.call(request);
-    } on BaseErrorEntity catch (error) {
-      if (error.statusCode == 1002) {
-        await CaptureMethodChannel.logOut();
-        return;
-      }
-    }
-  }
-
-  Future<List<ComplaintReasonEntity>> _getComplaintReason() async {
-    try {
-      showLoadingIndicator();
-      final requestData = _requestData.value;
-      final request = ComplaintReasonRequest(
-        userId: requestData?.userId,
-        userName: requestData?.displayName,
-        employeeCode: requestData?.employeeCode,
-        siteId: requestData?.siteId,
-      );
-      final result = await getPromotionAivComplaintReasonUseCase.call(request);
-      hideLoadingIndicator();
-      return result;
-    } on BaseErrorEntity catch (error) {
-      hideLoadingIndicator();
-      if (error.statusCode == 1002) {
-        await CaptureMethodChannel.logOut();
-      }
-      showSnackBar(description: error.message ?? '');
-      return [];
-    }
-  }
-
-  Future<void> setupPageView() async {
-    final zones = [
-      ImageZone(
-        zoneId: 1,
-        zoneName: 'Zone chính',
-        required: true,
-        selected: true,
-        sampleImages: [
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-        ],
-        myImages: [
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-        ],
-        result: ImageResult(
-          status: MyImageStatus.processing,
-          name: 'AI chấm',
-          resultDate: '16/10/2025 11:33',
-        ),
-      ),
-      ImageZone(
-        zoneId: 2,
-        zoneName: 'Zone phụ 2',
-        required: false,
-        sampleImages: [
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-        ],
-        myImages: [
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-        ],
-        result: ImageResult(
-          status: MyImageStatus.verified,
-          name: 'AI chấm',
-          resultDate: '16/10/2025 11:33',
-        ),
-      ),
-      ImageZone(
-        zoneId: 3,
-        zoneName: 'Zone phụ 3',
-        required: true,
-        sampleImages: [
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-        ],
-        myImages: [
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-        ],
-        result: ImageResult(
-          status: MyImageStatus.failed,
-          name: 'AI chấm',
-          resultDate: '16/10/2025 11:33',
-        ),
-      ),
-      ImageZone(
-        zoneId: 4,
-        zoneName: 'Zone phụ 4',
-        required: false,
-        sampleImages: [
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-          MyImage(
-            url:
-                'https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg',
-            path: null,
-          ),
-        ],
-        myImages: [],
-        result: ImageResult(
-          status: MyImageStatus.created,
-          name: 'AI chấm',
-          resultDate: '16/10/2025 11:33',
-        ),
-      ),
-    ];
-    imageZones.value = zones;
-    //final reason = await _getComplaintReason();
-    for (var zone in zones) {
-      final zc = ZoneController(
-        zoneId: zone.zoneId,
-        complaintReasons: [],
-        samplingResultImageGarnitureUseCase: samplingResultImageGarniture,
-        samplingSentApprovalImageUseCase: samplingSentApprovalImageUseCase,
-        promotionAivComplaintUseCase: promotionAivComplaintUseCase,
-      );
-      // if zone already has a processing state, start polling
-      if (zone.result.status == MyImageStatus.processing) {
-        zc.startPolling();
-      }
-      zoneControllers.add(zc);
-    }
-  }
-
   Future<ImageResult> _getImageResultFromServer(int zoneIndex) async {
     // call get result API for the zone
     // e.g. final res = await getImageResultUseCase.call(GetImageResultRequest(...));
@@ -419,7 +264,10 @@ class CaptureController extends GetxController {
     throw UnimplementedError('Implement image result fetch from server');
   }
 
-  Future<void> _submitImageToServer(int zoneIndex, MyImage image) async {
+  Future<void> _submitImageToServer(
+    int zoneIndex,
+    SampleImageEntity image,
+  ) async {
     // call upload/process API for the zone/image
     // e.g. await processImageUseCase.call(ProcessImageRequest(...));
     // after sending, the backend will report processing state -> ZoneController will poll _fetchZoneResultFromServer
@@ -427,10 +275,45 @@ class CaptureController extends GetxController {
   }
 
   /// =========================== API call Zone ===========================//
-  Future<String?> _uploadImage(Uint8List bytes) async {
+  Future<void> _getImageTemplates() async {
+    try {
+      showLoadingIndicator();
+      final request = ImageTemplateRequest();
+      final result = await getImageTemplateUseCase.call(request);
+      imageZones.value = result;
+      if (imageZones.isNotEmpty) {
+        imageZones[0] = imageZones[0].copyWith(selected: true);
+        imageZones.refresh();
+      }
+      for (var zone in result) {
+        final zc = ZoneController(
+          zoneId: zone.planogramId!,
+          samplingResultImageGarnitureUseCase: samplingResultImageGarniture,
+          samplingSentApprovalImageUseCase: samplingSentApprovalImageUseCase,
+          promotionAivComplaintUseCase: promotionAivComplaintUseCase,
+          getPromotionAivComplaintReasonUseCase:
+              getPromotionAivComplaintReasonUseCase,
+        );
+        // if zone already has a processing state, start polling
+        if (zone.result?.status == MyImageStatus.processing) {
+          zc.startPolling();
+        }
+        zoneControllers.add(zc);
+      }
+      hideLoadingIndicator();
+    } on BaseErrorEntity catch (error) {
+      if (error.statusCode == 1002) {
+        await CaptureMethodChannel.logOut();
+        hideLoadingIndicator();
+        return;
+      }
+      hideLoadingIndicator();
+      showSnackBar(description: error.message ?? '');
+    }
+  }
+
+  Future<String?> _uploadImage(Uint8List bytes, String? planogramCode) async {
     final requestData = _requestData.value;
-    //TODO -temp
-    final planogramCode = '';
     try {
       showLoadingIndicator();
       final request = SamplingUploadImageRequest(
@@ -465,10 +348,8 @@ class CaptureController extends GetxController {
     }
   }
 
-  Future<bool> _deleteImage(String? urlImg) async {
+  Future<bool> _deleteImage(String? urlImg, String? planogramCode) async {
     final requestData = _requestData.value;
-    //TODO - temp
-    final planogramCode = '';
     try {
       showLoadingIndicator();
       final request = SamplingUploadImageRequest(
@@ -504,106 +385,6 @@ class CaptureController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    setupPageView();
-  }
-}
-
-class ImageZone {
-  final int zoneId;
-  final String zoneName;
-  final bool required;
-  final List<MyImage> sampleImages;
-  final List<MyImage> myImages;
-  final ImageResult result;
-  final bool finalComplianceStatus;
-  bool selected;
-
-  ImageZone({
-    required this.zoneId,
-    required this.zoneName,
-    required this.required,
-    required this.sampleImages,
-    required this.myImages,
-    required this.result,
-    this.finalComplianceStatus = false,
-    this.selected = false,
-  });
-
-  copyWith({
-    int? zoneId,
-    String? zoneName,
-    bool? required,
-    List<MyImage>? sampleImages,
-    List<MyImage>? myImages,
-    ImageResult? result,
-    bool? selected,
-  }) {
-    return ImageZone(
-      zoneId: zoneId ?? this.zoneId,
-      zoneName: zoneName ?? this.zoneName,
-      required: required ?? this.required,
-      sampleImages: sampleImages ?? this.sampleImages,
-      myImages: myImages ?? this.myImages,
-      result: result ?? this.result,
-      selected: selected ?? this.selected,
-    );
-  }
-}
-
-enum MyImageStatus {
-  created(name: 'Mới tạo', color: AppColors.black4D),
-  processing(name: 'Chờ kết quả chấm', color: Color(0xFFE7B400)),
-  verified(name: 'Đạt', color: Color(0xFF3A73FF)),
-  failed(name: 'Rớt', color: AppColors.red);
-
-  const MyImageStatus({required this.name, required this.color});
-
-  final String name;
-  final Color color;
-}
-
-class ImageResult {
-  final MyImageStatus status;
-  final String name;
-  final String resultDate;
-
-  ImageResult({
-    required this.status,
-    required this.name,
-    required this.resultDate,
-  });
-
-  copyWith({MyImageStatus? status, String? name, String? resultDate}) {
-    return ImageResult(
-      status: status ?? this.status,
-      name: name ?? this.name,
-      resultDate: resultDate ?? this.resultDate,
-    );
-  }
-}
-
-class MyImage {
-  final String? url;
-  final XFile? path;
-  final String? address;
-  final String? takenDate;
-  final bool isHandled;
-
-  MyImage({
-    required this.url,
-    required this.path,
-    this.isHandled = false,
-    this.address,
-    this.takenDate,
-  });
-
-  copyWith({String? url, String? address, XFile? path, bool? isHandled}) {
-    return MyImage(
-      url: url ?? this.url,
-      address: address ?? this.address,
-      takenDate: takenDate,
-      path: path ?? this.path,
-      isHandled: isHandled ?? this.isHandled,
-    );
+    await _getImageTemplates();
   }
 }

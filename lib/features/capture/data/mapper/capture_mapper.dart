@@ -31,6 +31,8 @@ extension ImageTemplateMapper on ImageTemplateResponse {
       zoneName: zoneName,
       level: level,
       type: TemplateType.fromServer(type),
+      templateImage: SampleImageEntity(url: imageTemplate, path: null),
+      sampleImages: [],
     );
   }
 }

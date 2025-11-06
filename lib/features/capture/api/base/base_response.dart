@@ -47,8 +47,8 @@ class BaseListResponse<T> {
     Function(Map<String, dynamic>) create,
   ) {
     List<T> data = [];
-    if (json['data'] != null) {
-      json['data'].forEach((v) {
+    if (json['Data'] != null) {
+      json['Data'].forEach((v) {
         data.add(create(v));
       });
     }

@@ -5,11 +5,14 @@ import 'package:wincare_modules/app/app_secure_storage.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_result_image_garniture.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_sent_approval_image_use_case.dart';
 
+import '../data/request/complaint_reason_request.dart';
 import '../data/request/result_image_garniture_request.dart';
 import '../data/request/sampling_sent_approval_garniture_request.dart';
 import '../domain/entities/base/base_error_entity.dart';
 import '../domain/entities/capture/complaint_reason_entity.dart';
+import '../domain/entities/capture/image_template_entity.dart';
 import '../domain/entities/request_data_model.dart';
+import '../domain/usecases/get_promotion_aiv_complaint_reason_use_case.dart';
 import '../domain/usecases/promotion_aiv_complaint_use_case.dart';
 import 'capture_controller.dart';
 import 'common/capture_method_channel.dart';
@@ -18,7 +21,7 @@ import 'widgets/snack_bar.dart';
 
 class ZoneController extends GetxController {
   final int zoneId;
-  final List<ComplaintReasonEntity> complaintReasons;
+
   /// Lấy kết quá bộ hình theo zone
   final SamplingResultImageGarniture samplingResultImageGarnitureUseCase;
 
@@ -28,12 +31,15 @@ class ZoneController extends GetxController {
   /// Khiếu nại bộ hình theo zone
   final PromotionAivComplaintUseCase promotionAivComplaintUseCase;
 
+  final GetPromotionAivComplaintReasonUseCase
+  getPromotionAivComplaintReasonUseCase;
+
   ZoneController({
     required this.zoneId,
-    required this.complaintReasons,
     required this.samplingResultImageGarnitureUseCase,
     required this.samplingSentApprovalImageUseCase,
     required this.promotionAivComplaintUseCase,
+    required this.getPromotionAivComplaintReasonUseCase,
   });
 
   final Rxn<ImageResult> result = Rxn<ImageResult>();
@@ -43,11 +49,29 @@ class ZoneController extends GetxController {
   var selectedReason = Rxn<ComplaintReasonEntity>();
   final _requestData = Rxn<RequestDataModel>();
 
-  @override
-  void onInit() async {
-    super.onInit();
+  Future<void> getComplaintReason() async {
     _requestData.value = await AppSecureStorage.getRequestData();
-    reasons.value = complaintReasons;
+    try {
+      showLoadingIndicator();
+      final requestData = _requestData.value;
+      final request = ComplaintReasonRequest(
+        userId: requestData?.userId,
+        userName: requestData?.displayName,
+        employeeCode: requestData?.employeeCode,
+        siteId: requestData?.siteId,
+      );
+      final result = await getPromotionAivComplaintReasonUseCase.call(request);
+      reasons.value = result;
+      print('_getComplaintReason: ${result.length}');
+      hideLoadingIndicator();
+    } on BaseErrorEntity catch (error) {
+      if (error.statusCode == 1002) {
+        hideLoadingIndicator();
+        await CaptureMethodChannel.logOut();
+      }
+      showSnackBar(description: error.message ?? '');
+      hideLoadingIndicator();
+    }
   }
 
   void setSelectReason(ComplaintReasonEntity? s) {
@@ -70,17 +94,18 @@ class ZoneController extends GetxController {
     );
   }
 
+  int count = 0;
+
   Future<void> _poll() async {
-    // try {
-    //   final res = await fetchZoneResult(zoneId);
-    //   result.value = res;
-    //   // stop when result is final (not processing)
-    //   if (res!=null && res.status != MyImageStatus.processing) {
-    //     stopPolling();
-    //   }
-    // } catch (e) {
-    //   // optionally log
-    // }
+    try {
+      await samplingResultImageGarniture();
+      // stop when result is final (not processing)
+      if (count > 3) {
+        stopPolling();
+      }
+    } catch (e) {
+      // optionally log
+    }
   }
 
   void stopPolling() {
@@ -91,6 +116,7 @@ class ZoneController extends GetxController {
 
   /// =================== API call Area ==================
   Future<void> samplingResultImageGarniture() async {
+    count++;
     final requestData = _requestData.value;
     final planogramCode = '';
     try {

@@ -9,6 +9,7 @@ import '../../../../app/app_colors.dart';
 import '../../../../app/app_function.dart';
 import '../../../../app/app_icon.dart';
 import '../../../../app/app_text.dart';
+import '../../domain/entities/capture/image_template_entity.dart';
 import '../capture_controller.dart';
 import 'custom_network_image.dart';
 
@@ -24,7 +25,7 @@ class CustomSliderImage extends StatefulWidget {
     required this.onViewImage,
   });
 
-  final List<MyImage> images;
+  final List<SampleImageEntity> images;
   final double width;
   final double height;
   final int initCurrentImage;
@@ -37,7 +38,7 @@ class CustomSliderImage extends StatefulWidget {
 }
 
 class _CustomSliderImageState extends State<CustomSliderImage> {
-  List<MyImage> get _images => widget.images;
+  List<SampleImageEntity> get _images => widget.images;
 
   double get _width => widget.width;
 

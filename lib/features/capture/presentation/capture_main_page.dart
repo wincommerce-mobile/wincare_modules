@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_text.dart';
 import 'package:wincare_modules/app/environments/environment_banner.dart';
+import 'package:wincare_modules/features/capture/domain/entities/capture/image_template_entity.dart';
 import 'package:wincare_modules/features/capture/presentation/zone_item_page.dart';
 
 import '../../../app/app_colors.dart';
+import '../../../app/app_enum.dart';
 import '../../../app/app_icon.dart';
 import '../../../app/app_pages.dart';
 import 'capture_controller.dart';
@@ -21,7 +23,7 @@ class CaptureMainPage extends StatefulWidget {
 class _CaptureMainPageState extends State<CaptureMainPage> {
   final _controller = Get.find<CaptureController>();
 
-  List<ImageZone> get _zones => _controller.imageZones;
+  List<ImageTemplateEntity> get _zones => _controller.imageZones;
 
   @override
   void initState() {
@@ -87,14 +89,14 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             AppText(
-                              text: _zones[index].zoneName,
+                              text: _zones[index].zoneName ?? '',
                               fontSize: 16,
                               color: _zones[index].selected
                                   ? AppColors.white
                                   : AppColors.black4D,
                               fontWeight: FontWeight.w500,
                             ),
-                            if (_zones[index].required) ...[
+                            if (_zones[index].type == TemplateType.require) ...[
                               SizedBox(width: 6),
                               AppText(
                                 text: '*',
@@ -122,7 +124,7 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                     final imageZone = _zones[index];
                     return ZoneItemPage(
                       imageZone: imageZone,
-                      key: ValueKey(imageZone.zoneId),
+                      key: ValueKey(imageZone.planogramId),
                       onTakePicTure: () {
                         _controller.onTakePicTure(index);
                       },

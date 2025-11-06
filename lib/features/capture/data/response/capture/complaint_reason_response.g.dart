@@ -9,25 +9,25 @@ part of 'complaint_reason_response.dart';
 ComplaintReasonResponse _$ComplaintReasonResponseFromJson(
   Map<String, dynamic> json,
 ) => ComplaintReasonResponse(
-  id: (json['id'] as num?)?.toInt(),
-  reason: json['reason'] as String?,
-  createdAt: json['createdAt'] as String?,
-  createdByName: json['createdByName'] as String?,
-  createdBy: (json['createdBy'] as num?)?.toInt(),
-  updatedAt: json['updatedAt'] as String?,
-  updatedByName: json['updatedByName'] as String?,
-  updatedBy: (json['updatedBy'] as num?)?.toInt(),
+  id: (json['Id'] as num?)?.toInt(),
+  reason: json['Reason'] as String?,
+  createdAt: json['CreatedAt'] as String?,
+  createdByName: json['CreatedByName'] as String?,
+  createdBy: (json['CreatedBy'] as num?)?.toInt(),
+  updatedAt: json['UpdatedAt'] as String?,
+  updatedByName: json['UpdatedByName'] as String?,
+  updatedBy: (json['UpdatedBy'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$ComplaintReasonResponseToJson(
   ComplaintReasonResponse instance,
 ) => <String, dynamic>{
-  'id': instance.id,
-  'reason': instance.reason,
-  'createdAt': instance.createdAt,
-  'createdByName': instance.createdByName,
-  'createdBy': instance.createdBy,
-  'updatedAt': instance.updatedAt,
-  'updatedByName': instance.updatedByName,
-  'updatedBy': instance.updatedBy,
+  'Id': instance.id,
+  'Reason': instance.reason,
+  'CreatedAt': instance.createdAt,
+  'CreatedByName': instance.createdByName,
+  'CreatedBy': instance.createdBy,
+  'UpdatedAt': instance.updatedAt,
+  'UpdatedByName': instance.updatedByName,
+  'UpdatedBy': instance.updatedBy,
 };

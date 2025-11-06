@@ -8,6 +8,7 @@ import 'package:wincare_modules/features/capture/presentation/capture_controller
 import '../../../../app/app_colors.dart';
 import '../../../../app/app_function.dart';
 import '../../../../app/app_text.dart';
+import '../../domain/entities/capture/image_template_entity.dart';
 import 'custom_network_image.dart';
 import 'dismissible_page.dart';
 import 'smart_network_image.dart';
@@ -24,7 +25,7 @@ class ImageViewerBottomSheet extends StatefulWidget {
 
   final String title;
   final bool isShowDelete;
-  final List<MyImage> photos;
+  final List<SampleImageEntity> photos;
   final OnImageAction onImageAction;
   final PageController pageController;
 
@@ -34,7 +35,7 @@ class ImageViewerBottomSheet extends StatefulWidget {
 
 class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
   int _currentPage = 0;
-  List<MyImage> _photos = [];
+  List<SampleImageEntity> _photos = [];
 
   double get _bottom => widget.isShowDelete ? 133 : 42;
 
