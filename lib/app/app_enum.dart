@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'app_colors.dart';
+
 enum LabelTypeEnum {
   temThuong(description: 'Tem thường', type: 1),
   temThuongCoXuatXu(description: 'Tem thường có xuất xứ', type: 2),
@@ -45,15 +49,20 @@ enum ImageType {
 }
 
 enum ComplianceStatusEnum {
-  created(id: -1, title: 'Mới tạo'),
-  waitingResult(id: 1, title: 'Chờ kết quá chấm'),
-  passed(id: 2, title: 'Đạt'),
-  notPassed(id: 3, title: 'Không đạt');
+  created(id: -1, title: 'Mới tạo', color: AppColors.black4D),
+  waitingResult(id: 1, title: 'Chờ kết quá chấm', color: Color(0xFFE7B400)),
+  passed(id: 2, title: 'Đạt', color: Color(0xFF3A73FF)),
+  notPassed(id: 3, title: 'Không đạt', color: AppColors.red);
 
-  const ComplianceStatusEnum({required this.id, required this.title});
+  const ComplianceStatusEnum({
+    required this.id,
+    required this.title,
+    required this.color,
+  });
 
   final int id;
   final String title;
+  final Color color;
 
   static ComplianceStatusEnum fromServer(int? id) {
     switch (id) {

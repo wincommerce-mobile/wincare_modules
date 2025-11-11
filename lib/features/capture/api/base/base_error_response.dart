@@ -24,7 +24,7 @@ class BaseErrorResponse {
   factory BaseErrorResponse.fromDioException(DioException exception) {
     try {
       Map<String, dynamic> error = exception.response?.data;
-      final message = error['jlMessageFormat'];
+      final message = error['Message'];
       return BaseErrorResponse(
         statusCode: exception.response?.statusCode ?? 400,
         statusMessage: message ?? 'Unknown Error',

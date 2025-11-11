@@ -28,7 +28,7 @@ abstract class CaptureRepository {
     SamplingUploadImageRequest request,
   );
 
-  Future<BaseCreatedEntity> samplingOutletSentApprovalImageGarniture(
+  Future<ResultImageGarnitureEntity> samplingOutletSentApprovalImageGarniture(
     SamplingSentApprovalGarnitureRequest request,
   );
 

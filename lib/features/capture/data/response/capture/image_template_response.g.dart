@@ -17,6 +17,9 @@ ImageTemplateResponse _$ImageTemplateResponseFromJson(
   zoneName: json['ZoneName'] as String?,
   level: (json['Level'] as num?)?.toInt(),
   type: json['Type'] as String?,
+  urlImages: (json['UrlImages'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
 );
 
 Map<String, dynamic> _$ImageTemplateResponseToJson(
@@ -30,4 +33,5 @@ Map<String, dynamic> _$ImageTemplateResponseToJson(
   'ZoneName': instance.zoneName,
   'Level': instance.level,
   'Type': instance.type,
+  'UrlImages': instance.urlImages,
 };

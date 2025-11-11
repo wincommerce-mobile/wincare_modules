@@ -20,40 +20,6 @@ class _APIClientType implements APIClientType {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<BaseResponse<EmployeeOverviewResponse>> getEmployeeOverview(
-    Map<String, dynamic> body,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body);
-    final _options = _setStreamType<BaseResponse<EmployeeOverviewResponse>>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/api/MobileEmployee/GetEmployeeOverview',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<EmployeeOverviewResponse> _value;
-    try {
-      _value = BaseResponse<EmployeeOverviewResponse>.fromJson(
-        _result.data!,
-        (json) =>
-            EmployeeOverviewResponse.fromJson(json as Map<String, dynamic>),
-      );
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
   Future<BaseListResponse<ImageTemplateResponse>> getImageTemplateGarniture(
     Map<String, dynamic> body,
   ) async {
@@ -66,7 +32,7 @@ class _APIClientType implements APIClientType {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/MCHDMS/DMSSamplingOutletScoreImageTemplateGarniture',
+            '/api/MCHDMS/DMSSamplingOutletScoresImageTemplateGarniture',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -153,14 +119,14 @@ class _APIClientType implements APIClientType {
   }
 
   @override
-  Future<BaseResponse<BaseCreatedResponse>>
+  Future<BaseResponse<ResultImageGarnitureResponse>>
   samplingOutletSentApprovalImageGarniture(Map<String, dynamic> body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body);
-    final _options = _setStreamType<BaseResponse<BaseCreatedResponse>>(
+    final _options = _setStreamType<BaseResponse<ResultImageGarnitureResponse>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -171,11 +137,12 @@ class _APIClientType implements APIClientType {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<BaseCreatedResponse> _value;
+    late BaseResponse<ResultImageGarnitureResponse> _value;
     try {
-      _value = BaseResponse<BaseCreatedResponse>.fromJson(
+      _value = BaseResponse<ResultImageGarnitureResponse>.fromJson(
         _result.data!,
-        (json) => BaseCreatedResponse.fromJson(json as Map<String, dynamic>),
+        (json) =>
+            ResultImageGarnitureResponse.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
@@ -266,7 +233,7 @@ class _APIClientType implements APIClientType {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/MCHDMS/DMSSamplingOutletResultImageGarniture',
+            '/api/MCHDMS/DMSSamplingOutletResultImageGarniture',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -289,27 +256,17 @@ class _APIClientType implements APIClientType {
 
   @override
   Future<BaseListResponse<ComplaintReasonResponse>>
-  getPromotionAIVComplaintReason(
-    int? userId,
-    String? userName,
-    String? employeeCode,
-    String? siteId,
-  ) async {
+  getPromotionAIVComplaintReason(Map<String, dynamic> body) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'UserId': userId,
-      r'UserName': userName,
-      r'EmployeeCode': employeeCode,
-      r'SiteId': siteId,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
     final _options = _setStreamType<BaseListResponse<ComplaintReasonResponse>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/MCHDMS/DMSPromotionAIVComplaintReason',
+            '/api/MCHDMS/DMSPromotionAIVComplaintReason',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -343,7 +300,7 @@ class _APIClientType implements APIClientType {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/MCHDMS/DMSPromotionAIVComplaint',
+            '/api/MCHDMS/DMSPromotionAIVComplaint',
             queryParameters: queryParameters,
             data: _data,
           )

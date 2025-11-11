@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../app/app_secure_storage.dart';
 import 'base/base_request.dart';
 
@@ -7,7 +9,8 @@ class GlobalRequestBuilder {
     double? lat,
     double? lng,
   }) async {
-    final user = await AppSecureStorage.getRequestData();
+    final requestData = await AppSecureStorage.getRequestData();
+    final osName = Platform.isAndroid ? 'Android' : 'iOS';
 
     final lat = 0.0;
     final lng = 0.0;
@@ -16,8 +19,10 @@ class GlobalRequestBuilder {
       params: params,
       lat: lat,
       lng: lng,
-      sessionKey: user?.sessionLogin,
-      uid: user?.userId,
+      osName: osName,
+      versionInfo: requestData?.versionInfo,
+      sessionKey: requestData?.sessionLogin,
+      uid: requestData?.userId,
     );
   }
 }

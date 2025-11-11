@@ -142,7 +142,7 @@ class CaptureRepositoryImpl implements CaptureRepository {
   ) async {
     if (await AppConnectivity.instance.isInternetAvailable()) {
       try {
-        final response = await captureDataSource.samplingOutletUploadImage(
+        final response = await captureDataSource.samplingOutletCancelImage(
           request,
         );
         if (response == null) {
@@ -182,7 +182,7 @@ class CaptureRepositoryImpl implements CaptureRepository {
   }
 
   @override
-  Future<BaseCreatedEntity> samplingOutletSentApprovalImageGarniture(
+  Future<ResultImageGarnitureEntity> samplingOutletSentApprovalImageGarniture(
     SamplingSentApprovalGarnitureRequest request,
   ) async {
     if (await AppConnectivity.instance.isInternetAvailable()) {

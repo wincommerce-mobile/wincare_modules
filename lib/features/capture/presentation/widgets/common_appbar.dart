@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:wincare_modules/app/app_icon.dart';
@@ -23,23 +25,20 @@ PreferredSizeWidget commonAppBar(
         ),
       ),
     ),
-    title: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: AutoSizeText(
-        title,
-        maxFontSize: 21,
-        minFontSize: 16,
-        maxLines: 2,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'Roboto',
-          fontWeight: FontWeight.bold,
-          color: AppColors.white,
-        ),
+    title: AutoSizeText(
+      title,
+      maxFontSize: Platform.isAndroid ? 18 : 20,
+      minFontSize: 16,
+      maxLines: 2,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.bold,
+        color: AppColors.white,
       ),
     ),
     centerTitle: true,
-    actions: actions,
+    actions: actions ?? [SizedBox(width: 40)],
   );
 }
 

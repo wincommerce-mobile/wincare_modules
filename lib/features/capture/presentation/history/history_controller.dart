@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_secure_storage.dart';
 import 'package:wincare_modules/features/capture/domain/entities/base/base_error_entity.dart';
 import 'package:wincare_modules/features/capture/presentation/widgets/loading_indicator.dart';
 import 'package:wincare_modules/features/capture/presentation/widgets/snack_bar.dart';
 
+import '../../../../app/app_constants.dart';
 import '../../data/request/image_garniture_history_request.dart';
 import '../../domain/entities/history/capture_history_entity.dart';
 import '../../domain/usecases/sampling_history_image_garniture_use_case.dart';
@@ -15,6 +18,8 @@ class HistoryController extends GetxController {
   HistoryController({required this.historyImageGarnitureUseCase});
 
   var imageGarnitureHistories = RxList<ImageGarnitureHistoryEntity>([]);
+
+  static final _channel = MethodChannel(AppConstants.captureChannel);
 
   Future<void> getImageGarnitureHistory() async {
     final requestData = await AppSecureStorage.getRequestData();
@@ -41,9 +46,26 @@ class HistoryController extends GetxController {
     }
   }
 
+  Future<void> setupChannelHandler() async {
+    /// ------------------ ///
+    _channel.setMethodCallHandler((call) async {
+      try {
+        switch (call.method) {
+          case AppConstants.onNativeBackPressed:
+            Get.back();
+          default:
+            break;
+        }
+      } catch (e) {
+        debugPrint('Error setting up channel handler: $e');
+      }
+    });
+  }
+
   @override
   void onInit() async {
     super.onInit();
     await getImageGarnitureHistory();
+    await setupChannelHandler();
   }
 }

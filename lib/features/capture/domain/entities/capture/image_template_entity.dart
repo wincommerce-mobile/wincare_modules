@@ -1,9 +1,7 @@
-import 'dart:ui';
-
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../../app/app_colors.dart';
 import '../../../../../app/app_enum.dart';
+import 'result_image_garniture_entity.dart';
 
 class ImageTemplateEntity {
   final String? imageGarnitureId;
@@ -16,7 +14,7 @@ class ImageTemplateEntity {
   final TemplateType? type;
   final SampleImageEntity? templateImage;
   final List<SampleImageEntity> sampleImages;
-  ImageResult? result;
+  ResultImageGarnitureEntity? result;
   bool finalComplianceStatus;
   bool selected;
 
@@ -38,7 +36,8 @@ class ImageTemplateEntity {
 
   copyWith({
     List<SampleImageEntity>? sampleImages,
-    ImageResult? result,
+    ResultImageGarnitureEntity? result,
+    bool? finalComplianceStatus,
     bool? selected,
   }) {
     return ImageTemplateEntity(
@@ -53,6 +52,7 @@ class ImageTemplateEntity {
       templateImage: templateImage,
       result: result ?? this.result,
       selected: selected ?? this.selected,
+      finalComplianceStatus: finalComplianceStatus ?? this.finalComplianceStatus,
       sampleImages: sampleImages ?? this.sampleImages,
     );
   }
@@ -80,38 +80,6 @@ class SampleImageEntity {
       takenDate: takenDate,
       path: path ?? this.path,
       isHandled: isHandled ?? this.isHandled,
-    );
-  }
-}
-
-enum MyImageStatus {
-  created(name: 'Mới tạo', color: AppColors.black4D),
-  processing(name: 'Chờ kết quả chấm', color: Color(0xFFE7B400)),
-  verified(name: 'Đạt', color: Color(0xFF3A73FF)),
-  failed(name: 'Rớt', color: AppColors.red);
-
-  const MyImageStatus({required this.name, required this.color});
-
-  final String name;
-  final Color color;
-}
-
-class ImageResult {
-  final MyImageStatus status;
-  final String name;
-  final String resultDate;
-
-  ImageResult({
-    required this.status,
-    required this.name,
-    required this.resultDate,
-  });
-
-  copyWith({MyImageStatus? status, String? name, String? resultDate}) {
-    return ImageResult(
-      status: status ?? this.status,
-      name: name ?? this.name,
-      resultDate: resultDate ?? this.resultDate,
     );
   }
 }

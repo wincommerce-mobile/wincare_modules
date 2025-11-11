@@ -7,6 +7,7 @@ class RequestDataModel {
   final String? samplingId;
   final String? imageGarnitureId;
   final String? outletCode;
+  final String? versionInfo;
 
   RequestDataModel({
     required this.displayName,
@@ -17,6 +18,7 @@ class RequestDataModel {
     required this.samplingId,
     required this.imageGarnitureId,
     required this.outletCode,
+    required this.versionInfo,
   });
 
   factory RequestDataModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class RequestDataModel {
       samplingId: json['samplingId'] ?? '',
       imageGarnitureId: json['imageGarnitureId'] ?? '',
       outletCode: json['outletCode'] ?? '',
+      versionInfo: json['versionInfo'] ?? '',
     );
   }
 
@@ -42,6 +45,7 @@ class RequestDataModel {
       'samplingId': samplingId,
       'imageGarnitureId': imageGarnitureId,
       'outletCode': outletCode,
+      'versionInfo': versionInfo,
     };
   }
 }

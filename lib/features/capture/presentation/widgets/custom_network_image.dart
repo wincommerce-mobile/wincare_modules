@@ -32,7 +32,7 @@ class CustomNetworkImage extends StatelessWidget {
       width: width,
       fit: fit ?? BoxFit.cover,
       placeholder: (context, url) =>
-          AppIcon.placeholder.widget(height: height, width: width),
+          AppIcon.placeholder.widget(height: height, width: width, fit: BoxFit.cover),
       errorWidget: (context, url, error) => AppIcon.placeholder.widget(
         height: height,
         width: width,

@@ -10,4 +10,13 @@ class ComplaintReasonRequest {
     required this.employeeCode,
     required this.siteId,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'UserId': userId,
+      'UserName': userName,
+      'EmployeeCode': employeeCode,
+      'SiteId': siteId,
+    };
+  }
 }

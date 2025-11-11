@@ -6,11 +6,11 @@ class ImageTemplateRequest {
   String? imageGarnitureId;
 
   ImageTemplateRequest({
-    this.userId,
-    this.employeeCode,
-    this.samplingId,
-    this.outletCode,
-    this.imageGarnitureId,
+    required this.userId,
+    required this.employeeCode,
+    required this.samplingId,
+    required this.outletCode,
+    required this.imageGarnitureId,
   });
 
   Map<String, dynamic> toJson() {

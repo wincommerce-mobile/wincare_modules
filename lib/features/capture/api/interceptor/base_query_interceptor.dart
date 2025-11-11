@@ -17,6 +17,9 @@ class BaseQueryInterceptor extends InterceptorsWrapper with ConfigModule {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    // Set timeouts
+    dio.options.connectTimeout = Duration(seconds: 60);
+    dio.options.receiveTimeout = Duration(seconds: 60);
     return super.onRequest(options.copyWith(baseUrl: baseDomain), handler);
   }
 

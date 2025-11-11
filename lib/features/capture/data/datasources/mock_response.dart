@@ -58,7 +58,7 @@ class MockResponse {
     "Data": {
         "ID": 1,
         "Message": "Thêm mới record thành công.",
-        "SystemMessage": "Db_ExecuteStoreSucceed"
+        "SystemMessage": "https://xebangphan.vn/wp-content/uploads/2024/06/ha-giang-mua-he-2.jpg"
     },
     "StatusName": "Thành công",
     "MessageTechnical": null,
@@ -256,11 +256,11 @@ class MockResponse {
   {
     "StatusCode": 1,
     "Data": {
-        "ComplianceStatusId": 2, // 1: Chờ kết quả chấm, 2: Đạt, 3: Không đạt
-        "ComplianceStatus": "Đạt",
+        "ComplianceStatusId": 1,
+        "ComplianceStatus": "Chờ kết quả chấm",
         "ComplianceSummary": "Đạt 2/2 điều kiện: 200% faces (54/27) và 100% groups (0/0)",
         "CreatedByName": "AI Chấm hình",
-        "CreatedDate": "2024-09-12T08:21:58.497",
+        "CreatedDate": "2024-09-12T08:21:58.497"
     },
     "StatusName": "Thành công",
     "MessageTechnical": null,

@@ -32,6 +32,7 @@ class CurlLoggerDioInterceptor extends Interceptor {
       ) {
     if (printOnSuccess != null && printOnSuccess == true) {
       _renderCurlRepresentation(response.requestOptions);
+      log('response: ${response.data}');
     }
     return handler.next(response); //continue
   }
@@ -44,7 +45,7 @@ class CurlLoggerDioInterceptor extends Interceptor {
       }else{
         debugPrint(_cURLRepresentation(requestOptions));
       }
-
+      //debugPrint(_cURLRepresentation(requestOptions));
     } catch (err) {
       debugPrint('unable to create a CURL representation of the requestOptions');
     }

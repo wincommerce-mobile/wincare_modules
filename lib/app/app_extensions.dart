@@ -49,7 +49,6 @@ extension DateTimeExtension on DateTime {
   }
 
   String toAppDateTimeFormat() {
-    // 'this' ở đây chính là đối tượng DateTime mà bạn gọi hàm
     final formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
     return formatter.format(this);
   }
@@ -62,6 +61,15 @@ extension StringExtension on String {
       return dateTime.toDateTimeString();
     } catch (e) {
       return this; // Return original string if parsing fails
+    }
+  }
+
+  String toDisplayDateTime() {
+    try {
+      final dt = DateTime.parse(this);
+      return DateFormat('dd/MM/yyyy HH:mm:ss').format(dt);
+    } catch (_) {
+      return this;
     }
   }
 }

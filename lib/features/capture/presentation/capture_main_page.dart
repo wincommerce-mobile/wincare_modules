@@ -25,11 +25,15 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
 
   List<ImageTemplateEntity> get _zones => _controller.imageZones;
 
+  bool get _allowBack => _controller.allowBack;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.setupChannelHandler();
+      //TODO - update when build module
+      //await _controller.loadWithDummy();
     });
   }
 
@@ -41,30 +45,45 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
           appBar: commonAppBar(
             'CHẤM ẢNH CHƯƠNG TRÌNH',
             onBack: () {
-              showWarningDialog(
-                context: context,
-                message: 'Vui lòng xác nhận kết quả',
-              );
+              if (!_allowBack) {
+                showWarningDialog(
+                  context: context,
+                  message: 'Vui lòng xác nhận kết quả',
+                );
+              } else {
+                _controller.triggerNativeBack();
+              }
             },
             actions: [
-              InkWell(
-                child: AppIcon.icHistory.widget(),
-                onTap: () {
-                  Get.toNamed(AppRoutes.history);
-                },
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    child: AppIcon.icHistory.widget(),
+                    onTap: () {
+                      Get.toNamed(AppRoutes.history);
+                    },
+                  ),
+                ),
               ),
-              SizedBox(width: 12),
             ],
           ),
           body: Column(
             children: [
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(top: 12, left: 16, right: 16, bottom: 8),
+                padding: EdgeInsets.only(
+                  top: 12,
+                  left: 16,
+                  right: 16,
+                  bottom: 8,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(_zones.length, (index) {
-                    return InkWell(
+                    return GestureDetector(
                       onTap: () {
                         _controller.onPageChanged(index);
                       },
@@ -128,11 +147,14 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                       onTakePicTure: () {
                         _controller.onTakePicTure(index);
                       },
-                      onDeleteImage: (imageIndex) {
-                        _controller.onDeletePicTure(index, imageIndex);
+                      onDeleteImage: (imageIndex) async {
+                        await _controller.onDeletePicTure(index, imageIndex);
                       },
-                      onGetImagePoint: (result){
+                      onGetImagePoint: (result) {
                         _controller.onUpdateResult(index, result);
+                      },
+                      onUpdateFinalResult: (finalResult) {
+                        _controller.onUpdateFinalResult(index, finalResult);
                       },
                       zoneController: _controller.zoneControllers[index],
                     );
@@ -146,11 +168,3 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
     );
   }
 }
-/*
-TODO list
-1. Detect to handle back button
-2. Api load hình mẫu theo zone
-3. Api load hình trưng bày theo zone
-4. Api upload image (cần biết nó thuộc zone nào)
-5. Api load hình trưng bày theo zone
-*/

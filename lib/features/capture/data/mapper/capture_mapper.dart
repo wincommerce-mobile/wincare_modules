@@ -32,7 +32,11 @@ extension ImageTemplateMapper on ImageTemplateResponse {
       level: level,
       type: TemplateType.fromServer(type),
       templateImage: SampleImageEntity(url: imageTemplate, path: null),
-      sampleImages: [],
+      sampleImages: urlImages != null
+          ? urlImages!
+                .map((url) => SampleImageEntity(url: url, path: null))
+                .toList()
+          : [],
     );
   }
 }

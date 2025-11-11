@@ -3,7 +3,7 @@ import '../../../../../app/app_enum.dart';
 class ResultImageGarnitureEntity {
   final int? complianceStatusId;
   final String? complianceStatus;
-  final ComplianceStatusEnum complianceStatusEnum;
+  final ComplianceStatusEnum? complianceStatusEnum;
   final String? complianceSummary;
   final String? createdByName;
   final String? createdDate;

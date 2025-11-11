@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_colors.dart';
+import 'package:wincare_modules/app/app_extensions.dart';
 import 'package:wincare_modules/app/app_text.dart';
 import 'package:wincare_modules/features/capture/presentation/history/history_controller.dart';
 import 'package:wincare_modules/features/capture/presentation/widgets/common_appbar.dart';
@@ -40,13 +41,16 @@ class _HistoryPageState extends State<HistoryPage> {
                 Row(
                   children: [
                     AppText(
-                      text: 'Ngày ${history.createdDate}: ',
+                      text:
+                          'Ngày ${history.createdDate?.toDisplayDateTime()}: ',
                       fontSize: 14,
                     ),
-                    AppText(
-                      text: history.statusName ?? '',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
+                    Expanded(
+                      child: AppText(
+                        text: history.statusName ?? '',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ],
                 ),

@@ -1,15 +1,15 @@
-import 'package:wincare_modules/features/capture/domain/entities/base/base_created_entity.dart';
 import 'package:wincare_modules/features/capture/domain/repositories/capture_repository.dart';
 
 import '../../data/request/sampling_sent_approval_garniture_request.dart';
 import '../entities/base/base_error_entity.dart';
+import '../entities/capture/result_image_garniture_entity.dart';
 
 class SamplingSentApprovalImageUseCase {
   final CaptureRepository repository;
 
   SamplingSentApprovalImageUseCase({required this.repository});
 
-  Future<BaseCreatedEntity> call(
+  Future<ResultImageGarnitureEntity> call(
     SamplingSentApprovalGarnitureRequest request,
   ) async {
     try {

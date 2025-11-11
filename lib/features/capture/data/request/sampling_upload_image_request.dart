@@ -8,6 +8,7 @@ class SamplingUploadImageRequest {
 
   /// Mã bộ hình trong object DMS_SamplingOutletDetailImageGarniture
   final String? imageGarnitureId;
+
   /// Zone ID
   final String? planogramCode;
   final ImageType? imageType;
@@ -15,6 +16,8 @@ class SamplingUploadImageRequest {
   final String? urlImg;
   final String? fileName;
   final String? fileExtension;
+  final double? latitude;
+  final double? longitude;
 
   const SamplingUploadImageRequest({
     required this.userId,
@@ -28,6 +31,8 @@ class SamplingUploadImageRequest {
     required this.urlImg,
     required this.fileName,
     required this.fileExtension,
+    this.latitude,
+    this.longitude,
   });
 
   Map<String, dynamic> toJson() {
@@ -43,6 +48,8 @@ class SamplingUploadImageRequest {
       'UrlImg': urlImg,
       'FileName': fileName,
       'FileExtension': fileExtension,
+      if (latitude != null) 'Latitude': latitude,
+      if (longitude != null) 'Longitude': longitude,
     };
   }
 }

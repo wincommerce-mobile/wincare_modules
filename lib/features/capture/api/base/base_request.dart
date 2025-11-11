@@ -3,6 +3,7 @@ class BaseRequest<T> {
   int? uid;
   String? sessionKey;
   String? versionInfo;
+  String? osName;
   bool? checkedLocation;
   double? lat;
   double? lng;
@@ -12,6 +13,7 @@ class BaseRequest<T> {
     this.uid = 0,
     this.sessionKey = '',
     this.versionInfo = '',
+    this.osName = '',
     this.checkedLocation = false,
     this.lat = 0.0,
     this.lng = 0.0,
@@ -24,6 +26,7 @@ class BaseRequest<T> {
       'SessionKey': sessionKey,
       'VersionInfo': versionInfo,
       'CheckedLocation': checkedLocation,
+      'OSName': osName,
       'Lat': lat,
       'Lng': lng,
     };

@@ -27,6 +27,9 @@ class ImageTemplateResponse {
   @JsonKey(name: 'Type')
   final String? type;
 
+  @JsonKey(name: 'UrlImages')
+  final List<String>? urlImages;
+
   ImageTemplateResponse({
     this.imageGarnitureId,
     this.planogramId,
@@ -36,6 +39,7 @@ class ImageTemplateResponse {
     this.zoneName,
     this.level,
     this.type,
+    this.urlImages,
   });
 
   factory ImageTemplateResponse.fromJson(Map<String, dynamic> json) =>

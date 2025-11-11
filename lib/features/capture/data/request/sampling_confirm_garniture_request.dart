@@ -14,6 +14,23 @@ class SamplingConfirmGarnitureRequest {
   String? reasonComplaint;
   String? imageGarnitureId;
 
+  SamplingConfirmGarnitureRequest({
+    required this.userId,
+    required this.userName,
+    required this.employeeCode,
+    required this.siteId,
+    required this.planogramCode,
+    required this.level,
+    required this.promotionCode,
+    required this.rowNumber,
+    required this.outletCode,
+    required this.outletName,
+    required this.zoneName,
+    required this.isComplaint,
+    required this.reasonComplaint,
+    required this.imageGarnitureId,
+  });
+
   Map<String, dynamic> toJson() {
     return {
       'UserId': userId,

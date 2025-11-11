@@ -66,7 +66,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
   Widget build(BuildContext context) {
     return DismissiblePage(
       child: SizedBox(
-        height: Get.height * .92,
+        height: Get.height - 95,
         child: Column(
           children: [
             Stack(
@@ -94,138 +94,141 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
               ],
             ),
             Expanded(
-              child: Stack(
-                children: [
-                  PageView.builder(
-                    controller: widget.pageController,
-                    itemCount: _photos.length,
-                    physics: ClampingScrollPhysics(),
-                    onPageChanged: (page) {
-                      setState(() {
-                        _currentPage = page;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      final photo = _photos[index];
-                      return Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Stack(
-                            children: [
-                              InteractiveViewer(
-                                panEnabled: true,
-                                minScale: 1,
-                                maxScale: 5,
-                                child: photo.url != null
-                                    ? CustomNetworkImage(
-                                        url: photo.url!,
-                                        height: Get.height * .92 - _bottom,
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Image.file(
-                                        File(photo.path!.path),
-                                        height: Get.height * .92 - _bottom,
-                                        fit: BoxFit.fill,
-                                      ),
-                              ),
+              child: Container(
+                color: AppColors.white,
+                child: Stack(
+                  children: [
+                    PageView.builder(
+                      controller: widget.pageController,
+                      itemCount: _photos.length,
+                      physics: ClampingScrollPhysics(),
+                      onPageChanged: (page) {
+                        setState(() {
+                          _currentPage = page;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        final photo = _photos[index];
+                        return Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Stack(
+                              children: [
+                                InteractiveViewer(
+                                  panEnabled: true,
+                                  minScale: 1,
+                                  maxScale: 5,
+                                  child: photo.url != null
+                                      ? CustomNetworkImage(
+                                          url: photo.url!,
+                                          height: Get.height * .92 - _bottom,
+                                          fit: BoxFit.fill,
+                                        )
+                                      : Image.file(
+                                          File(photo.path!.path),
+                                          height: Get.height * .92 - _bottom,
+                                          fit: BoxFit.fill,
+                                        ),
+                                ),
 
-                              widget.isShowDelete
-                                  ? Positioned(
-                                      left: 4,
-                                      bottom: 4,
+                                widget.isShowDelete
+                                    ? Positioned(
+                                        left: 4,
+                                        bottom: 4,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            AppText(
+                                              text: photo.takenDate ?? '',
+                                              color: AppColors.white,
+                                              backgroundColor: AppColors.black,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            const SizedBox(height: 2),
+                                            AppText(
+                                              text: photo.address ?? '',
+                                              fontSize: 10,
+                                              backgroundColor: AppColors.black,
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                            !(widget.isShowDelete) || photo.isHandled
+                                ? SizedBox.shrink()
+                                : InkWell(
+                                    onTap: () {
+                                      widget.onImageAction(index);
+                                    },
+                                    child: Container(
+                                      height: 60,
+                                      width: Get.width,
+                                      color: AppColors.white,
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
                                         children: [
-                                          AppText(
-                                            text: photo.takenDate ?? '',
-                                            color: AppColors.white,
-                                            backgroundColor: AppColors.black,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
+                                          const SizedBox(height: 10),
+                                          AppIcon.icDelete.widget(
+                                            color: AppColors.red,
                                           ),
-                                          const SizedBox(height: 2),
+                                          const SizedBox(height: 4),
                                           AppText(
-                                            text: photo.address ?? '',
-                                            fontSize: 10,
-                                            backgroundColor: AppColors.black,
-                                            color: AppColors.white,
-                                            fontWeight: FontWeight.bold,
+                                            text: 'Xoá ảnh',
+                                            fontSize: 12,
+                                            color: AppColors.color4D4D4D,
+                                            fontWeight: FontWeight.w400,
                                           ),
                                         ],
                                       ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                          !(widget.isShowDelete) || photo.isHandled
-                              ? SizedBox.shrink()
-                              : InkWell(
-                                  onTap: () {
-                                    widget.onImageAction(index);
-                                  },
-                                  child: Container(
-                                    height: 60,
-                                    width: Get.width,
-                                    color: AppColors.white,
-                                    child: Column(
-                                      children: [
-                                        const SizedBox(height: 10),
-                                        AppIcon.icDelete.widget(
-                                          color: AppColors.red,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        AppText(
-                                          text: 'Xoá ảnh',
-                                          fontSize: 12,
-                                          color: AppColors.color4D4D4D,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ],
                                     ),
                                   ),
-                                ),
-                        ],
-                      );
-                    },
-                  ),
-                  _showLeft
-                      ? Align(
-                          alignment: Alignment.centerLeft,
-                          child: IconButton(
-                            onPressed: () {
-                              widget.pageController.previousPage(
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            },
-                            icon: Icon(
-                              Icons.arrow_back_ios,
-                              color: AppColors.white,
-                              size: 32,
+                          ],
+                        );
+                      },
+                    ),
+                    _showLeft
+                        ? Align(
+                            alignment: Alignment.centerLeft,
+                            child: IconButton(
+                              onPressed: () {
+                                widget.pageController.previousPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios,
+                                color: AppColors.white,
+                                size: 32,
+                              ),
                             ),
-                          ),
-                        )
-                      : Container(),
-                  _showRight
-                      ? Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            onPressed: () {
-                              widget.pageController.nextPage(
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            },
-                            icon: Icon(
-                              Icons.arrow_forward_ios,
-                              color: AppColors.white,
-                              size: 32,
+                          )
+                        : Container(),
+                    _showRight
+                        ? Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () {
+                                widget.pageController.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                color: AppColors.white,
+                                size: 32,
+                              ),
                             ),
-                          ),
-                        )
-                      : Container(),
-                ],
+                          )
+                        : Container(),
+                  ],
+                ),
               ),
             ),
           ],
