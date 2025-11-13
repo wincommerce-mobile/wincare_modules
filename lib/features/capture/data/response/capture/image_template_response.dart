@@ -1,4 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:wincare_modules/features/capture/data/response/capture/image_response.dart';
+
+import 'result_image_garniture_response.dart';
+
 part 'image_template_response.g.dart';
 
 @JsonSerializable()
@@ -24,11 +28,17 @@ class ImageTemplateResponse {
   @JsonKey(name: 'Level')
   final int? level;
 
+  @JsonKey(name: 'IsConfirmed')
+  final bool? isConfirmed;
+
   @JsonKey(name: 'Type')
   final String? type;
 
-  @JsonKey(name: 'UrlImages')
-  final List<String>? urlImages;
+  @JsonKey(name: 'ComplianceResult')
+  final ResultImageGarnitureResponse? resultImageGarniture;
+
+  @JsonKey(name: 'Images')
+  final List<ImageResponse>? images;
 
   ImageTemplateResponse({
     this.imageGarnitureId,
@@ -38,8 +48,10 @@ class ImageTemplateResponse {
     this.imageTemplate,
     this.zoneName,
     this.level,
+    this.isConfirmed,
     this.type,
-    this.urlImages,
+    this.resultImageGarniture,
+    this.images,
   });
 
   factory ImageTemplateResponse.fromJson(Map<String, dynamic> json) =>

@@ -14,9 +14,14 @@ class ImageTemplateEntity {
   final TemplateType? type;
   final SampleImageEntity? templateImage;
   final List<SampleImageEntity> sampleImages;
-  ResultImageGarnitureEntity? result;
-  bool finalComplianceStatus;
+  final ResultImageGarnitureEntity? result;
+  final bool finalComplianceStatus;
+
+  /// bộ hình đã gửi chấm hình và có kết quả
+  bool isSendConfirm;
   bool selected;
+
+  bool get allImagesConfirmed => sampleImages.every((e) => e.isSendConfirm);
 
   ImageTemplateEntity({
     required this.imageGarnitureId,
@@ -29,9 +34,10 @@ class ImageTemplateEntity {
     required this.type,
     required this.templateImage,
     required this.sampleImages,
-    this.result,
+    required this.result,
     this.selected = false,
-    this.finalComplianceStatus = false,
+    required this.isSendConfirm,
+    required this.finalComplianceStatus,
   });
 
   copyWith({
@@ -39,6 +45,7 @@ class ImageTemplateEntity {
     ResultImageGarnitureEntity? result,
     bool? finalComplianceStatus,
     bool? selected,
+    bool? isSendConfirm,
   }) {
     return ImageTemplateEntity(
       imageGarnitureId: imageGarnitureId,
@@ -52,7 +59,9 @@ class ImageTemplateEntity {
       templateImage: templateImage,
       result: result ?? this.result,
       selected: selected ?? this.selected,
-      finalComplianceStatus: finalComplianceStatus ?? this.finalComplianceStatus,
+      isSendConfirm: isSendConfirm ?? this.isSendConfirm,
+      finalComplianceStatus:
+          finalComplianceStatus ?? this.finalComplianceStatus,
       sampleImages: sampleImages ?? this.sampleImages,
     );
   }
@@ -63,23 +72,40 @@ class SampleImageEntity {
   final XFile? path;
   final String? address;
   final String? takenDate;
+
+  /// Hình đã xử lý và trả về từ AI (in case hình ghép)
   final bool isHandled;
+  final bool isAllowEdit;
+
+  /// Hình đã gửi chấm hình và có kết quả
+  final bool isSendConfirm;
 
   SampleImageEntity({
     required this.url,
     required this.path,
     this.isHandled = false,
+    this.isAllowEdit = true,
     this.address,
     this.takenDate,
+    required this.isSendConfirm,
   });
 
-  copyWith({String? url, String? address, XFile? path, bool? isHandled}) {
+  copyWith({
+    String? url,
+    String? address,
+    XFile? path,
+    bool? isHandled,
+    bool? isAllowEdit,
+    bool? isSendConfirm,
+  }) {
     return SampleImageEntity(
       url: url ?? this.url,
       address: address ?? this.address,
       takenDate: takenDate,
       path: path ?? this.path,
       isHandled: isHandled ?? this.isHandled,
+      isAllowEdit: isAllowEdit ?? this.isAllowEdit,
+      isSendConfirm: isSendConfirm ?? this.isSendConfirm,
     );
   }
 }

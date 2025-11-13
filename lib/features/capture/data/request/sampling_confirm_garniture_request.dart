@@ -13,6 +13,7 @@ class SamplingConfirmGarnitureRequest {
   bool? isComplaint;
   String? reasonComplaint;
   String? imageGarnitureId;
+  int? planogramId;
 
   SamplingConfirmGarnitureRequest({
     required this.userId,
@@ -29,6 +30,7 @@ class SamplingConfirmGarnitureRequest {
     required this.isComplaint,
     required this.reasonComplaint,
     required this.imageGarnitureId,
+    required this.planogramId,
   });
 
   Map<String, dynamic> toJson() {
@@ -47,6 +49,7 @@ class SamplingConfirmGarnitureRequest {
       'IsComplaint': isComplaint,
       'ReasonComplaint': reasonComplaint,
       'ImageGarnitureId': imageGarnitureId,
+      'PlanogramId': planogramId,
     };
   }
 }

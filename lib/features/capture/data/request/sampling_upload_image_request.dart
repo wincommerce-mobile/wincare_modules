@@ -10,6 +10,7 @@ class SamplingUploadImageRequest {
   final String? imageGarnitureId;
 
   /// Zone ID
+  final int? planogramId;
   final String? planogramCode;
   final ImageType? imageType;
   final String? img;
@@ -25,6 +26,7 @@ class SamplingUploadImageRequest {
     required this.employeeCode,
     required this.siteId,
     required this.imageGarnitureId,
+    required this.planogramId,
     required this.planogramCode,
     required this.imageType,
     required this.img,
@@ -43,6 +45,7 @@ class SamplingUploadImageRequest {
       'SiteId': siteId,
       'ID': imageGarnitureId,
       'PlanogramCode': planogramCode,
+      'PlanogramId': planogramId,
       'ImageTypeId': imageType?.id,
       'Img': img,
       'UrlImg': urlImg,

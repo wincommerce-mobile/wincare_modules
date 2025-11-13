@@ -29,12 +29,26 @@ extension ImageTemplateMapper on ImageTemplateResponse {
       promotionCode: promotionCode,
       imageTemplate: imageTemplate,
       zoneName: zoneName,
+      finalComplianceStatus: isConfirmed ?? false,
       level: level,
+      isSendConfirm: resultImageGarniture != null,
       type: TemplateType.fromServer(type),
-      templateImage: SampleImageEntity(url: imageTemplate, path: null),
-      sampleImages: urlImages != null
-          ? urlImages!
-                .map((url) => SampleImageEntity(url: url, path: null))
+      result: resultImageGarniture?.toEntity(),
+      templateImage: SampleImageEntity(
+        url: imageTemplate,
+        path: null,
+        isSendConfirm: true,
+      ),
+      sampleImages: images != null
+          ? images!
+                .map(
+                  (img) => SampleImageEntity(
+                    url: img.urlImage,
+                    path: null,
+                    isSendConfirm: resultImageGarniture != null,
+                    isHandled: img.isCollage ?? false,
+                  ),
+                )
                 .toList()
           : [],
     );

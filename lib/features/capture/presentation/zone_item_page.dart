@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wincare_modules/app/app_extensions.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/complaint_reason_entity.dart';
 import 'package:wincare_modules/features/capture/presentation/zone_controller.dart';
 
@@ -27,6 +28,7 @@ class ZoneItemPage extends StatefulWidget {
     required this.zoneController,
     required this.onGetImagePoint,
     required this.onUpdateFinalResult,
+    required this.onRefreshZone,
   });
 
   final ImageTemplateEntity imageZone;
@@ -35,6 +37,7 @@ class ZoneItemPage extends StatefulWidget {
   final OnGetImagePoint onGetImagePoint;
   final OnUpdateFinalResult onUpdateFinalResult;
   final ZoneController zoneController;
+  final VoidCallback onRefreshZone;
 
   @override
   State<ZoneItemPage> createState() => _ZoneItemPageState();
@@ -44,14 +47,40 @@ class _ZoneItemPageState extends State<ZoneItemPage>
     with AutomaticKeepAliveClientMixin {
   ZoneController get _zoneController => widget.zoneController;
 
+  final ScrollController _scrollController = ScrollController();
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  ImageTemplateEntity get _imageZone => widget.imageZone;
+
   List<SampleImageEntity> get _templateImages =>
       widget.imageZone.templateImage != null
       ? [widget.imageZone.templateImage!]
       : [];
 
+  bool get _isAllowEdit =>
+      _zoneController.requestDataModel?.isAllowEdit ?? true;
+
   List<SampleImageEntity> get _images => widget.imageZone.sampleImages;
 
   ResultImageGarnitureEntity? get _result => widget.imageZone.result;
+
+  bool get _hiddenAction =>
+      (_result?.complianceStatusEnum == null ||
+      _result?.complianceStatusEnum == ComplianceStatusEnum.waitingResult ||
+      _result?.complianceStatusEnum == ComplianceStatusEnum.created ||
+      _finalComplianceStatus ||
+      !_isAllowEdit ||
+      widget.imageZone.sampleImages.isEmpty ||
+      !_imageZone.allImagesConfirmed);
 
   bool get _finalComplianceStatus => widget.imageZone.finalComplianceStatus;
 
@@ -62,10 +91,10 @@ class _ZoneItemPageState extends State<ZoneItemPage>
   //                 ComplianceStatusEnum.waitingResult) &&
   //         !_finalComplianceStatus);
 
-  bool get _showVerifyImageButton =>
-      widget.imageZone.sampleImages.isNotEmpty &&
-      (_result == null ||
-          _result?.complianceStatusEnum == ComplianceStatusEnum.created);
+  // bool get _showVerifyImageButton =>
+  //     widget.imageZone.sampleImages.isNotEmpty &&
+  //     (_result == null ||
+  //         _result?.complianceStatusEnum == ComplianceStatusEnum.created);
 
   bool get _showTakePickTureButton =>
       (_result?.complianceStatusEnum != ComplianceStatusEnum.passed &&
@@ -73,9 +102,51 @@ class _ZoneItemPageState extends State<ZoneItemPage>
               ComplianceStatusEnum.waitingResult) ||
       !_finalComplianceStatus;
 
+  bool get _allHandled => _images.every((img) => img.isHandled);
+
+  bool get _hiddenVerifyImageButton {
+    if (!_isAllowEdit) {
+      return true;
+    }
+    if (widget.imageZone.sampleImages.isEmpty) {
+      return true;
+    }
+    if (_allHandled) {
+      return true;
+    }
+    if (_finalComplianceStatus) {
+      return true;
+    }
+    if (_result != null &&
+        _result?.complianceStatusEnum != null &&
+        _result?.complianceStatusEnum == ComplianceStatusEnum.waitingResult) {
+      return true;
+    }
+
+    return false;
+  }
+
+  bool get _hiddenTakePickTureButton {
+    if (!_isAllowEdit) {
+      return true;
+    }
+    if (_finalComplianceStatus) {
+      return true;
+    }
+    if (_result != null &&
+        _result?.complianceStatusEnum != null &&
+        _result?.complianceStatusEnum == ComplianceStatusEnum.waitingResult) {
+      return true;
+    }
+
+    return false;
+  }
+
   bool get _showResult => _result?.complianceStatusEnum != null;
 
   double get _bottom => MediaQuery.of(context).padding.bottom;
+
+  int _currentIndex = 0;
 
   List<ComplaintReasonEntity> get _reasons => _zoneController.reasons;
 
@@ -87,26 +158,26 @@ class _ZoneItemPageState extends State<ZoneItemPage>
     _zoneController.imageResult.listen((result) {
       if (result != null) {
         widget.onGetImagePoint(result);
+        if (result.complianceStatusEnum == ComplianceStatusEnum.passed ||
+            result.complianceStatusEnum == ComplianceStatusEnum.notPassed) {
+          widget.onRefreshZone();
+        }
+
+        _scrollToBottom();
       }
     });
   }
 
   Future<void> onConfirm() async {
     final result = await _zoneController.samplingConfirmImage();
+    _zoneController.updateFinalResult(result);
     widget.onUpdateFinalResult(result);
   }
 
   Future<void> onComplaint() async {
     final result = await _zoneController.promotionAivComplaint();
+    _zoneController.updateFinalResult(result);
     widget.onUpdateFinalResult(result);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _zoneController.samplingResultImageGarniture();
-    });
   }
 
   @override
@@ -118,9 +189,12 @@ class _ZoneItemPageState extends State<ZoneItemPage>
     return Stack(
       children: [
         RefreshIndicator(
-          onRefresh: _zoneController.onRefresh,
+          onRefresh: () async {
+            await _zoneController.onRefresh();
+          },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
             padding: EdgeInsets.only(
               left: 16,
               right: 16,
@@ -132,7 +206,8 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                 _buildSlider(),
                 const SizedBox(height: 24),
                 _buildImages(),
-                const SizedBox(height: 24),
+                if (!_hiddenTakePickTureButton || !_hiddenVerifyImageButton)
+                  const SizedBox(height: 24),
                 _buildCapture(),
                 const SizedBox(height: 24),
                 _buildResult(),
@@ -223,7 +298,16 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   Widget _emptyImage() {
     return InkWell(
-      onTap: widget.onTakePicTure,
+      onTap: _hiddenTakePickTureButton
+          ? null
+          : () async {
+              await widget.onTakePicTure();
+              Future.delayed(const Duration(milliseconds: 100), () {
+                setState(() {
+                  _currentIndex = _images.length - 1;
+                });
+              });
+            },
       child: DottedBorder(
         options: RoundedRectDottedBorderOptions(
           dashPattern: [6, 5],
@@ -250,7 +334,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
       images: _images,
       width: width,
       height: height,
-      initCurrentImage: _images.length - 1,
+      initCurrentImage: _currentIndex,
       key: ValueKey('multiImages'),
       onViewImage: (index) {
         _openImageViewerBottomSheet(
@@ -258,7 +342,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
           title: "Hình ảnh trưng bày",
           photos: _images,
           initPage: index,
-          isShowDelete: true,
+          isShowDelete: _isAllowEdit,
         );
       },
       showImageAddress: true,
@@ -270,11 +354,16 @@ class _ZoneItemPageState extends State<ZoneItemPage>
     return Row(
       children: [
         Expanded(
-          child: _showTakePickTureButton
+          child: !_hiddenTakePickTureButton
               ? CustomBorderButton(
                   title: 'Chụp hình mới',
                   onPressed: () async {
-                    widget.onTakePicTure();
+                    await widget.onTakePicTure();
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      setState(() {
+                        _currentIndex = _images.length - 1;
+                      });
+                    });
                   },
                   icon: AppIcon.icCamera.widget(),
                   borderColor: AppColors.color3A73FF,
@@ -284,7 +373,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: _showVerifyImageButton
+          child: !_hiddenVerifyImageButton
               ? CustomButton(
                   text: 'Chấm hình',
                   onPressed: () {
@@ -361,7 +450,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                     fontWeight: FontWeight.w400,
                   ),
                   AppText(
-                    text: _result?.createdDate ?? '',
+                    text: _result?.createdDate?.toDisplayDateTime() ?? '',
                     fontSize: 14,
                     color: AppColors.black,
                   ),
@@ -377,10 +466,12 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                     ),
-                    AppText(
-                      text: _result?.complianceSummary ?? '',
-                      fontSize: 14,
-                      color: AppColors.black,
+                    Expanded(
+                      child: AppText(
+                        text: _result?.complianceSummary ?? '',
+                        fontSize: 14,
+                        color: AppColors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -402,10 +493,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   /// Confirm / Feedback
   Widget _buildAction() {
-    if (_result?.complianceStatusEnum == null ||
-        _result?.complianceStatusEnum == ComplianceStatusEnum.waitingResult ||
-        _result?.complianceStatusEnum == ComplianceStatusEnum.created ||
-        _finalComplianceStatus) {
+    if (_hiddenAction) {
       return Container();
     }
     return Container(
@@ -429,24 +517,20 @@ class _ZoneItemPageState extends State<ZoneItemPage>
               bgColor: AppColors.color3A73FF,
             ),
           ),
-          _result?.complianceStatusEnum == ComplianceStatusEnum.notPassed
-              ? const SizedBox(width: 16)
-              : SizedBox.shrink(),
-          _result?.complianceStatusEnum == ComplianceStatusEnum.notPassed
-              ? Expanded(
-                  child: CustomButton(
-                    text: 'Khiếu nại',
-                    onPressed: () async {
-                      _zoneController.setReasonList();
-                      Future.delayed(const Duration(milliseconds: 100), () {
-                        showDropdownReasonDialog();
-                      });
-                    },
-                    height: 48,
-                    bgColor: AppColors.red,
-                  ),
-                )
-              : Container(),
+          const SizedBox(width: 16),
+          Expanded(
+            child: CustomButton(
+              text: 'Khiếu nại',
+              onPressed: () async {
+                _zoneController.setReasonList();
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  showDropdownReasonDialog();
+                });
+              },
+              height: 48,
+              bgColor: AppColors.red,
+            ),
+          ),
         ],
       ),
     );

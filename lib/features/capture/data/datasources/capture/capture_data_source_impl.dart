@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:wincare_modules/features/capture/data/request/complaint_reason_request.dart';
 import 'package:wincare_modules/features/capture/data/request/complaint_request.dart';
 import 'package:wincare_modules/features/capture/data/request/image_template_request.dart';
@@ -11,13 +8,12 @@ import 'package:wincare_modules/features/capture/data/request/sampling_upload_im
 import 'package:wincare_modules/features/capture/data/response/base_created_response.dart';
 import 'package:wincare_modules/features/capture/data/response/capture/complaint_reason_response.dart';
 import 'package:wincare_modules/features/capture/data/response/capture/image_template_response.dart';
+
 import '../../../api/api_client_type.dart';
 import '../../../api/base/base_error_response.dart';
-import '../../../api/base/base_response.dart';
 import '../../../api/global_request_builder.dart';
 import '../../request/result_image_garniture_request.dart';
 import '../../response/capture/result_image_garniture_response.dart';
-import '../mock_response.dart';
 import 'capture_data_source.dart';
 
 class CaptureDataSourceImpl implements CaptureDataSource {
@@ -177,18 +173,18 @@ class CaptureDataSourceImpl implements CaptureDataSource {
       if (response.data != null) {
         return response.data;
       }
-
-      throw BaseErrorResponse.fromApiException(
-        response.errorMessage,
-        response.statusCode,
-      );
+      final message =
+          (response.errorMessage != null && response.errorMessage!.isNotEmpty)
+          ? response.errorMessage
+          : response.statusName;
+      throw BaseErrorResponse.fromApiException(message, response.statusCode);
     } on DioException catch (error) {
       throw BaseErrorResponse.fromDioException(error);
     }
   }
 
   @override
-  Future<ResultImageGarnitureResponse?> samplingOutletSentApprovalImageGarniture(
+  Future<BaseCreatedResponse?> samplingOutletSentApprovalImageGarniture(
     SamplingSentApprovalGarnitureRequest request,
   ) async {
     final req =
@@ -200,6 +196,7 @@ class CaptureDataSourceImpl implements CaptureDataSource {
       final response = await apiClient.samplingOutletSentApprovalImageGarniture(
         jsonBody,
       );
+
       if (response.data != null) {
         return response.data;
       }

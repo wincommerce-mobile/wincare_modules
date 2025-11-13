@@ -30,6 +30,7 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
   @override
   void initState() {
     super.initState();
+    debugPrint("capture - initState");
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.setupChannelHandler();
       //TODO - update when build module
@@ -48,7 +49,7 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
               if (!_allowBack) {
                 showWarningDialog(
                   context: context,
-                  message: 'Vui lòng xác nhận kết quả',
+                  message: _controller.requiredMessage,
                 );
               } else {
                 _controller.triggerNativeBack();
@@ -144,8 +145,8 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                     return ZoneItemPage(
                       imageZone: imageZone,
                       key: ValueKey(imageZone.planogramId),
-                      onTakePicTure: () {
-                        _controller.onTakePicTure(index);
+                      onTakePicTure: () async{
+                        await _controller.onTakePicTure(index);
                       },
                       onDeleteImage: (imageIndex) async {
                         await _controller.onDeletePicTure(index, imageIndex);
@@ -155,6 +156,9 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                       },
                       onUpdateFinalResult: (finalResult) {
                         _controller.onUpdateFinalResult(index, finalResult);
+                      },
+                      onRefreshZone: () async{
+                        await _controller.onRefreshZone();
                       },
                       zoneController: _controller.zoneControllers[index],
                     );

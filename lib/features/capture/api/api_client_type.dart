@@ -35,7 +35,7 @@ abstract class APIClientType {
 
   /// Chấm ảnh
   @retrofit.POST('/api/MCHDMS/DMSSamplingOutletSentApprovalImageGarniture')
-  Future<BaseResponse<ResultImageGarnitureResponse>>
+  Future<BaseResponse<BaseCreatedResponse>>
   samplingOutletSentApprovalImageGarniture(
     @retrofit.Body() Map<String, dynamic> body,
   );

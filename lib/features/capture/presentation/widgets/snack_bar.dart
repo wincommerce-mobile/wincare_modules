@@ -40,7 +40,7 @@ Future<void> showSnackBar({
 
 Future<void> showSuccessSnackBar({
   required String description,
-  Duration duration = const Duration(milliseconds: 4000),
+  Duration duration = const Duration(milliseconds: 2000),
 }) async {
   final context = navigatorKey.currentContext;
   if (context != null) {

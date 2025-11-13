@@ -66,7 +66,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
   Widget build(BuildContext context) {
     return DismissiblePage(
       child: SizedBox(
-        height: Get.height - 95,
+        height: Get.height * .95,
         child: Column(
           children: [
             Stack(
@@ -122,12 +122,12 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                       ? CustomNetworkImage(
                                           url: photo.url!,
                                           height: Get.height * .92 - _bottom,
-                                          fit: BoxFit.fill,
+                                          fit: BoxFit.contain,
                                         )
                                       : Image.file(
                                           File(photo.path!.path),
                                           height: Get.height * .92 - _bottom,
-                                          fit: BoxFit.fill,
+                                          fit: BoxFit.contain,
                                         ),
                                 ),
 
@@ -160,7 +160,9 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                     : Container(),
                               ],
                             ),
-                            !(widget.isShowDelete) || photo.isHandled
+                            !(widget.isShowDelete) ||
+                                    photo.isHandled ||
+                                    !photo.isAllowEdit
                                 ? SizedBox.shrink()
                                 : InkWell(
                                     onTap: () {

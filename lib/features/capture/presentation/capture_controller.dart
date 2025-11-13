@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wincare_modules/app/app_extensions.dart';
+import 'package:wincare_modules/app/app_pages.dart';
 import 'package:wincare_modules/app/app_secure_storage.dart';
 import 'package:wincare_modules/features/capture/data/request/image_template_request.dart';
 import 'package:wincare_modules/features/capture/domain/entities/request_data_model.dart';
@@ -73,19 +74,42 @@ class CaptureController extends GetxController {
   static final _channel = MethodChannel(AppConstants.captureChannel);
 
   final PageController pageController = PageController();
+  var _currentPageIndex = 0;
   final zoneControllers = <ZoneController>[].obs;
   Position? _position;
 
-  var reasons = RxList<ComplaintReasonEntity>([]);
+  final _reasons = RxList<ComplaintReasonEntity>([]);
 
   final _requestData = Rxn<RequestDataModel>();
 
   var imageZones = RxList<ImageTemplateEntity>([]);
 
+  //var message = 'Vui lòng xác nhận kết quả'.obs;
+
+  String get requiredMessage {
+    String newMessage = '';
+    for (var i in imageZones) {
+      if (!i.finalComplianceStatus && i.result != null) {
+        newMessage = '$newMessage[${i.zoneName}]';
+      }
+    }
+    return '$newMessage chưa xác nhận kết quả';
+  }
+
   /// Chỉ cho phép back khi đã xác nhận bộ hình (passed or not passed)
   bool get allowBack => imageZones
       .where((i) => i.type == TemplateType.require)
-      .every((i) => (i.finalComplianceStatus == true || i.result == null));
+      .every(
+        (i) =>
+            (i.finalComplianceStatus == true ||
+            i.result == null ||
+            (_requestData.value != null && !_requestData.value!.isAllowEdit) ||
+            (i.result != null &&
+                i.result!.complianceStatusEnum != null &&
+                i.result!.complianceStatusEnum != ComplianceStatusEnum.passed &&
+                i.result!.complianceStatusEnum !=
+                    ComplianceStatusEnum.notPassed)),
+      );
 
   bool get _finalComplianceStatus => imageZones
       .where((i) => i.type == TemplateType.require)
@@ -101,8 +125,9 @@ class CaptureController extends GetxController {
   }
 
   Future<void> loadWithDummy() async {
+    await _clearResult();
     final dummyJsonStr = '''
-     {"displayName":"sm Kho NPP TN Cà Mau - Bạc Liêu","sessionLogin":"f6bcfd83-c8dd-4bcf-abc9-14f33bc6b497","employeeCode":"sm.baclieu","siteId":"","userId":2644,"samplingId":"1-53FJ7MD","imageGarnitureId":"430468A6-2BBD-46BA-902E-C60E403939AF","outletCode":"3062100","versionInfo":"1.4"}
+     {"displayName":"sm Kho NPP TN Cà Mau - Bạc Liêu","sessionLogin":"c5de6cef-0b14-41d4-b6d4-c0aee8720be1","employeeCode":"sm.baclieu","siteId":"","userId":2644,"samplingId":"1-53FJ7MD","imageGarnitureId":"FD22DC2C-0A84-4FA0-9819-A66BA86A8EC5","outletCode":"3062100","versionInfo":"1.5","isAllowEdit":false}
      ''';
     final Map<String, dynamic> decoded = jsonDecode(dummyJsonStr);
     final requestData = RequestDataModel.fromJson(decoded);
@@ -120,6 +145,7 @@ class CaptureController extends GetxController {
         showLoadingIndicator();
         switch (call.method) {
           case AppConstants.getRequestData:
+            await _clearResult();
             final jsonStr = call.arguments as String;
             debugPrint("Received getRequestData: $jsonStr");
             final Map<String, dynamic> decoded = jsonDecode(jsonStr);
@@ -132,14 +158,20 @@ class CaptureController extends GetxController {
             hideLoadingIndicator();
             break;
           case AppConstants.onNativeBackPressed:
-            if (Get.context != null && !allowBack) {
-              showWarningDialog(
-                context: Get.context!,
-                message: 'Vui lòng xác nhận kết quả',
-              );
+            if (Get.currentRoute == AppRoutes.history) {
+              Get.back();
             } else {
-              await triggerNativeBack();
+              if (Get.context != null && !allowBack) {
+                showWarningDialog(
+                  context: Get.context!,
+                  message: requiredMessage,
+                );
+              } else {
+                await triggerNativeBack();
+              }
             }
+
+            hideLoadingIndicator();
             break;
           default:
             hideLoadingIndicator();
@@ -152,7 +184,18 @@ class CaptureController extends GetxController {
     });
   }
 
+  Future<void> _clearResult() async {
+    imageZones.clear();
+    imageZones.refresh();
+    zoneControllers.clear();
+    zoneControllers.refresh();
+    _requestData.value = null;
+    await AppSecureStorage.clearRequest();
+  }
+
   void onPageChanged(pageIndex) {
+    _currentPageIndex = pageIndex;
+
     /// deselect all zones
     for (var i = 0; i < imageZones.length; i++) {
       imageZones[i] = imageZones[i].copyWith(selected: false);
@@ -169,6 +212,7 @@ class CaptureController extends GetxController {
     final result = await _deleteImage(
       imgZone.sampleImages[imageIndex].url,
       imgZone.planogramCode,
+      imgZone.planogramId,
     );
     if (result) {
       imgZone.sampleImages.removeAt(imageIndex);
@@ -190,6 +234,7 @@ class CaptureController extends GetxController {
       final result = await _uploadImage(
         await image.readAsBytes(),
         imgZone.planogramCode,
+        imgZone.planogramId,
         _position?.latitude ?? 0.0,
         _position?.longitude ?? 0.0,
       );
@@ -203,6 +248,7 @@ class CaptureController extends GetxController {
             url: result,
             path: null,
             address: address,
+            isSendConfirm: false,
             takenDate: takenDate,
           ),
         );
@@ -219,7 +265,14 @@ class CaptureController extends GetxController {
     ResultImageGarnitureEntity result,
   ) async {
     var imgZone = imageZones[zoneIndex];
-    imageZones[zoneIndex] = imgZone.copyWith(result: result);
+
+    /// Sau khi gọi chấm thành công, update tất cả hình trong zone thành hình đã chấm
+    imageZones[zoneIndex] = imgZone.copyWith(
+      result: result,
+      sampleImages: imgZone.sampleImages
+          .map<SampleImageEntity>((img) => img.copyWith(isSendConfirm: true))
+          .toList(),
+    );
     imageZones.refresh();
   }
 
@@ -232,9 +285,7 @@ class CaptureController extends GetxController {
   Future<XFile?> _takePicture() async {
     final XFile? image = await ImagePicker().pickImage(
       source: ImageSource.camera,
-      imageQuality: 35,
-      maxWidth: 1024,
-      maxHeight: 1024,
+      imageQuality: 50,
       preferredCameraDevice: CameraDevice.rear,
     );
 
@@ -300,10 +351,13 @@ class CaptureController extends GetxController {
     }
   }
 
+  Future<void> onRefreshZone() async {
+    await _getImageTemplates(selectedIndex: _currentPageIndex);
+  }
+
   /// =========================== API call Zone ===========================//
   Future<List<ComplaintReasonEntity>> _getComplaintReason() async {
     try {
-      showLoadingIndicator();
       final requestData = _requestData.value;
       final request = ComplaintReasonRequest(
         userId: requestData?.userId,
@@ -312,11 +366,9 @@ class CaptureController extends GetxController {
         siteId: requestData?.siteId,
       );
       final result = await getPromotionAivComplaintReasonUseCase.call(request);
-      reasons.value = result;
-      hideLoadingIndicator();
+      _reasons.value = result;
       return result;
     } on BaseErrorEntity catch (error) {
-      hideLoadingIndicator();
       if (error.statusCode == 1002) {
         await CaptureMethodChannel.logOut();
         return [];
@@ -326,7 +378,7 @@ class CaptureController extends GetxController {
     }
   }
 
-  Future<void> _getImageTemplates() async {
+  Future<void> _getImageTemplates({int selectedIndex = 0}) async {
     try {
       showLoadingIndicator();
       final requestData = _requestData.value;
@@ -340,13 +392,25 @@ class CaptureController extends GetxController {
       final result = await getImageTemplateUseCase.call(request);
       imageZones.value = result;
       if (imageZones.isNotEmpty) {
-        imageZones[0] = imageZones[0].copyWith(selected: true);
+        imageZones[selectedIndex] = imageZones[selectedIndex].copyWith(
+          selected: true,
+        );
+        for (var i = 0; i < imageZones.length; i++) {
+          final z = imageZones[i];
+          imageZones[i] = z.copyWith(
+            sampleImages: z.sampleImages
+                .map<SampleImageEntity>(
+                  (img) => img.copyWith(isAllowEdit: requestData?.isAllowEdit),
+                )
+                .toList(),
+          );
+        }
         imageZones.refresh();
       }
       for (var zone in result) {
         final zc = ZoneController(
           zone: zone,
-          reasonList: reasons,
+          reasonList: _reasons,
           samplingResultImageGarnitureUseCase: samplingResultImageGarniture,
           samplingSentApprovalImageUseCase: samplingSentApprovalImageUseCase,
           promotionAivComplaintUseCase: promotionAivComplaintUseCase,
@@ -371,6 +435,7 @@ class CaptureController extends GetxController {
   Future<String?> _uploadImage(
     Uint8List bytes,
     String? planogramCode,
+    int? planogramId,
     double lat,
     double lng,
   ) async {
@@ -384,6 +449,7 @@ class CaptureController extends GetxController {
         siteId: requestData?.siteId,
         imageGarnitureId: requestData?.imageGarnitureId,
         planogramCode: planogramCode,
+        planogramId: planogramId,
         imageType: ImageType.sampling,
         img: base64Encode(bytes),
         urlImg: null,
@@ -393,12 +459,20 @@ class CaptureController extends GetxController {
         longitude: lng,
       );
       final result = await samplingUploadImageUseCase.call(request);
-      debugPrint("_uploadImage: ${result.systemMessage}");
-      hideLoadingIndicator();
-      showSuccessSnackBar(description: "Thành công");
+      if (result.id != null && result.id! > 0) {
+        debugPrint("_uploadImage: ${result.systemMessage}");
+        hideLoadingIndicator();
+        if (result.systemMessage != null && result.systemMessage!.isNotEmpty) {
+          showSuccessSnackBar(description: "Thành công");
+        }
 
-      /// Image url
-      return result.systemMessage;
+        /// Image url
+        return result.systemMessage;
+      } else {
+        hideLoadingIndicator();
+        showSnackBar(description: result.message ?? '');
+        return null;
+      }
     } on BaseErrorEntity catch (error) {
       hideLoadingIndicator();
       if (error.statusCode == 1002) {
@@ -411,7 +485,11 @@ class CaptureController extends GetxController {
     }
   }
 
-  Future<bool> _deleteImage(String? urlImg, String? planogramCode) async {
+  Future<bool> _deleteImage(
+    String? urlImg,
+    String? planogramCode,
+    int? planogramId,
+  ) async {
     final requestData = _requestData.value;
     try {
       showLoadingIndicator();
@@ -422,6 +500,7 @@ class CaptureController extends GetxController {
         siteId: requestData?.siteId,
         imageGarnitureId: requestData?.imageGarnitureId,
         planogramCode: planogramCode,
+        planogramId: planogramId,
         imageType: ImageType.sampling,
         img: null,
         urlImg: urlImg,

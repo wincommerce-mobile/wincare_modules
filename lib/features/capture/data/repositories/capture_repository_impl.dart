@@ -182,7 +182,7 @@ class CaptureRepositoryImpl implements CaptureRepository {
   }
 
   @override
-  Future<ResultImageGarnitureEntity> samplingOutletSentApprovalImageGarniture(
+  Future<BaseCreatedEntity> samplingOutletSentApprovalImageGarniture(
     SamplingSentApprovalGarnitureRequest request,
   ) async {
     if (await AppConnectivity.instance.isInternetAvailable()) {

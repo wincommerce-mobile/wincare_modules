@@ -13,6 +13,7 @@ class ComplaintRequest {
   bool? isComplaint;
   String? reasonComplaint;
   String? imageGarnitureId;
+  int? planogramId;
 
   ComplaintRequest({
     required this.userId,
@@ -29,6 +30,7 @@ class ComplaintRequest {
     required this.isComplaint,
     required this.reasonComplaint,
     required this.imageGarnitureId,
+    required this.planogramId,
   });
 
   Map<String, dynamic> toJson() {
@@ -47,6 +49,7 @@ class ComplaintRequest {
       'IsComplaint': isComplaint,
       'ReasonComplaint': reasonComplaint,
       'ImageGarnitureId': imageGarnitureId,
+      'PlanogramId': planogramId,
     };
   }
 }

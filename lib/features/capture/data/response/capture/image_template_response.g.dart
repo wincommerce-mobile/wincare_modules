@@ -16,9 +16,15 @@ ImageTemplateResponse _$ImageTemplateResponseFromJson(
   imageTemplate: json['ImageTemplate'] as String?,
   zoneName: json['ZoneName'] as String?,
   level: (json['Level'] as num?)?.toInt(),
+  isConfirmed: json['IsConfirmed'] as bool?,
   type: json['Type'] as String?,
-  urlImages: (json['UrlImages'] as List<dynamic>?)
-      ?.map((e) => e as String)
+  resultImageGarniture: json['ComplianceResult'] == null
+      ? null
+      : ResultImageGarnitureResponse.fromJson(
+          json['ComplianceResult'] as Map<String, dynamic>,
+        ),
+  images: (json['Images'] as List<dynamic>?)
+      ?.map((e) => ImageResponse.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 
@@ -32,6 +38,8 @@ Map<String, dynamic> _$ImageTemplateResponseToJson(
   'ImageTemplate': instance.imageTemplate,
   'ZoneName': instance.zoneName,
   'Level': instance.level,
+  'IsConfirmed': instance.isConfirmed,
   'Type': instance.type,
-  'UrlImages': instance.urlImages,
+  'ComplianceResult': instance.resultImageGarniture,
+  'Images': instance.images,
 };

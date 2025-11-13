@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wincare_modules/app/app_extensions.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_result_image_garniture.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_sent_approval_image_use_case.dart';
 
@@ -59,9 +61,14 @@ class ZoneController extends GetxController {
       Rxn<ResultImageGarnitureEntity>();
   Timer? _pollTimer;
   bool _isPolling = false;
+  bool finalComplianceStatus = false;
 
   var reasons = RxList<ComplaintReasonEntity>([]);
   var selectedReason = Rxn<ComplaintReasonEntity>();
+
+  void updateFinalResult(bool result) {
+    finalComplianceStatus = result;
+  }
 
   Future<void> onRefresh() async {
     await samplingResultImageGarniture();
@@ -142,6 +149,54 @@ class ZoneController extends GetxController {
   }
 
   /// =================== API call Area ==================
+  /// Gọi chấm hình
+  Future<void> samplingSentApprovalImage() async {
+    try {
+      showLoadingIndicator();
+      final request = SamplingSentApprovalGarnitureRequest(
+        userId: requestDataModel?.userId,
+        employeeCode: requestDataModel?.employeeCode,
+        userName: requestDataModel?.displayName,
+        samplingId: requestDataModel?.samplingId,
+        imageGarnitureId: requestDataModel?.imageGarnitureId,
+        outletCode: requestDataModel?.outletCode,
+        planogramCode: zone?.planogramCode,
+        planogramId: zone?.planogramId,
+      );
+      final result = await samplingSentApprovalImageUseCase.call(request);
+      if (result.id != null && result.id! > 0) {
+        imageResult.value = ResultImageGarnitureEntity(
+          complianceStatusId: ComplianceStatusEnum.created.id,
+          complianceStatus: 'Chờ kết quả chấm hình',
+          complianceStatusEnum: ComplianceStatusEnum.waitingResult,
+          complianceSummary: '',
+          createdByName: '',
+          createdDate: DateTime.now().toIso8601String(),
+        );
+        imageResult.refresh();
+        debugPrint('samplingSentApprovalImage: ${imageResult.value}');
+
+        /// Sau khi gọi api chấm hình thành công, gọi tiếp api để listen kq chấm hình
+        //showSuccessSnackBar(description: "Thành công");
+        Future.delayed(const Duration(seconds: 2), () {
+          hideLoadingIndicator();
+          _startPolling();
+        });
+      } else {
+        showSnackBar(description: result.message ?? '');
+      }
+
+      hideLoadingIndicator();
+    } on BaseErrorEntity catch (error) {
+      hideLoadingIndicator();
+      if (error.statusCode == 1002) {
+        await CaptureMethodChannel.logOut();
+        return;
+      }
+      showSnackBar(description: error.message ?? '');
+    }
+  }
+
   /// Gọi để lấy kết quá chấm
   Future<ResultImageGarnitureEntity?> samplingResultImageGarniture() async {
     try {
@@ -152,6 +207,7 @@ class ZoneController extends GetxController {
         outletCode: requestDataModel?.outletCode,
         imageGarnitureId: requestDataModel?.imageGarnitureId,
         planogramCode: zone?.planogramCode,
+        planogramId: zone?.planogramId,
         samplingId: requestDataModel?.samplingId,
       );
       final result = await samplingResultImageGarnitureUseCase.call(request);
@@ -166,37 +222,6 @@ class ZoneController extends GetxController {
         showSnackBar(description: error.message ?? '');
       }
       return null;
-    }
-  }
-
-  /// Gọi chấm hình
-  Future<void> samplingSentApprovalImage() async {
-    try {
-      showLoadingIndicator();
-      final request = SamplingSentApprovalGarnitureRequest(
-        userId: requestDataModel?.userId,
-        employeeCode: requestDataModel?.employeeCode,
-        userName: requestDataModel?.displayName,
-        samplingId: requestDataModel?.samplingId,
-        outletCode: requestDataModel?.outletCode,
-        planogramCode: zone?.planogramCode,
-      );
-      final result = await samplingSentApprovalImageUseCase.call(request);
-      imageResult.value = result;
-
-      /// Sau khi gọi api chấm hình thành công, gọi tiếp api để listen kq chấm hình
-      showSuccessSnackBar(description: "Thành công");
-      Future.delayed(const Duration(seconds: 5), () {
-        _startPolling();
-      });
-      hideLoadingIndicator();
-    } on BaseErrorEntity catch (error) {
-      hideLoadingIndicator();
-      if (error.statusCode == 1002) {
-        await CaptureMethodChannel.logOut();
-        return;
-      }
-      showSnackBar(description: error.message ?? '');
     }
   }
 
@@ -219,6 +244,7 @@ class ZoneController extends GetxController {
         isComplaint: false,
         reasonComplaint: null,
         imageGarnitureId: requestDataModel?.imageGarnitureId,
+        planogramId: zone?.planogramId
       );
       final result = await samplingConfirmImageUseCase.call(request);
       if (result.id == 1) {
@@ -259,6 +285,7 @@ class ZoneController extends GetxController {
         outletCode: requestDataModel?.outletCode,
         outletName: "",
         zoneName: zone?.zoneName,
+        planogramId: zone?.planogramId,
         isComplaint: true,
         reasonComplaint: selectedReason.value?.reason,
         imageGarnitureId: requestDataModel?.imageGarnitureId,
@@ -286,5 +313,6 @@ class ZoneController extends GetxController {
   void onClose() {
     stopPolling();
     super.onClose();
+    debugPrint('onClose');
   }
 }

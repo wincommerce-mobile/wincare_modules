@@ -13,6 +13,10 @@ class BaseCreatedResponse {
   @JsonKey(name: 'SystemMessage')
   final String? systemMessage;
 
+  bool get isIdValid {
+    return (id != null && id! > 0);
+  }
+
   BaseCreatedResponse({this.id, this.message, this.systemMessage});
 
   factory BaseCreatedResponse.fromJson(Map<String, dynamic> json) =>

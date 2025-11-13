@@ -28,7 +28,7 @@ abstract class CaptureDataSource {
     SamplingUploadImageRequest request,
   );
 
-  Future<ResultImageGarnitureResponse?> samplingOutletSentApprovalImageGarniture(
+  Future<BaseCreatedResponse?> samplingOutletSentApprovalImageGarniture(
     SamplingSentApprovalGarnitureRequest request,
   );
 

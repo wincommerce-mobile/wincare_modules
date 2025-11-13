@@ -8,6 +8,7 @@ class RequestDataModel {
   final String? imageGarnitureId;
   final String? outletCode;
   final String? versionInfo;
+  final bool isAllowEdit;
 
   RequestDataModel({
     required this.displayName,
@@ -19,6 +20,7 @@ class RequestDataModel {
     required this.imageGarnitureId,
     required this.outletCode,
     required this.versionInfo,
+    required this.isAllowEdit,
   });
 
   factory RequestDataModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class RequestDataModel {
       imageGarnitureId: json['imageGarnitureId'] ?? '',
       outletCode: json['outletCode'] ?? '',
       versionInfo: json['versionInfo'] ?? '',
+      isAllowEdit: json['isAllowEdit'] ?? false,
     );
   }
 
@@ -46,6 +49,7 @@ class RequestDataModel {
       'imageGarnitureId': imageGarnitureId,
       'outletCode': outletCode,
       'versionInfo': versionInfo,
+      'isAllowEdit': isAllowEdit,
     };
   }
 }

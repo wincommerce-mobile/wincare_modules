@@ -62,10 +62,11 @@ class HistoryController extends GetxController {
     });
   }
 
+
   @override
   void onInit() async {
     super.onInit();
     await getImageGarnitureHistory();
-    await setupChannelHandler();
+    //await setupChannelHandler();
   }
 }

@@ -5,6 +5,7 @@ class ResultImageGarnitureRequest {
   String? outletCode;
   String? imageGarnitureId;
   String? planogramCode;
+  int? planogramId;
   String? samplingId;
 
   ResultImageGarnitureRequest({
@@ -14,6 +15,7 @@ class ResultImageGarnitureRequest {
     required this.outletCode,
     required this.imageGarnitureId,
     required this.planogramCode,
+    required this.planogramId,
     required this.samplingId,
   });
 
@@ -25,6 +27,7 @@ class ResultImageGarnitureRequest {
       'OutletCode': outletCode,
       'ImageGarnitureId': imageGarnitureId,
       'PlanogramCode': planogramCode,
+      'PlanogramId': planogramId,
       'SamplingId': samplingId,
     };
   }
