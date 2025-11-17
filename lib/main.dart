@@ -11,7 +11,7 @@ import 'app/global.dart';
 /// Environment
 String environment = const String.fromEnvironment(
   'ENV',
-  defaultValue: Environment.uat,
+  defaultValue: Environment.pro,
 );
 
 void main() {
