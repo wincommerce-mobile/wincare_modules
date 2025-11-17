@@ -43,3 +43,10 @@ build to native repo with only release:
 build to libs repo with only release:
 
 ```flutter build ios-framework --release --no-debug --no-profile --output=/Users/uytb/Documents/projects/wincare-libs/ios```
+```flutter build ios-framework --release --no-debug --no-profile --output=/Users/uytb/Documents/projects/tcx_projects/wincare_modules_build```
+```flutter build ios-framework \
+  --release \
+  --no-debug \
+  --no-profile \
+  --xcframework \
+  --output=/Users/uytb/Documents/projects/tcx_projects/wincare_modules_build```

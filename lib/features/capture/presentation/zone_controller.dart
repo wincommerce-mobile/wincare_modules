@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wincare_modules/app/app_extensions.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_result_image_garniture.dart';
 import 'package:wincare_modules/features/capture/domain/usecases/sampling_sent_approval_image_use_case.dart';
 
 import '../../../app/app_enum.dart';
+import '../data/request/complaint_reason_request.dart';
 import '../data/request/complaint_request.dart';
 import '../data/request/result_image_garniture_request.dart';
 import '../data/request/sampling_confirm_garniture_request.dart';
@@ -165,19 +165,21 @@ class ZoneController extends GetxController {
       );
       final result = await samplingSentApprovalImageUseCase.call(request);
       if (result.id != null && result.id! > 0) {
-        imageResult.value = ResultImageGarnitureEntity(
-          complianceStatusId: ComplianceStatusEnum.created.id,
+        final r = ResultImageGarnitureEntity(
+          complianceStatusId: ComplianceStatusEnum.waitingResult.id,
           complianceStatus: 'Chờ kết quả chấm hình',
           complianceStatusEnum: ComplianceStatusEnum.waitingResult,
           complianceSummary: '',
           createdByName: '',
           createdDate: DateTime.now().toIso8601String(),
         );
-        imageResult.refresh();
-        debugPrint('samplingSentApprovalImage: ${imageResult.value}');
+        imageResult.value = r;
+        debugPrint(
+          'samplingSentApprovalImage: ${imageResult.value?.complianceStatusEnum}',
+        );
 
         /// Sau khi gọi api chấm hình thành công, gọi tiếp api để listen kq chấm hình
-        //showSuccessSnackBar(description: "Thành công");
+        showSuccessSnackBar(description: "Thành công");
         Future.delayed(const Duration(seconds: 2), () {
           hideLoadingIndicator();
           _startPolling();
@@ -244,7 +246,7 @@ class ZoneController extends GetxController {
         isComplaint: false,
         reasonComplaint: null,
         imageGarnitureId: requestDataModel?.imageGarnitureId,
-        planogramId: zone?.planogramId
+        planogramId: zone?.planogramId,
       );
       final result = await samplingConfirmImageUseCase.call(request);
       if (result.id == 1) {
@@ -306,6 +308,26 @@ class ZoneController extends GetxController {
       }
       showSnackBar(description: error.message ?? '');
       return false;
+    }
+  }
+
+  Future<void> getComplaintReason() async {
+    try {
+      final request = ComplaintReasonRequest(
+        userId: requestDataModel?.userId,
+        userName: requestDataModel?.displayName,
+        employeeCode: requestDataModel?.employeeCode,
+        siteId: requestDataModel?.siteId,
+      );
+      final result = await getPromotionAivComplaintReasonUseCase.call(request);
+      reasons.value = result;
+      debugPrint('getComplaintReason: ${reasons.length}');
+    } on BaseErrorEntity catch (error) {
+      if (error.statusCode == 1002) {
+        await CaptureMethodChannel.logOut();
+        return;
+      }
+      showSnackBar(description: error.message ?? '');
     }
   }
 

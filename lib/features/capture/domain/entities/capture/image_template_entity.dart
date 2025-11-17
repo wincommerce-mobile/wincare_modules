@@ -10,6 +10,7 @@ class ImageTemplateEntity {
   final String? promotionCode;
   final String? imageTemplate;
   final String? zoneName;
+  final String? collageImageToolTip;
   final int? level;
   final TemplateType? type;
   final SampleImageEntity? templateImage;
@@ -30,6 +31,7 @@ class ImageTemplateEntity {
     required this.promotionCode,
     required this.imageTemplate,
     required this.zoneName,
+    required this.collageImageToolTip,
     required this.level,
     required this.type,
     required this.templateImage,
@@ -54,6 +56,7 @@ class ImageTemplateEntity {
       promotionCode: promotionCode,
       imageTemplate: imageTemplate,
       zoneName: zoneName,
+      collageImageToolTip: collageImageToolTip,
       level: level,
       type: type,
       templateImage: templateImage,
@@ -80,11 +83,16 @@ class SampleImageEntity {
   /// Hình đã gửi chấm hình và có kết quả
   final bool isSendConfirm;
 
+  /// Đang chờ kết quả chấm hình
+  ///
+  bool isWaitingResult;
+
   SampleImageEntity({
     required this.url,
     required this.path,
     this.isHandled = false,
     this.isAllowEdit = true,
+    this.isWaitingResult = false,
     this.address,
     this.takenDate,
     required this.isSendConfirm,
@@ -96,6 +104,7 @@ class SampleImageEntity {
     XFile? path,
     bool? isHandled,
     bool? isAllowEdit,
+    bool? isWaitingResult,
     bool? isSendConfirm,
   }) {
     return SampleImageEntity(
@@ -104,6 +113,7 @@ class SampleImageEntity {
       takenDate: takenDate,
       path: path ?? this.path,
       isHandled: isHandled ?? this.isHandled,
+      isWaitingResult: isWaitingResult ?? this.isWaitingResult,
       isAllowEdit: isAllowEdit ?? this.isAllowEdit,
       isSendConfirm: isSendConfirm ?? this.isSendConfirm,
     );

@@ -46,6 +46,7 @@ class ZoneItemPage extends StatefulWidget {
 class _ZoneItemPageState extends State<ZoneItemPage>
     with AutomaticKeepAliveClientMixin {
   ZoneController get _zoneController => widget.zoneController;
+  final int _maxImageZone = 8;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -69,40 +70,67 @@ class _ZoneItemPageState extends State<ZoneItemPage>
   bool get _isAllowEdit =>
       _zoneController.requestDataModel?.isAllowEdit ?? true;
 
+  bool get _isAllowAddImage =>
+      _zoneController.requestDataModel?.isAllowAddImage ?? true;
+
+  bool get _isAllowCancelImage =>
+      _zoneController.requestDataModel?.isAllowCancelImage ?? true;
+
+  bool get _isAllowSendApproval =>
+      _zoneController.requestDataModel?.isAllowSendApproval ?? true;
+
   List<SampleImageEntity> get _images => widget.imageZone.sampleImages;
 
   ResultImageGarnitureEntity? get _result => widget.imageZone.result;
 
-  bool get _hiddenAction =>
-      (_result?.complianceStatusEnum == null ||
-      _result?.complianceStatusEnum == ComplianceStatusEnum.waitingResult ||
-      _result?.complianceStatusEnum == ComplianceStatusEnum.created ||
-      _finalComplianceStatus ||
-      !_isAllowEdit ||
-      widget.imageZone.sampleImages.isEmpty ||
-      !_imageZone.allImagesConfirmed);
+  bool get _hiddenAction {
+    final condition1 = _result?.complianceStatusEnum == null;
+    final condition2 =
+        _result?.complianceStatusEnum == ComplianceStatusEnum.waitingResult;
+    final condition3 =
+        _result?.complianceStatusEnum == ComplianceStatusEnum.created;
+    final condition4 = _finalComplianceStatus;
+    final condition5 = !_isAllowEdit;
+    final condition6 = widget.imageZone.sampleImages.isEmpty;
+    final condition7 = !_imageZone.allImagesConfirmed;
+    final condition8 = !_isAllowSendApproval;
+
+    // Print each condition
+    debugPrint('condition1 (complianceStatusEnum == null): $condition1');
+    debugPrint('condition2 (waitingResult): $condition2');
+    debugPrint('condition3 (created): $condition3');
+    debugPrint('condition4 (_finalComplianceStatus): $condition4');
+    debugPrint('condition5 (!_isAllowEdit): $condition5');
+    debugPrint('condition6 (sampleImages.isEmpty): $condition6');
+    debugPrint('condition7 (!allImagesConfirmed): $condition7');
+    debugPrint('condition8 (!_isAllowSendApproval): $condition8');
+
+    final result =
+        condition1 ||
+        condition2 ||
+        condition3 ||
+        condition4 ||
+        condition5 ||
+        condition6 ||
+        condition7 ||
+        condition8;
+
+    print('=> _hiddenAction: $result');
+
+    return result;
+  }
 
   bool get _finalComplianceStatus => widget.imageZone.finalComplianceStatus;
 
-  // bool get _showVerifyImageButton =>
-  //     widget.imageZone.sampleImages.isNotEmpty &&
-  //     ((_result?.complianceStatusEnum == ComplianceStatusEnum.passed &&
-  //             _result?.complianceStatusEnum !=
-  //                 ComplianceStatusEnum.waitingResult) &&
-  //         !_finalComplianceStatus);
+  int get _unhandledImagesCount => widget.imageZone.sampleImages
+      .where((image) => image.isHandled == false)
+      .length;
 
-  // bool get _showVerifyImageButton =>
-  //     widget.imageZone.sampleImages.isNotEmpty &&
-  //     (_result == null ||
-  //         _result?.complianceStatusEnum == ComplianceStatusEnum.created);
-
-  bool get _showTakePickTureButton =>
-      (_result?.complianceStatusEnum != ComplianceStatusEnum.passed &&
-          _result?.complianceStatusEnum !=
-              ComplianceStatusEnum.waitingResult) ||
-      !_finalComplianceStatus;
+  bool get _reachMaxZoneImages => _unhandledImagesCount >= _maxImageZone;
 
   bool get _allHandled => _images.every((img) => img.isHandled);
+
+  bool get _isSendConfirm => _images.every((img) => img.isSendConfirm);
 
   bool get _hiddenVerifyImageButton {
     if (!_isAllowEdit) {
@@ -111,7 +139,14 @@ class _ZoneItemPageState extends State<ZoneItemPage>
     if (widget.imageZone.sampleImages.isEmpty) {
       return true;
     }
+    if (!_isAllowSendApproval) {
+      return true;
+    }
     if (_allHandled) {
+      return true;
+    }
+
+    if (_isSendConfirm) {
       return true;
     }
     if (_finalComplianceStatus) {
@@ -128,6 +163,12 @@ class _ZoneItemPageState extends State<ZoneItemPage>
 
   bool get _hiddenTakePickTureButton {
     if (!_isAllowEdit) {
+      return true;
+    }
+    if (!_isAllowAddImage) {
+      return true;
+    }
+    if (_reachMaxZoneImages) {
       return true;
     }
     if (_finalComplianceStatus) {
@@ -154,8 +195,10 @@ class _ZoneItemPageState extends State<ZoneItemPage>
       _zoneController.selectedReason.value;
 
   Future<void> onGetPoint() async {
-    await _zoneController.samplingSentApprovalImage();
     _zoneController.imageResult.listen((result) {
+      debugPrint(
+        'onGetPoint: ${result?.complianceStatusEnum} - ${result?.createdByName}',
+      );
       if (result != null) {
         widget.onGetImagePoint(result);
         if (result.complianceStatusEnum == ComplianceStatusEnum.passed ||
@@ -166,6 +209,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
         _scrollToBottom();
       }
     });
+    await _zoneController.samplingSentApprovalImage();
   }
 
   Future<void> onConfirm() async {
@@ -178,6 +222,17 @@ class _ZoneItemPageState extends State<ZoneItemPage>
     final result = await _zoneController.promotionAivComplaint();
     _zoneController.updateFinalResult(result);
     widget.onUpdateFinalResult(result);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (_reasons.isEmpty) {
+      _zoneController.getComplaintReason();
+    }
+    debugPrint(
+      '_isAllowAddImage: $_isAllowAddImage - _isAllowCancelImage: $_isAllowCancelImage - _isAllowSendApproval: $_isAllowSendApproval',
+    );
   }
 
   @override
@@ -271,8 +326,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
               onTap: () {
                 showInformDialog(
                   context: context,
-                  message:
-                      'Chỉ chụp 1 hình trưng bày rõ nét các sản phẩm đặt trên kệ. Nếu kệ quá dài thì chụp từng phần kệ, hệ thống sẽ ghép thành 1 hình sau khi chấm hình',
+                  message: _imageZone.collageImageToolTip ?? '',
                 );
               },
               child: Row(
@@ -342,7 +396,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
           title: "Hình ảnh trưng bày",
           photos: _images,
           initPage: index,
-          isShowDelete: _isAllowEdit,
+          isShowDelete: (_isAllowEdit && _isAllowCancelImage),
         );
       },
       showImageAddress: true,
@@ -435,10 +489,12 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
-                  AppText(
-                    text: _result?.createdByName ?? '',
-                    fontSize: 14,
-                    color: AppColors.black,
+                  Expanded(
+                    child: AppText(
+                      text: _result?.createdByName ?? '',
+                      fontSize: 14,
+                      color: AppColors.black,
+                    ),
                   ),
                 ],
               ),
@@ -524,6 +580,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
               onPressed: () async {
                 _zoneController.setReasonList();
                 Future.delayed(const Duration(milliseconds: 100), () {
+                  debugPrint('ReasonList: ${_reasons.length}');
                   showDropdownReasonDialog();
                 });
               },

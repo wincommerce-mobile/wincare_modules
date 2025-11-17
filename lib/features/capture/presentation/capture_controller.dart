@@ -89,11 +89,14 @@ class CaptureController extends GetxController {
   String get requiredMessage {
     String newMessage = '';
     for (var i in imageZones) {
-      if (!i.finalComplianceStatus && i.result != null) {
+      if (!i.finalComplianceStatus &&
+          i.type == TemplateType.require &&
+          ((i.result != null) ||
+              (i.result == null && i.sampleImages.isNotEmpty))) {
         newMessage = '$newMessage[${i.zoneName}]';
       }
     }
-    return '$newMessage chưa xác nhận kết quả';
+    return '$newMessage chưa chấm hình / xác nhận kết quả';
   }
 
   /// Chỉ cho phép back khi đã xác nhận bộ hình (passed or not passed)
@@ -102,7 +105,7 @@ class CaptureController extends GetxController {
       .every(
         (i) =>
             (i.finalComplianceStatus == true ||
-            i.result == null ||
+            (i.sampleImages.isEmpty) ||
             (_requestData.value != null && !_requestData.value!.isAllowEdit) ||
             (i.result != null &&
                 i.result!.complianceStatusEnum != null &&
@@ -127,7 +130,7 @@ class CaptureController extends GetxController {
   Future<void> loadWithDummy() async {
     await _clearResult();
     final dummyJsonStr = '''
-     {"displayName":"sm Kho NPP TN Cà Mau - Bạc Liêu","sessionLogin":"c5de6cef-0b14-41d4-b6d4-c0aee8720be1","employeeCode":"sm.baclieu","siteId":"","userId":2644,"samplingId":"1-53FJ7MD","imageGarnitureId":"FD22DC2C-0A84-4FA0-9819-A66BA86A8EC5","outletCode":"3062100","versionInfo":"1.5","isAllowEdit":false}
+     {"displayName":"Trương Lê Huy","sessionLogin":"ecd273c8-4427-45dd-96ed-2b1551efea11","employeeCode":"19SF.MT6168","siteId":"","userId":2773,"samplingId":"1-56XCBFJ","imageGarnitureId":"4BD0860F-91B7-4F55-A6EB-1477C878539F","outletCode":"141546","versionInfo":"1.5","isAllowEdit":true,"isAllowAddImage":true,"isAllowCancelImage":true,"isAllowSendApproval":true}
      ''';
     final Map<String, dynamic> decoded = jsonDecode(dummyJsonStr);
     final requestData = RequestDataModel.fromJson(decoded);
@@ -260,17 +263,23 @@ class CaptureController extends GetxController {
     }
   }
 
+  /// Gọi và chờ kq chấm hình
   Future<void> onUpdateResult(
     int zoneIndex,
     ResultImageGarnitureEntity result,
   ) async {
     var imgZone = imageZones[zoneIndex];
+    bool isWaiting =
+        result.complianceStatusEnum == ComplianceStatusEnum.waitingResult;
 
     /// Sau khi gọi chấm thành công, update tất cả hình trong zone thành hình đã chấm
     imageZones[zoneIndex] = imgZone.copyWith(
       result: result,
       sampleImages: imgZone.sampleImages
-          .map<SampleImageEntity>((img) => img.copyWith(isSendConfirm: true))
+          .map<SampleImageEntity>(
+            (img) =>
+                img.copyWith(isSendConfirm: true, isWaitingResult: isWaiting),
+          )
           .toList(),
     );
     imageZones.refresh();
@@ -278,7 +287,12 @@ class CaptureController extends GetxController {
 
   Future<void> onUpdateFinalResult(int zoneIndex, bool finaResult) async {
     var imgZone = imageZones[zoneIndex];
-    imageZones[zoneIndex] = imgZone.copyWith(finalComplianceStatus: finaResult);
+    imageZones[zoneIndex] = imgZone.copyWith(
+      finalComplianceStatus: finaResult,
+      sampleImages: imgZone.sampleImages
+          .map<SampleImageEntity>((img) => img.copyWith(isAllowEdit: false))
+          .toList(),
+    );
     imageZones.refresh();
   }
 
@@ -304,7 +318,10 @@ class CaptureController extends GetxController {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      return Future.error('Location services are disabled.');
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
     }
 
     permission = await Geolocator.checkPermission();
@@ -397,10 +414,16 @@ class CaptureController extends GetxController {
         );
         for (var i = 0; i < imageZones.length; i++) {
           final z = imageZones[i];
+          bool isWaiting =
+              z.result?.complianceStatusEnum ==
+              ComplianceStatusEnum.waitingResult;
           imageZones[i] = z.copyWith(
             sampleImages: z.sampleImages
                 .map<SampleImageEntity>(
-                  (img) => img.copyWith(isAllowEdit: requestData?.isAllowEdit),
+                  (img) => img.copyWith(
+                    isAllowEdit: requestData?.isAllowEdit,
+                    isWaitingResult: isWaiting,
+                  ),
                 )
                 .toList(),
           );
@@ -508,9 +531,15 @@ class CaptureController extends GetxController {
         fileExtension: FileExtension.jpeg.type,
       );
       final result = await samplingCancelImageUseCase.call(request);
-      hideLoadingIndicator();
-      debugPrint("_deleteImage: ${result.message}");
-      return true;
+      if (result.id != null && result.id! > 0) {
+        hideLoadingIndicator();
+        debugPrint("_deleteImage: ${result.message}");
+        return true;
+      } else {
+        hideLoadingIndicator();
+        showSnackBar(description: result.message ?? '');
+        return false;
+      }
     } on BaseErrorEntity catch (error) {
       hideLoadingIndicator();
       if (error.statusCode == 1002) {

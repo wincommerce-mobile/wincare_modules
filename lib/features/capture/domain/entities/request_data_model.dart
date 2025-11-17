@@ -9,6 +9,9 @@ class RequestDataModel {
   final String? outletCode;
   final String? versionInfo;
   final bool isAllowEdit;
+  final bool isAllowAddImage;
+  final bool isAllowCancelImage;
+  final bool isAllowSendApproval;
 
   RequestDataModel({
     required this.displayName,
@@ -21,6 +24,9 @@ class RequestDataModel {
     required this.outletCode,
     required this.versionInfo,
     required this.isAllowEdit,
+    required this.isAllowAddImage,
+    required this.isAllowCancelImage,
+    required this.isAllowSendApproval,
   });
 
   factory RequestDataModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +41,9 @@ class RequestDataModel {
       outletCode: json['outletCode'] ?? '',
       versionInfo: json['versionInfo'] ?? '',
       isAllowEdit: json['isAllowEdit'] ?? false,
+      isAllowAddImage: json['isAllowAddImage'] ?? false,
+      isAllowCancelImage: json['isAllowCancelImage'] ?? false,
+      isAllowSendApproval: json['isAllowSendApproval'] ?? false,
     );
   }
 
@@ -50,6 +59,9 @@ class RequestDataModel {
       'outletCode': outletCode,
       'versionInfo': versionInfo,
       'isAllowEdit': isAllowEdit,
+      'isAllowAddImage': isAllowAddImage,
+      'isAllowCancelImage': isAllowCancelImage,
+      'isAllowSendApproval': isAllowSendApproval,
     };
   }
 }

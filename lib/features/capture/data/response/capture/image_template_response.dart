@@ -25,6 +25,9 @@ class ImageTemplateResponse {
   @JsonKey(name: 'ZoneName')
   final String? zoneName;
 
+  @JsonKey(name: 'CollageImageToolTip')
+  final String? collageImageToolTip;
+
   @JsonKey(name: 'Level')
   final int? level;
 
@@ -47,6 +50,7 @@ class ImageTemplateResponse {
     this.promotionCode,
     this.imageTemplate,
     this.zoneName,
+    this.collageImageToolTip,
     this.level,
     this.isConfirmed,
     this.type,

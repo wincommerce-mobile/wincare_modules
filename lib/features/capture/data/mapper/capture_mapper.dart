@@ -29,6 +29,7 @@ extension ImageTemplateMapper on ImageTemplateResponse {
       promotionCode: promotionCode,
       imageTemplate: imageTemplate,
       zoneName: zoneName,
+      collageImageToolTip: collageImageToolTip,
       finalComplianceStatus: isConfirmed ?? false,
       level: level,
       isSendConfirm: resultImageGarniture != null,

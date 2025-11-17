@@ -101,7 +101,7 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                     PageView.builder(
                       controller: widget.pageController,
                       itemCount: _photos.length,
-                      physics: ClampingScrollPhysics(),
+                      physics: NeverScrollableScrollPhysics(),
                       onPageChanged: (page) {
                         setState(() {
                           _currentPage = page;
@@ -162,7 +162,8 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                             ),
                             !(widget.isShowDelete) ||
                                     photo.isHandled ||
-                                    !photo.isAllowEdit
+                                    !photo.isAllowEdit ||
+                                    photo.isWaitingResult
                                 ? SizedBox.shrink()
                                 : InkWell(
                                     onTap: () {
