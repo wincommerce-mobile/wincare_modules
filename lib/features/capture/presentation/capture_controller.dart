@@ -130,7 +130,7 @@ class CaptureController extends GetxController {
   Future<void> loadWithDummy() async {
     await _clearResult();
     final dummyJsonStr = '''
-     {"displayName":"Trương Lê Huy","sessionLogin":"ecd273c8-4427-45dd-96ed-2b1551efea11","employeeCode":"19SF.MT6168","siteId":"","userId":2773,"samplingId":"1-56XCBFJ","imageGarnitureId":"4BD0860F-91B7-4F55-A6EB-1477C878539F","outletCode":"141546","versionInfo":"1.5","isAllowEdit":true,"isAllowAddImage":true,"isAllowCancelImage":true,"isAllowSendApproval":true}
+     {"samplingId":"1-5DSM8HB","isAllowEdit":true,"isAllowSendApproval":true,"siteId":"G-10KF1292","sessionLogin":"dd42ae43-25e7-45af-9729-504c2983eaff","versionInfo":"1.6.2","imageGarnitureId":"1F63E51F-971C-43F5-BAEC-8004ABA81F08","userId":2681,"employeeCode":"sm.trucnguyen.uat","isAllowAddImage":true,"isAllowCancelImage":true,"displayName":"sm Kho NPP Trúc Nguyên uat","outletCode":"446352"}
      ''';
     final Map<String, dynamic> decoded = jsonDecode(dummyJsonStr);
     final requestData = RequestDataModel.fromJson(decoded);

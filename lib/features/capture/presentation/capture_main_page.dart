@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:wincare_modules/app/app_text.dart';
 import 'package:wincare_modules/app/environments/environment_banner.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/image_template_entity.dart';
+import 'package:wincare_modules/features/capture/presentation/widgets/empty_data.dart';
 import 'package:wincare_modules/features/capture/presentation/zone_item_page.dart';
 
 import '../../../app/app_colors.dart';
@@ -133,37 +134,45 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                 ),
               ),
               Expanded(
-                child: PageView.builder(
-                  itemCount: _zones.length,
-                  controller: _controller.pageController,
-                  physics: NeverScrollableScrollPhysics(),
-                  onPageChanged: (page) {
-                    _controller.onPageChanged(page);
-                  },
-                  itemBuilder: (context, index) {
-                    final imageZone = _zones[index];
-                    return ZoneItemPage(
-                      imageZone: imageZone,
-                      key: ValueKey(imageZone.planogramId),
-                      onTakePicTure: () async{
-                        await _controller.onTakePicTure(index);
-                      },
-                      onDeleteImage: (imageIndex) async {
-                        await _controller.onDeletePicTure(index, imageIndex);
-                      },
-                      onGetImagePoint: (result) {
-                        _controller.onUpdateResult(index, result);
-                      },
-                      onUpdateFinalResult: (finalResult) {
-                        _controller.onUpdateFinalResult(index, finalResult);
-                      },
-                      onRefreshZone: () async{
-                        await _controller.onRefreshZone();
-                      },
-                      zoneController: _controller.zoneControllers[index],
-                    );
-                  },
-                ),
+                child: _zones.isEmpty
+                    ? EmptyData(message: 'Không có dữ liệu của bộ hình')
+                    : PageView.builder(
+                        itemCount: _zones.length,
+                        controller: _controller.pageController,
+                        physics: NeverScrollableScrollPhysics(),
+                        onPageChanged: (page) {
+                          _controller.onPageChanged(page);
+                        },
+                        itemBuilder: (context, index) {
+                          final imageZone = _zones[index];
+                          return ZoneItemPage(
+                            imageZone: imageZone,
+                            key: ValueKey(imageZone.planogramId),
+                            onTakePicTure: () async {
+                              await _controller.onTakePicTure(index);
+                            },
+                            onDeleteImage: (imageIndex) async {
+                              await _controller.onDeletePicTure(
+                                index,
+                                imageIndex,
+                              );
+                            },
+                            onGetImagePoint: (result) {
+                              _controller.onUpdateResult(index, result);
+                            },
+                            onUpdateFinalResult: (finalResult) {
+                              _controller.onUpdateFinalResult(
+                                index,
+                                finalResult,
+                              );
+                            },
+                            onRefreshZone: () async {
+                              await _controller.onRefreshZone();
+                            },
+                            zoneController: _controller.zoneControllers[index],
+                          );
+                        },
+                      ),
               ),
             ],
           ),
