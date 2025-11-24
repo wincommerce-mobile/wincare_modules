@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'product_result_response.dart';
+
 part 'result_image_garniture_response.g.dart';
 
 @JsonSerializable()
@@ -19,12 +21,16 @@ class ResultImageGarnitureResponse {
   @JsonKey(name: 'CreatedDate')
   final String? createdDate;
 
+  @JsonKey(name: 'ContentParsed')
+  final List<ProductResultResponse>? products;
+
   ResultImageGarnitureResponse({
     this.complianceStatusId,
     this.complianceStatus,
     this.complianceSummary,
     this.createdByName,
     this.createdDate,
+    this.products,
   });
 
   factory ResultImageGarnitureResponse.fromJson(Map<String, dynamic> json) =>

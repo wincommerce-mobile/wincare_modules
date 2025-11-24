@@ -516,6 +516,7 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                   _result!.complianceSummary != null &&
                   _result!.complianceSummary!.isNotEmpty)
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText(
                       text: 'Đánh giá: ',
@@ -530,6 +531,44 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                       ),
                     ),
                   ],
+                ),
+              if (_result != null && _result!.products.isNotEmpty)
+                ..._result!.products.map(
+                  (e) => Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        text: 'SKU: ',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: AppText(
+                                text: e.productName ?? '',
+                                fontSize: 14,
+                                color: AppColors.black,
+                              ),
+                            ),
+                            AppText(
+                              text: ' - Số mặt: ',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            AppText(
+                              text: e.skuDetected ?? '',
+                              fontSize: 14,
+                              color: AppColors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               if (_result?.complianceStatusEnum ==
                   ComplianceStatusEnum.waitingResult) ...[

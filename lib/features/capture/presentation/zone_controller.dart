@@ -171,6 +171,7 @@ class ZoneController extends GetxController {
           complianceStatusEnum: ComplianceStatusEnum.waitingResult,
           complianceSummary: '',
           createdByName: '',
+          products: [],
           createdDate: DateTime.now().toIso8601String(),
         );
         imageResult.value = r;

@@ -1,5 +1,6 @@
 import 'package:wincare_modules/app/app_enum.dart';
 import 'package:wincare_modules/features/capture/data/response/capture/complaint_reason_response.dart';
+import 'package:wincare_modules/features/capture/data/response/capture/product_result_response.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/complaint_reason_entity.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/image_template_entity.dart';
 import 'package:wincare_modules/features/capture/domain/entities/capture/result_image_garniture_entity.dart';
@@ -14,6 +15,9 @@ extension ResultImageGarnitureMapper on ResultImageGarnitureResponse {
       complianceStatus: complianceStatus,
       complianceStatusEnum: ComplianceStatusEnum.fromServer(complianceStatusId),
       complianceSummary: complianceSummary,
+      products: products != null
+          ? products!.map((e) => e.toEntity()).toList()
+          : [],
       createdByName: createdByName,
       createdDate: createdDate,
     );
@@ -67,6 +71,16 @@ extension ComplaintReasonMapper on ComplaintReasonResponse {
       updatedAt: updatedAt,
       updatedByName: updatedByName,
       updatedBy: updatedBy,
+    );
+  }
+}
+
+extension ProductResultMapper on ProductResultResponse {
+  ProductResultEntity toEntity() {
+    return ProductResultEntity(
+      productName: productName,
+      productCode: productCode,
+      skuDetected: skuDetected,
     );
   }
 }

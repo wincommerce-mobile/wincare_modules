@@ -14,6 +14,9 @@ ResultImageGarnitureResponse _$ResultImageGarnitureResponseFromJson(
   complianceSummary: json['ComplianceSummary'] as String?,
   createdByName: json['CreatedByName'] as String?,
   createdDate: json['CreatedDate'] as String?,
+  products: (json['ContentParsed'] as List<dynamic>?)
+      ?.map((e) => ProductResultResponse.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$ResultImageGarnitureResponseToJson(
@@ -24,4 +27,5 @@ Map<String, dynamic> _$ResultImageGarnitureResponseToJson(
   'ComplianceSummary': instance.complianceSummary,
   'CreatedByName': instance.createdByName,
   'CreatedDate': instance.createdDate,
+  'ContentParsed': instance.products,
 };

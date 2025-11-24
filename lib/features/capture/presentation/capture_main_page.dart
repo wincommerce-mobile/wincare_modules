@@ -89,44 +89,47 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                       onTap: () {
                         _controller.onPageChanged(index);
                       },
-                      child: Container(
-                        height: 32,
-                        width: 114,
-                        margin: EdgeInsets.only(right: 10),
-                        decoration: BoxDecoration(
-                          color: _zones[index].selected
-                              ? AppColors.color41A4FF
-                              : AppColors.white,
-                          border: Border.all(
-                            width: 1,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: 114.0),
+                        child: Container(
+                          height: 32,
+                          margin: EdgeInsets.only(right: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
                             color: _zones[index].selected
                                 ? AppColors.color41A4FF
-                                : AppColors.red,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AppText(
-                              text: _zones[index].zoneName ?? '',
-                              fontSize: 16,
+                                : AppColors.white,
+                            border: Border.all(
+                              width: 1,
                               color: _zones[index].selected
-                                  ? AppColors.white
-                                  : AppColors.black4D,
-                              fontWeight: FontWeight.w500,
+                                  ? AppColors.color41A4FF
+                                  : AppColors.red,
                             ),
-                            if (_zones[index].type == TemplateType.require) ...[
-                              SizedBox(width: 6),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
                               AppText(
-                                text: '*',
+                                text: _zones[index].zoneName ?? '',
                                 fontSize: 16,
-                                color: AppColors.red,
+                                color: _zones[index].selected
+                                    ? AppColors.white
+                                    : AppColors.black4D,
                                 fontWeight: FontWeight.w500,
                               ),
+                              if (_zones[index].type == TemplateType.require) ...[
+                                SizedBox(width: 6),
+                                AppText(
+                                  text: '*',
+                                  fontSize: 16,
+                                  color: AppColors.red,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     );

@@ -7,6 +7,7 @@ Wincare modules
 Build the project using the following command:
 
 #### For code generator
+
 ```
 flutter packages pub run build_runner build --delete-conflicting-outputs
 
@@ -50,3 +51,5 @@ build to libs repo with only release:
   --no-profile \
   --xcframework \
   --output=/Users/uytb/Documents/projects/tcx_projects/wincare_modules_build```
+
+```flutter build ios-framework --cocoapods```
