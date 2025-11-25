@@ -159,8 +159,8 @@ class CaptureController extends GetxController {
             _requestData.value = await AppSecureStorage.getRequestData();
             await _getComplaintReason();
             await _getImageTemplates();
-            _position = await _determinePosition();
             hideLoadingIndicator();
+            _position = await _determinePosition();
             break;
           case AppConstants.onNativeBackPressed:
             if (Get.currentRoute == AppRoutes.history) {
