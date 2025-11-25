@@ -21,6 +21,10 @@ class HistoryController extends GetxController {
 
   static final _channel = MethodChannel(AppConstants.captureChannel);
 
+  Future<void> onRefresh() async {
+    await getImageGarnitureHistory();
+  }
+
   Future<void> getImageGarnitureHistory() async {
     final requestData = await AppSecureStorage.getRequestData();
     try {
@@ -61,7 +65,6 @@ class HistoryController extends GetxController {
       }
     });
   }
-
 
   @override
   void onInit() async {

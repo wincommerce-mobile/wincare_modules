@@ -30,46 +30,51 @@ class _HistoryPageState extends State<HistoryPage> {
       body: Obx(
         () => _imageGarnitureHistories.isEmpty
             ? EmptyData(message: "Không có lịch sử thay đổi")
-            : ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                itemCount: _imageGarnitureHistories.length,
-                separatorBuilder: (context, index) {
-                  return Divider(height: 24, thickness: .5);
+            : RefreshIndicator(
+                onRefresh: () async {
+                  await _controller.onRefresh();
                 },
-                itemBuilder: (context, index) {
-                  final history = _imageGarnitureHistories[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          AppText(
-                            text:
-                                'Ngày ${history.createdDate?.toDisplayDateTime()}: ',
-                            fontSize: 14,
-                          ),
-                          Expanded(
-                            child: AppText(
-                              text: history.statusName ?? '',
+                child: ListView.separated(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  itemCount: _imageGarnitureHistories.length,
+                  separatorBuilder: (context, index) {
+                    return Divider(height: 24, thickness: .5);
+                  },
+                  itemBuilder: (context, index) {
+                    final history = _imageGarnitureHistories[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            AppText(
+                              text:
+                                  'Ngày ${history.createdDate?.toDisplayDateTime()}: ',
                               fontSize: 14,
-                              fontWeight: FontWeight.w400,
                             ),
-                          ),
-                        ],
-                      ),
-                      AppText(
-                        text: 'Ghi chú: ${history.note}',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      AppText(
-                        text: 'Thao tác: ${history.createdByName}',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ],
-                  );
-                },
+                            Expanded(
+                              child: AppText(
+                                text: history.statusName ?? '',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        AppText(
+                          text: 'Ghi chú: ${history.note}',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        AppText(
+                          text: 'Thao tác: ${history.createdByName}',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
       ),
     );

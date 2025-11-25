@@ -86,6 +86,8 @@ class CaptureController extends GetxController {
 
   //var message = 'Vui lòng xác nhận kết quả'.obs;
 
+
+  /// Message warning các zone đã chấm hình nhưng chưa xác nhận / khiếu nại
   String get requiredMessage {
     String newMessage = '';
     for (var i in imageZones) {
@@ -114,6 +116,7 @@ class CaptureController extends GetxController {
                     ComplianceStatusEnum.notPassed)),
       );
 
+  /// Trạng thái cuối cùng của cả bộ hình (tất cả các zone requỉred & đã xác nhận kq)
   bool get _finalComplianceStatus => imageZones
       .where((i) => i.type == TemplateType.require)
       .every((i) => (i.finalComplianceStatus == true));
@@ -127,6 +130,8 @@ class CaptureController extends GetxController {
     }
   }
 
+
+  /// Test standalone flutter module with dummy data
   Future<void> loadWithDummy() async {
     //showLoadingIndicator();
     await _clearResult();
@@ -143,21 +148,27 @@ class CaptureController extends GetxController {
     //hideLoadingIndicator();
   }
 
+  /// Method channel to conmunicate with native side
   Future<void> setupChannelHandler() async {
     _channel.setMethodCallHandler((call) async {
       debugPrint("Received arguments: ${call.arguments}");
       try {
         showLoadingIndicator();
         switch (call.method) {
+          /// Get request data from native
           case AppConstants.getRequestData:
+            /// Clear to prevent cached
             await _clearResult();
             final jsonStr = call.arguments as String;
             debugPrint("Received getRequestData: $jsonStr");
             final Map<String, dynamic> decoded = jsonDecode(jsonStr);
             final requestData = RequestDataModel.fromJson(decoded);
+            /// Save new
             await AppSecureStorage.saveRequestData(requestData);
             _requestData.value = await AppSecureStorage.getRequestData();
+            /// Pre-load reason
             await _getComplaintReason();
+            /// Load data for zones
             await _getImageTemplates();
             hideLoadingIndicator();
             _position = await _determinePosition();
@@ -212,6 +223,7 @@ class CaptureController extends GetxController {
     imageZones.refresh();
   }
 
+  /// Delete picture
   Future<void> onDeletePicTure(int zoneIndex, imageIndex) async {
     var imgZone = imageZones[zoneIndex];
     final result = await _deleteImage(
@@ -230,6 +242,7 @@ class CaptureController extends GetxController {
     }
   }
 
+  /// Take picture
   Future<void> onTakePicTure(int zoneIndex) async {
     _position ??= await _determinePosition();
     final image = await _takePicture();
@@ -265,7 +278,7 @@ class CaptureController extends GetxController {
     }
   }
 
-  /// Gọi và chờ kq chấm hình
+  /// Listen kết quả chấm hình và update và zone
   Future<void> onUpdateResult(
     int zoneIndex,
     ResultImageGarnitureEntity result,
@@ -287,6 +300,7 @@ class CaptureController extends GetxController {
     imageZones.refresh();
   }
 
+  /// Update kết quả cho cả bộ hình
   Future<void> onUpdateFinalResult(int zoneIndex, bool finaResult) async {
     var imgZone = imageZones[zoneIndex];
     imageZones[zoneIndex] = imgZone.copyWith(
@@ -370,6 +384,7 @@ class CaptureController extends GetxController {
     }
   }
 
+  /// Swipe to refresh zone data & get zone's result
   Future<void> onRefreshZone() async {
     await _getImageTemplates(selectedIndex: _currentPageIndex);
   }
@@ -397,6 +412,7 @@ class CaptureController extends GetxController {
     }
   }
 
+  /// Lấy bộ hình mẫu
   Future<void> _getImageTemplates({int selectedIndex = 0}) async {
     try {
       showLoadingIndicator();
