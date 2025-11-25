@@ -128,10 +128,10 @@ class CaptureController extends GetxController {
   }
 
   Future<void> loadWithDummy() async {
-    showLoadingIndicator();
+    //showLoadingIndicator();
     await _clearResult();
     final dummyJsonStr = '''
-     {"displayName":"SM Training 17","sessionLogin":"55283b1e-2d57-4064-9d56-fafe776f3bdd","employeeCode":"sm.training17","siteId":"G-10KF1292","userId":2789,"samplingId":"1-5DSS6XS","imageGarnitureId":"C0D20639-C546-4BC1-808E-476C78E58070","outletCode":"2151326","versionInfo":"1.8","isAllowEdit":true,"isAllowAddImage":true,"isAllowCancelImage":true,"isAllowSendApproval":true}
+     {"samplingId":"1-5DSS6XS","userId":2789,"sessionLogin":"3a49eb20-ad54-4cbb-9ac0-e3605ada97f6","employeeCode":"sm.training17","siteId":"G-10KF1292","isAllowCancelImage":true,"versionInfo":"1.6.2","outletCode":"3024692","isAllowSendApproval":true,"isAllowEdit":true,"imageGarnitureId":"80AE4A0D-EBF9-487E-AA81-04DFBC228883","displayName":"SM Training 17","isAllowAddImage":true}
      ''';
     final Map<String, dynamic> decoded = jsonDecode(dummyJsonStr);
     final requestData = RequestDataModel.fromJson(decoded);
@@ -140,7 +140,7 @@ class CaptureController extends GetxController {
     await _getComplaintReason();
     await _getImageTemplates();
     _position = await _determinePosition();
-    hideLoadingIndicator();
+    //hideLoadingIndicator();
   }
 
   Future<void> setupChannelHandler() async {
