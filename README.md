@@ -53,3 +53,4 @@ build to libs repo with only release:
   --output=/Users/uytb/Documents/projects/tcx_projects/wincare_modules_build```
 
 ```flutter build ios-framework --cocoapods```
+```pod install```
