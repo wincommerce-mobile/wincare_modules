@@ -533,6 +533,8 @@ class _ZoneItemPageState extends State<ZoneItemPage>
                   ],
                 ),
               if (_result != null && _result!.products.isNotEmpty)
+                const SizedBox(height: 4),
+              if (_result != null && _result!.products.isNotEmpty)
                 ..._result!.products.map(
                   (e) => Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

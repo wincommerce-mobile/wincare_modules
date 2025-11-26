@@ -83,12 +83,12 @@ class ZoneController extends GetxController {
   }
 
   int _attempts = 0;
-  int _maxAttempts = 3;
+  int _maxAttempts = 4;
   bool _isExecuting = false;
 
   void _startPolling({
-    Duration interval = const Duration(seconds: 10),
-    int maxAttempts = 3,
+    Duration interval = const Duration(seconds: 5),
+    int maxAttempts = 4,
   }) {
     if (_isPolling) return;
     _isPolling = true;
@@ -181,7 +181,7 @@ class ZoneController extends GetxController {
 
         /// Sau khi gọi api chấm hình thành công, gọi tiếp api để listen kq chấm hình
         showSuccessSnackBar(description: "Thành công");
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 5), () {
           hideLoadingIndicator();
           _startPolling();
         });
