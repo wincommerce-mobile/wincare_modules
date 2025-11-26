@@ -83,12 +83,12 @@ class ZoneController extends GetxController {
   }
 
   int _attempts = 0;
-  int _maxAttempts = 4;
+  int _maxAttempts = 5;
   bool _isExecuting = false;
 
   void _startPolling({
-    Duration interval = const Duration(seconds: 5),
-    int maxAttempts = 4,
+    Duration interval = const Duration(seconds: 3),
+    int maxAttempts = 5,
   }) {
     if (_isPolling) return;
     _isPolling = true;

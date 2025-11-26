@@ -98,13 +98,13 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
                         child: myImage.url != null
                             ? CustomNetworkImage(
                                 url: myImage.url ?? '',
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 width: _width,
                                 height: _height,
                               )
                             : Image.file(
                                 File(myImage.path!.path),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 width: _width,
                                 height: _height,
                               ),

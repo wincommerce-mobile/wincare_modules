@@ -1,56 +1,25 @@
-# wincare_modules
+# Wincare modules
 
-Wincare modules
+Flutter modules for Wincare app
 
-## Getting Started
+## Check list for building module and embed to Wincare app
 
-Build the project using the following command:
+#### 1. Check ENV and Method channel
+    A. Check ENV (DEV, UAT, PRO) in main.dart -> Update based on target
+    B. Check setupChannelHandler is called 
+#### 2. Generation code
+Run ```flutter packages pub run build_runner build --delete-conflicting-outputs``` for generate code
+#### 3. Android build & setup
+Run ```flutter build aar --output-dir=/Users/uytb/Documents/projects/tcx_projects/Wincare.Android/app/modules``` for generate aar to folder modules of native repo
+#### 4. iOS build & setup
+Run ```flutter build ios-framework --cocoapods```
 
-#### For code generator
+In iOS native project, Podfile -> add below:
 
-```
-flutter packages pub run build_runner build --delete-conflicting-outputs
+    flutter_application_path = '../wincare_modules'
+    load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+    flutter_post_install(installer)
 
-For android:
+Then run
 
-```flutter build aar --output-dir=path_to_build directory```
-
-for example:
-
-build to native repo:
-
-```flutter build aar --output-dir=/Users/uytb/Documents/projects/tcx_projects/Wincare.Android/app/modules```
-
-build to libs repo:
-
-```flutter build aar --output-dir=/Users/uytb/Documents/projects/wincare-libs/android```
-
-
-for ios:
-
-```flutter build ios-framework --output=../MyiOSNativeApp/Flutter/```
-```If add new package, add it to FlutterPluginRegistrant.podspec first```
-```Add and Signed its to Frameworks and Libraries in Xcode```
-```Then run pod install in native ios repo```
-
-for example:
-
-```flutter build ios-framework --output=/Users/uytb/Documents/projects/test-embed-flutter/Flutter```
-
-build to native repo with only release:
-
-```flutter build ios-framework --release --no-debug --no-profile --output=/Users/uytb/Documents/projects/test-embed-flutter/Flutter```
-
-build to libs repo with only release:
-
-```flutter build ios-framework --release --no-debug --no-profile --output=/Users/uytb/Documents/projects/wincare-libs/ios```
-```flutter build ios-framework --release --no-debug --no-profile --output=/Users/uytb/Documents/projects/tcx_projects/wincare_modules_build```
-```flutter build ios-framework \
-  --release \
-  --no-debug \
-  --no-profile \
-  --xcframework \
-  --output=/Users/uytb/Documents/projects/tcx_projects/wincare_modules_build```
-
-```flutter build ios-framework --cocoapods```
 ```pod install```
