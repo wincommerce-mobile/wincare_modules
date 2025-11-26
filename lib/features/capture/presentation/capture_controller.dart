@@ -132,21 +132,21 @@ class CaptureController extends GetxController {
 
 
   /// Test standalone flutter module with dummy data
-  Future<void> loadWithDummy() async {
-    //showLoadingIndicator();
-    await _clearResult();
-    final dummyJsonStr = '''
-     {"samplingId":"1-5DSS6XS","userId":2789,"sessionLogin":"3a49eb20-ad54-4cbb-9ac0-e3605ada97f6","employeeCode":"sm.training17","siteId":"G-10KF1292","isAllowCancelImage":true,"versionInfo":"1.6.2","outletCode":"3024692","isAllowSendApproval":true,"isAllowEdit":true,"imageGarnitureId":"80AE4A0D-EBF9-487E-AA81-04DFBC228883","displayName":"SM Training 17","isAllowAddImage":true}
-     ''';
-    final Map<String, dynamic> decoded = jsonDecode(dummyJsonStr);
-    final requestData = RequestDataModel.fromJson(decoded);
-    await AppSecureStorage.saveRequestData(requestData);
-    _requestData.value = await AppSecureStorage.getRequestData();
-    await _getComplaintReason();
-    await _getImageTemplates();
-    _position = await _determinePosition();
-    //hideLoadingIndicator();
-  }
+  // Future<void> loadWithDummy() async {
+  //   //showLoadingIndicator();
+  //   await _clearResult();
+  //   final dummyJsonStr = '''
+  //    {"samplingId":"1-5DSS6XS","userId":2789,"sessionLogin":"3a49eb20-ad54-4cbb-9ac0-e3605ada97f6","employeeCode":"sm.training17","siteId":"G-10KF1292","isAllowCancelImage":true,"versionInfo":"1.6.2","outletCode":"3024692","isAllowSendApproval":true,"isAllowEdit":true,"imageGarnitureId":"80AE4A0D-EBF9-487E-AA81-04DFBC228883","displayName":"SM Training 17","isAllowAddImage":true}
+  //    ''';
+  //   final Map<String, dynamic> decoded = jsonDecode(dummyJsonStr);
+  //   final requestData = RequestDataModel.fromJson(decoded);
+  //   await AppSecureStorage.saveRequestData(requestData);
+  //   _requestData.value = await AppSecureStorage.getRequestData();
+  //   await _getComplaintReason();
+  //   await _getImageTemplates();
+  //   _position = await _determinePosition();
+  //   //hideLoadingIndicator();
+  // }
 
   /// Method channel to conmunicate with native side
   Future<void> setupChannelHandler() async {
