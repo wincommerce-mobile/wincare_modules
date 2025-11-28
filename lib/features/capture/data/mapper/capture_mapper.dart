@@ -39,17 +39,12 @@ extension ImageTemplateMapper on ImageTemplateResponse {
       isSendConfirm: resultImageGarniture != null,
       type: TemplateType.fromServer(type),
       result: resultImageGarniture?.toEntity(),
-      templateImage: SampleImageEntity(
-        url: imageTemplate,
-        path: null,
-        isSendConfirm: true,
-      ),
+      templateImage: SampleImageEntity(url: imageTemplate, isSendConfirm: true),
       sampleImages: images != null
           ? images!
                 .map(
                   (img) => SampleImageEntity(
                     url: img.urlImage,
-                    path: null,
                     isSendConfirm: resultImageGarniture != null,
                     isHandled: img.isCollage ?? false,
                   ),

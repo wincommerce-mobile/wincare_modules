@@ -264,7 +264,6 @@ class CaptureController extends GetxController {
         imgZone.sampleImages.add(
           SampleImageEntity(
             url: result,
-            path: null,
             address: address,
             isSendConfirm: false,
             takenDate: takenDate,

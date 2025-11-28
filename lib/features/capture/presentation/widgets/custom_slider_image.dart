@@ -95,19 +95,13 @@ class _CustomSliderImageState extends State<CustomSliderImage> {
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
-                        child: myImage.url != null
-                            ? CustomNetworkImage(
+                        child: CustomNetworkImage(
                                 url: myImage.url ?? '',
                                 fit: BoxFit.contain,
                                 width: _width,
                                 height: _height,
                               )
-                            : Image.file(
-                                File(myImage.path!.path),
-                                fit: BoxFit.contain,
-                                width: _width,
-                                height: _height,
-                              ),
+                            ,
                       ),
                     ),
                     !_showImageAddress

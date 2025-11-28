@@ -118,17 +118,11 @@ class _ImageViewerBottomSheetState extends State<ImageViewerBottomSheet> {
                                   panEnabled: true,
                                   minScale: 1,
                                   maxScale: 5,
-                                  child: photo.url != null
-                                      ? CustomNetworkImage(
-                                          url: photo.url!,
-                                          height: Get.height * .92 - _bottom,
-                                          fit: BoxFit.contain,
-                                        )
-                                      : Image.file(
-                                          File(photo.path!.path),
-                                          height: Get.height * .92 - _bottom,
-                                          fit: BoxFit.contain,
-                                        ),
+                                  child: CustomNetworkImage(
+                                    url: photo.url!,
+                                    height: Get.height * .92 - _bottom,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
 
                                 widget.isShowDelete

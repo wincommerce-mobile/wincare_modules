@@ -119,7 +119,8 @@ class _CaptureMainPageState extends State<CaptureMainPage> {
                                     : AppColors.black4D,
                                 fontWeight: FontWeight.w500,
                               ),
-                              if (_zones[index].type == TemplateType.require) ...[
+                              if (_zones[index].type ==
+                                  TemplateType.require) ...[
                                 SizedBox(width: 6),
                                 AppText(
                                   text: '*',

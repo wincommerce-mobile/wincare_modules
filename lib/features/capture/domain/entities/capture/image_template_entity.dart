@@ -72,7 +72,6 @@ class ImageTemplateEntity {
 
 class SampleImageEntity {
   final String? url;
-  final XFile? path;
   final String? address;
   final String? takenDate;
 
@@ -89,7 +88,6 @@ class SampleImageEntity {
 
   SampleImageEntity({
     required this.url,
-    required this.path,
     this.isHandled = false,
     this.isAllowEdit = true,
     this.isWaitingResult = false,
@@ -111,7 +109,6 @@ class SampleImageEntity {
       url: url ?? this.url,
       address: address ?? this.address,
       takenDate: takenDate,
-      path: path ?? this.path,
       isHandled: isHandled ?? this.isHandled,
       isWaitingResult: isWaitingResult ?? this.isWaitingResult,
       isAllowEdit: isAllowEdit ?? this.isAllowEdit,
